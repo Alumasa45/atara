@@ -1,0 +1,321 @@
+@url=http://localhost:3000
+@adminToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MjQyNjQxMywiZXhwIjoxNzYyNDMwMDEzfQ.E8aOjur0lHyU1j5WkbHt9nAIrwKVJeUiMbokvcexugI
+@trainerToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjgsInJvbGUiOiJ0cmFpbmVyIiwiaWF0IjoxNzYyMjUwMTc2LCJleHAiOjE3NjIyNTEwNzZ9.wXV7CaDrKmcoMebS12EML7ea_JOzcX0rTf941G593qQ
+@clientToken=PASTE_CLIENT_TOKEN_HERE
+
+##Sign up an admin user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "aquinatta",
+    "email": "aquinattaalumasa@gmail.com",
+    "phone": "0715879708",
+    "password": "Akwinara2005!",
+    "role": "admin",
+    "status": "active"
+}
+
+###Sign up a trainer
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "Jane Doe",
+    "email": "jane@trainer.com",
+    "phone": "+1234567890",
+    "password": "JaneDoe",
+    "role": "trainer",
+    "status": "active"
+}
+
+###Sign up a manager
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "manageruser",
+    "email": "manager@gmail.com",
+    "phone": "0744444444",
+    "password": "Manager@1234",
+    "role": "manager",
+    "status": "active"
+}
+
+###Sign up a client (default)
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "username": "clientuser",
+    "email": "client@gmail.com",
+    "phone": "0755555555",
+    "password": "Client@1234",
+    "role": "client",
+    "status": "active"
+}
+
+###Login - Admin User
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "aquinattaalumasa@gmail.com",
+    "password": "Akwinara2005!"
+}
+
+###Login - Trainer User
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "trainer@gmail.com",
+    "password": "Trainer@1234"
+}
+
+###Login - Manager User
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "manager@gmail.com",
+    "password": "Manager!"
+}
+
+###Login - Client User
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "client@gmail.com",
+    "password": "Client@1234"
+}
+
+###Get all users (requires authorization)
+### Use the access_token from any login response above
+GET http://localhost:3000/users
+Authorization: Bearer {{adminToken}}
+
+###Get one user by ID (requires authorization)
+GET http://localhost:3000/users/4
+Authorization: Bearer {{adminToken}}
+
+###Remove user by ID (requires authorization)
+DELETE http://localhost:3000/users/6
+Authorization: Bearer {{adminToken}}
+
+###Update user by ID (requires authorization)
+PATCH http://localhost:3000/users/3
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "role": "trainer"
+}
+
+### Test Dashboard Endpoints
+### IMPORTANT: Replace {{trainerToken}} with actual trainer JWT token from login response
+
+### 1. Login as trainer (get token)
+### Copy the access_token from response and use below
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "ataratrainer@gmail.com",
+    "password": "Trainer@1234"
+}
+
+### 2. Test Trainer Dashboard Endpoint
+### This should return: trainer, sessions, upcomingSchedules, bookings, cancellations, stats
+GET http://localhost:3000/dashboard/trainer
+Authorization: Bearer {{trainerToken}}
+
+### 3. Get Trainer Profile (trainers/:id endpoint)
+### Replace ID with actual trainer ID from dashboard response
+GET http://localhost:3000/trainers/1
+Authorization: Bearer {{trainerToken}}
+
+### 4. Get All Trainers (PUBLIC - no auth required)
+GET http://localhost:3000/trainers
+Authorization: Bearer {{adminToken}}
+
+### 4a. Get All Trainers (ADMIN ENDPOINT - requires admin token)
+### This is what the dashboard uses - must use {{adminToken}}
+GET http://localhost:3000/admin/trainers?page=1&limit=100
+Authorization: Bearer {{adminToken}}
+
+### 4b. Create New Trainer (ADMIN ONLY - NEW ENDPOINT!)
+### This is the new POST endpoint added to fix the issue
+POST http://localhost:3000/admin/trainers
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "user_id": 11,
+    "name": "Jane Doe",
+    "specialty": "yoga",
+    "phone": "+1234567890",
+    "email": "jane@trainer.com",
+    "bio": "Experienced yoga instructor with 10 years of teaching",
+    "status": "active"
+}
+
+### 5. Get All Sessions
+### Should show all sessions (for reference)
+GET http://localhost:3000/sessions
+Authorization: Bearer {{trainerToken}}
+
+### Create a session (for testing bookings)
+POST http://localhost:3000/sessions
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "trainer_id": 1,
+    "category": "yoga",
+    "description": "A refreshing morning yoga session",
+    "date": "2024-07-01",
+    "time": "08:00:00",
+    "duration": 60,
+    "capacity": 15,
+    "status": "active"
+}
+
+### 6. Get All Bookings
+### Should show all bookings (for reference)
+GET http://localhost:3000/bookings
+Authorization: Bearer {{trainerToken}}
+
+### 7. Get All Schedules
+GET http://localhost:3000/schedule
+Authorization: Bearer {{trainerToken}}
+
+### 8. Test Client Dashboard (for comparison)
+### Login as client first and get token
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "client@gmail.com",
+    "password": "Client@1234"
+}
+
+### Then test client dashboard
+GET http://localhost:3000/dashboard/client
+Authorization: Bearer {{clientToken}}
+
+### 9. Test Health Check
+### Simple endpoint to verify server is responding
+GET http://localhost:3000/
+
+### 10. DEBUG: Check Admin User Role
+### This endpoint tells you what role the token has
+GET http://localhost:3000/admin/debug/whoami
+Authorization: Bearer {{adminToken}}
+
+### 11. TEST: Create Multiple Schedules on Same Day
+### First Schedule - Morning Session
+POST http://localhost:3000/admin/schedules
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "session_id": 1,
+  "start_time": "2024-11-05T08:00:00Z",
+  "end_time": "2024-11-05T09:00:00Z"
+}
+
+### 11b. TEST: Create Second Schedule on Same Day - Noon
+### This should work without any conflicts
+POST http://localhost:3000/admin/schedules
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "session_id": 1,
+  "start_time": "2024-11-05T12:00:00Z",
+  "end_time": "2024-11-05T13:00:00Z"
+}
+
+### 11c. TEST: Create Third Schedule on Same Day - Evening
+### Admin can create as many as needed on one day
+POST http://localhost:3000/admin/schedules
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "session_id": 1,
+  "start_time": "2024-11-05T17:00:00Z",
+  "end_time": "2024-11-05T18:00:00Z"
+}
+
+### 12. Get All Schedules (to verify multiple schedules created)
+GET http://localhost:3000/admin/schedules
+Authorization: Bearer {{adminToken}}
+
+### TROUBLESHOOTING GUIDE:
+### If you get 404 on /dashboard/trainer:
+###   - Check that backend is running on port 3000
+###   - Verify ServeStaticModule exclude patterns are correct
+###   - Restart backend server
+###
+### If you get 403 Forbidden on /dashboard/trainer:
+###   - Verify token is from a trainer account (role: "trainer")
+###   - Check that token is still valid (not expired)
+###
+### If you get 500 error on /dashboard/trainer:
+###   - Check backend console for error details
+###   - Verify trainer profile exists (user_id matches)
+###   - Check database connection
+
+### MULTIPLE SCHEDULES PER DAY GUIDE:
+### The system fully supports creating multiple schedules on the same day.
+### There are NO restrictions on:
+###   - Number of schedules per day
+###   - Time conflicts between schedules
+###   - Duplicate session_id values
+###
+### The only requirement is:
+###   - start_time must be before end_time
+###   - session_id must exist
+###
+### Use cases:
+###   - Create morning, noon, and evening sessions on same day
+###   - Multiple trainers leading different sessions same day
+###   - Different session types (yoga, pilates, strength) same day
+###   - Fully flexible scheduling based on business needs
+
+### 13. FINAL VERIFICATION: Get All 5 Requirements Working
+### Test the complete implementation of all 5 features
+
+### Feature 1: Get Client Dashboard (should include upcomingSchedules)
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "client@gmail.com",
+    "password": "Client@1234"
+}
+
+### Save the token and use in next request
+### GET http://localhost:3000/dashboard/client
+### Authorization: Bearer {{clientToken}}
+### Expected: upcomingSchedules array with all schedules
+
+### Feature 2: Verify Multiple Schedules Same Day
+### Create 3 schedules on same day - all should succeed
+### POST requests 11, 11b, 11c above
+
+### Feature 3: Get Carousel Images
+GET http://localhost:3000/slides
+### Expected: Array of 3 Unsplash image URLs
+
+### Feature 4: Check Responsive Session Card
+### View on mobile viewport - should display correctly
+### Click Book Now button - should redirect to /sessions/booking
+
+### Feature 5: Verify KES Currency
+### Check any session response
+### Expected price format: "KES 2000" not "$20.00"
+

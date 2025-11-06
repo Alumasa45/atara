@@ -1,0 +1,287 @@
+/* Palette variables based on provided image — primary color marked with ❤️ is #DDB892 */
+:root{
+  --bg: #EDE0D4;
+  --surface: #E6CCB2;
+  --primary: #DDB892; /* chosen */
+  --accent-1: #B08968;
+  --accent-2: #7F5539;
+  --accent-3: #9C6644;
+  --text: #3b2f2a;
+  --muted: #8b6f5a;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: linear-gradient(180deg,var(--bg), #f6efe7);
+  color:var(--text);
+}
+
+/* Layout with sidebar */
+.layout {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(180deg,var(--bg), #f6efe7);
+}
+
+.sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #F5EFE7 0%, #FDFBF7 100%);
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 2px solid #DDB892;
+}
+
+.sidebar-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0ede8;
+}
+
+.sidebar-header .logo {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 8px;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 18px;
+}
+
+.sidebar-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.sidebar-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.nav-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 12px;
+  text-decoration: none;
+  color: var(--text);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: linear-gradient(135deg, #F5EFE7 0%, #E6CCB2 100%);
+  color: var(--accent-2);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(221, 184, 146, 0.3);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, #DDB892 0%, #E6CCB2 100%);
+  color: white;
+  font-weight: 700;
+  border-left: 4px solid var(--accent-2);
+  padding-left: 8px;
+  box-shadow: 0 3px 10px rgba(221, 184, 146, 0.4);
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 18px;
+}
+
+.nav-label {
+  flex: 1;
+}
+
+.sidebar-user {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  background: linear-gradient(135deg, #E6CCB2 0%, #F5EFE7 100%);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 2px solid #DDB892;
+  box-shadow: 0 3px 10px rgba(221, 184, 146, 0.25);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, #B08968 0%, #9C6644 100%);
+  border: 2px solid #7F5539;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 10px rgba(127, 85, 57, 0.3);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #9C6644 0%, #7F5539 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(127, 85, 57, 0.5);
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background: linear-gradient(180deg,var(--bg), #f6efe7);
+  padding-top: 72px; /* Account for fixed header height */
+}
+
+.app {
+  max-width:1100px;
+  margin:32px auto;
+  padding:24px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+  border-radius:16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+.header{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.logo{
+  width:64px;
+  height:64px;
+  border-radius:12px;
+  background:var(--primary);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color:white;
+}
+.title{
+  font-size:20px;
+  font-weight:700;
+}
+
+.palette{
+  display:flex;
+  gap:8px;
+  margin-top:16px;
+}
+.colorBox{width:84px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600}
+.small{width:48px;height:28px}
+
+.card{background:#fff;padding:16px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,0.06);}
+
+.formRow{display:flex;gap:8px;margin-top:8px}
+.input{flex:1;padding:8px;border-radius:8px;border:1px solid #e7dfd6}
+.button{background:var(--primary);color:white;padding:8px 12px;border-radius:8px;border:none}
+
+/* Modal for booking flow */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(16,12,10,0.45);display:flex;align-items:center;justify-content:center;z-index:2000;padding:16px
+}
+.modal{background:linear-gradient(180deg,#fff, #fff);border-radius:12px;padding:18px;max-width:720px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.25)}
+.modal .close{position:absolute;right:20px;top:16px;background:transparent;border:none;color:var(--accent-2);font-weight:700}
+
+/* Toast theming (react-hot-toast uses .__react_hot_toast_container and .react-hot-toast) */
+.react-hot-toast{
+  --toastBackground: var(--surface);
+  --toastColor: var(--text);
+}
+.react-hot-toast .toast{
+  background: var(--surface); color:var(--text); border-left:4px solid var(--primary); padding:12px 14px; border-radius:8px; box-shadow:0 6px 20px rgba(0,0,0,0.08)
+}
+
+/* Responsive layout: stack columns on small screens */
+@media (max-width: 800px) {
+  .app { margin: 12px; padding: 16px }
+  .palette { flex-wrap: wrap }
+  /* stack main and aside */
+  [style*="gridTemplateColumns"]{ grid-template-columns: 1fr !important }
+  .logo{width:52px;height:52px}
+  
+  .layout {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e7dfd6;
+  }
+}
+
+/* Carousel tweaks */
+.carousel-img{border-radius:12px}
+.carousel-dots button{width:12px;height:12px}
+
+
+

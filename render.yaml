@@ -1,0 +1,75 @@
+services:
+  # NestJS Backend
+  - type: web
+    name: atara-backend
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DB_TYPE
+        value: postgres
+      - key: DB_HOST
+        fromDatabase:
+          name: atara-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: atara-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: atara-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: atara-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: atara-db
+          property: password
+      - key: DB_SYNC
+        value: false
+      - key: DB_LOGGING
+        value: false
+      - key: REDIS_HOST
+        fromService:
+          name: atara-redis
+          type: pserv
+          property: host
+      - key: REDIS_PORT
+        value: 6379
+      - key: REDIS_PASSWORD
+        generateValue: true
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 3600s
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: RECAPTCHA_SECRET
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        value: Atara Movement Studio <ataradesk25@gmail.com>
+      - key: APP_BASE_URL
+        sync: false
+
+databases:
+  - name: atara-db
+    databaseName: atara
+    user: atara_user
+    plan: free

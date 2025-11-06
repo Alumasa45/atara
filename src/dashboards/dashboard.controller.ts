@@ -1,0 +1,67 @@
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Req,
+  ForbiddenException,
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { DashboardService } from './dashboard.service';
+
+@Controller('dashboard')
+export class DashboardController {
+  constructor(private readonly dashboardService: DashboardService) {}
+
+  /**
+   * Client dashboard: their bookings, profile, stats
+   */
+  @Get('client')
+  @UseGuards(JwtAuthGuard)
+  async getClientDashboard(@Req() req: any) {
+    const user = req.user;
+    console.log('Dashboard client request - user:', user);
+    if (!user || user.role !== 'client') {
+      throw new ForbiddenException('Only clients can access this endpoint');
+    }
+    return await this.dashboardService.getClientDashboard(user.userId);
+  }
+
+  /**
+   * Trainer dashboard: their sessions, bookings, earnings
+   */
+  @Get('trainer')
+  @UseGuards(JwtAuthGuard)
+  async getTrainerDashboard(@Req() req: any) {
+    const user = req.user;
+    if (!user || user.role !== 'trainer') {
+      throw new ForbiddenException('Only trainers can access this endpoint');
+    }
+    return await this.dashboardService.getTrainerDashboard(user.userId);
+  }
+
+  /**
+   * Manager dashboard: system statistics
+   */
+  @Get('manager')
+  @UseGuards(JwtAuthGuard)
+  async getManagerDashboard(@Req() req: any) {
+    const user = req.user;
+    if (!user || user.role !== 'manager') {
+      throw new ForbiddenException('Only managers can access this endpoint');
+    }
+    return await this.dashboardService.getManagerDashboard();
+  }
+
+  /**
+   * Admin dashboard: full system overview
+   */
+  @Get('admin')
+  @UseGuards(JwtAuthGuard)
+  async getAdminDashboard(@Req() req: any) {
+    const user = req.user;
+    if (!user || user.role !== 'admin') {
+      throw new ForbiddenException('Only admins can access this endpoint');
+    }
+    return await this.dashboardService.getAdminDashboard();
+  }
+}
