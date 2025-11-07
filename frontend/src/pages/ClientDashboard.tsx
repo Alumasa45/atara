@@ -4,6 +4,8 @@ import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import MembershipCard from '../components/MembershipCard';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 export default function ClientDashboard() {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -20,7 +22,7 @@ export default function ClientDashboard() {
 
         console.log('Token found:', token.substring(0, 20) + '...');
 
-        const res = await fetch(`http://localhost:3000/dashboard/client`, {
+        const res = await fetch(`${BASE}/dashboard/client`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',

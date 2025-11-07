@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function ProfilePage() {
       const userId = currentUser?.userId || currentUser?.sub;
       if (!userId) throw new Error('User ID not found in token');
 
-      const res = await fetch(`http://localhost:3000/users/${userId}`, {
+      const res = await fetch(`${BASE}/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -84,7 +86,7 @@ export default function ProfilePage() {
       const token = localStorage.getItem('token');
       const userId = profile.user_id;
 
-      const res = await fetch(`http://localhost:3000/users/${userId}`, {
+      const res = await fetch(`${BASE}/users/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +128,7 @@ export default function ProfilePage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3000/auth/change-password', {
+      const res = await fetch(`${BASE}/auth/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +166,7 @@ export default function ProfilePage() {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(
-        'http://localhost:3000/auth/send-verification-email',
+        `${BASE}/auth/send-verification-email`,
         {
           method: 'POST',
           headers: {

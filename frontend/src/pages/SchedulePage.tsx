@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface TimeSlot {
   slot_id: number;
   session_id: number;
@@ -37,7 +39,7 @@ export default function SchedulePage() {
         const headers: Record<string, string> = { Accept: 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const res = await fetch('http://localhost:3000/schedule', { headers });
+        const res = await fetch(`${BASE}/schedule`, { headers });
         if (!res.ok) {
           const errorData = await res.text();
           console.error('Schedule API error:', errorData);

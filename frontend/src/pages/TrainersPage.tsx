@@ -3,6 +3,8 @@ import TrainerCard from '../components/TrainerCard';
 import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 export default function TrainersPage() {
   const [trainers, setTrainers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,7 @@ export default function TrainersPage() {
         const headers: Record<string, string> = { Accept: 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const res = await fetch('http://localhost:3000/trainers', { headers });
+        const res = await fetch(`${BASE}/trainers`, { headers });
         if (!res.ok) throw new Error('Failed to fetch trainers');
 
         const data = await res.json();
