@@ -12,8 +12,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  // Set global prefix for all API routes
-  app.setGlobalPrefix('api');
+  // Remove global prefix for now
 
   // Enable CORS so the frontend dev server can call this API.
   // Allow configuring origins via CORS_ORIGIN env var (comma-separated).
