@@ -18,19 +18,38 @@ export class DashboardController {
   @Get('client')
   @UseGuards(JwtAuthGuard)
   async getClientDashboard(@Req() req: any) {
-    const user = req.user;
-    console.log('Dashboard client request - user:', user);
-    if (!user) {
-      throw new ForbiddenException('User not authenticated');
+    try {
+      const user = req.user;
+      console.log('Dashboard client request - user:', user);
+      
+      if (!user) {
+        throw new ForbiddenException('User not authenticated');
+      }
+      
+      const userId = user.userId || user.user_id || user.sub;
+      console.log('Dashboard client request - userId:', userId);
+      
+      if (!userId) {
+        throw new ForbiddenException('User ID not found');
+      }
+      
+      // Return minimal data for now
+      return {
+        profile: { username: user.username || 'User', email: user.email || 'N/A' },
+        upcomingBookings: [],
+        pastBookings: [],
+        upcomingSchedules: [],
+        stats: {
+          totalBookings: 0,
+          confirmedBookings: 0,
+          cancelledBookings: 0,
+          pendingBookings: 0,
+        },
+      };
+    } catch (error) {
+      console.error('Dashboard controller error:', error);
+      throw error;
     }
-    
-    const userId = user.userId || user.user_id || user.sub;
-    if (!userId) {
-      throw new ForbiddenException('User ID not found');
-    }
-    
-    // Allow all authenticated users to access client dashboard
-    return await this.dashboardService.getClientDashboard(userId);
   }
 
   /**
