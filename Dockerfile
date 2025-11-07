@@ -10,28 +10,31 @@ WORKDIR /app
 COPY package*.json ./
 COPY pnpm-lock.yaml ./
 
-# Install dependencies
+# Install backend dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
-# Build frontend with production environment variables
-WORKDIR /app/frontend
-ENV VITE_API_BASE_URL=https://atara-dajy.onrender.com
-RUN pnpm install --frozen-lockfile
+# Build the backend application
 RUN pnpm build
+
+# Build frontend
+WORKDIR /app/frontend
+
+# Install frontend dependencies
+RUN pnpm install --frozen-lockfile
+
+# Build frontend with production environment
+RUN VITE_API_BASE_URL=https://atara-dajy.onrender.com pnpm build
 
 # Copy built frontend to backend public directory
 WORKDIR /app
 RUN mkdir -p /app/public
-RUN cp -r /app/frontend/dist/* /app/public/
+RUN if [ -d "/app/frontend/dist" ]; then cp -r /app/frontend/dist/* /app/public/; else echo "Frontend dist not found"; fi
 
 # Create logs directory
 RUN mkdir -p /app/applogs
-
-# Build the backend application
-RUN pnpm build
 
 # Copy start script
 COPY start.sh ./
