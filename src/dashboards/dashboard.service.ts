@@ -39,99 +39,69 @@ export class DashboardService {
    * Get client dashboard data
    */
   async getClientDashboard(userId: number) {
-    const user = await this.userRepository.findOne({
-      where: { user_id: userId },
-    });
-    if (!user) throw new NotFoundException('User not found');
+    try {
+      console.log('Dashboard service - userId:', userId);
+      const user = await this.userRepository.findOne({
+        where: { user_id: userId },
+      });
+      if (!user) throw new NotFoundException('User not found');
+      console.log('Dashboard service - user found:', user.username);
 
-    // Get user profile data
-    const profile = user;
+      // Get user profile data
+      const profile = user;
+      console.log('Dashboard service - getting bookings...');
 
-    // Get upcoming bookings (future schedules) using query builder
-    const upcomingBookings = await this.bookingRepository
-      .createQueryBuilder('b')
-      .leftJoinAndSelect('b.schedule', 's')
-      .leftJoinAndSelect('b.timeSlot', 'ts')
-      .leftJoinAndSelect('ts.session', 'ses')
-      .leftJoinAndSelect('ses.trainer', 't')
-      .leftJoinAndSelect('t.user', 'tu')
-      .where('b.user_id = :userId', { userId })
-      .andWhere('b.status = :booked', { booked: BookingStatus.booked })
-      .orderBy('b.booking_id', 'DESC')
-      .take(5)
-      .getMany();
+      // Get basic booking counts
+      const totalBookings = await this.bookingRepository.count({
+        where: { user_id: userId }
+      });
+      console.log('Dashboard service - total bookings:', totalBookings);
 
-    // Filter for future bookings only
-    const now = new Date();
-    const futureBookings = upcomingBookings.filter((b) => {
-      const scheduleDate = b.schedule?.date ? new Date(b.schedule.date) : null;
-      return scheduleDate && scheduleDate > now;
-    });
+      const confirmedBookings = await this.bookingRepository.count({
+        where: { user_id: userId, status: BookingStatus.booked }
+      });
 
-    // Get past bookings using query builder
-    const pastBookings = await this.bookingRepository
-      .createQueryBuilder('b')
-      .leftJoinAndSelect('b.schedule', 's')
-      .leftJoinAndSelect('s.timeSlots', 'ts')
-      .leftJoinAndSelect('ts.session', 'ses')
-      .leftJoinAndSelect('ses.trainer', 't')
-      .where('b.user_id = :userId', { userId })
-      .orderBy('b.booking_id', 'DESC')
-      .take(10)
-      .getMany();
+      const cancelledBookings = await this.bookingRepository.count({
+        where: { user_id: userId, status: BookingStatus.cancelled }
+      });
 
-    // Filter for past bookings only
-    const pastBookingsFiltered = pastBookings.filter((b) => {
-      const scheduleDate = b.schedule?.date ? new Date(b.schedule.date) : null;
-      return scheduleDate && scheduleDate < now;
-    });
+      // Get simple bookings without complex joins
+      const upcomingBookings = await this.bookingRepository.find({
+        where: { user_id: userId, status: BookingStatus.booked },
+        take: 5,
+        order: { booking_id: 'DESC' }
+      });
 
-    // Get all upcoming schedules (for display on dashboard)
-    const upcomingSchedules = await this.scheduleRepository
-      .createQueryBuilder('s')
-      .leftJoinAndSelect('s.timeSlots', 'ts')
-      .leftJoinAndSelect('ts.session', 'ses')
-      .leftJoinAndSelect('ses.trainer', 't')
-      .orderBy('s.date', 'ASC')
-      .take(10)
-      .getMany();
+      const pastBookings = await this.bookingRepository.find({
+        where: { user_id: userId },
+        take: 10,
+        order: { booking_id: 'DESC' }
+      });
 
-    // Filter for future schedules only
-    const futureSchedules = upcomingSchedules.filter((s) => {
-      const scheduleDate = s.date ? new Date(s.date) : null;
-      return scheduleDate && scheduleDate > now;
-    });
+      // Get simple schedules
+      const upcomingSchedules = await this.scheduleRepository.find({
+        take: 10,
+        order: { date: 'ASC' }
+      });
 
-    // Count stats using QueryBuilder
-    const totalBookings = await this.bookingRepository
-      .createQueryBuilder('b')
-      .where('b.user_id = :userId', { userId })
-      .getCount();
+      console.log('Dashboard service - data collected successfully');
 
-    const confirmedBookings = await this.bookingRepository
-      .createQueryBuilder('b')
-      .where('b.user_id = :userId', { userId })
-      .andWhere('b.status = :booked', { booked: BookingStatus.booked })
-      .getCount();
-
-    const cancelledBookings = await this.bookingRepository
-      .createQueryBuilder('b')
-      .where('b.user_id = :userId', { userId })
-      .andWhere('b.status = :cancelled', { cancelled: BookingStatus.cancelled })
-      .getCount();
-
-    return {
-      profile,
-      upcomingBookings: futureBookings,
-      pastBookings: pastBookingsFiltered,
-      upcomingSchedules,
-      stats: {
-        totalBookings,
-        confirmedBookings,
-        cancelledBookings,
-        pendingBookings: totalBookings - confirmedBookings - cancelledBookings,
-      },
-    };
+      return {
+        profile,
+        upcomingBookings,
+        pastBookings,
+        upcomingSchedules,
+        stats: {
+          totalBookings,
+          confirmedBookings,
+          cancelledBookings,
+          pendingBookings: totalBookings - confirmedBookings - cancelledBookings,
+        },
+      };
+    } catch (error) {
+      console.error('Dashboard service error:', error);
+      throw error;
+    }
   }
 
   /**
