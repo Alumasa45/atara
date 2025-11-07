@@ -18,8 +18,7 @@ COPY . .
 
 # Build frontend with production environment variables
 WORKDIR /app/frontend
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_API_BASE_URL=https://atara-dajy.onrender.com
 RUN pnpm install --frozen-lockfile
 RUN pnpm build
 
