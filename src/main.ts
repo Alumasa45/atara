@@ -11,23 +11,32 @@ async function bootstrap() {
   }
 
   const app = await NestFactory.create(AppModule);
+
   // Enable CORS so the frontend dev server can call this API.
   // Allow configuring origins via CORS_ORIGIN env var (comma-separated).
   const corsOrigins = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim())
     : ['http://localhost:5173', 'http://localhost:3000'];
+
+  console.log('🌐 CORS enabled for origins:', corsOrigins);
+
   app.enableCors({
     origin: corsOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
+
   // apply a simple rate limiter for sensitive auth endpoints
   app.use(rateLimitMiddleware as any);
+
   // enable global validation pipe (whitelists DTO props)
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+
+  console.log(`🚀 Application is running on: http://localhost:${port}`);
 }
 
 bootstrap();

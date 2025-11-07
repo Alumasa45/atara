@@ -46,11 +46,11 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
         : process.env.DB_PASSWORD || 'aquinattaayo',
       database: process.env.DATABASE_URL
         ? undefined
-        : process.env.DB_DATABASE || 'atara',
+        : process.env.DB_DATABASE || process.env.DB_NAME || 'atara',
       // Render requires SSL
       ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
       synchronize: false,
-      logging: false,
+      logging: process.env.DB_LOGGING === 'true',
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
     }),

@@ -30,7 +30,7 @@ export class TrainersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // public: clients can view trainers list
   async findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
     const p = page ? Number(page) : 1;
     const l = limit ? Number(limit) : 20;
