@@ -4,12 +4,12 @@
 @clientToken=PASTE_CLIENT_TOKEN_HERE
 
 ##Sign up an admin user
-POST http://localhost:3000/auth/register
+POST https://atara-dajy.onrender.com/auth/register
 Content-Type: application/json
 
 {
-    "username": "aquinatta",
-    "email": "aquinattaalumasa@gmail.com",
+    "username": "alumasa",
+    "email": "aquinatta@gmail.com",
     "phone": "0715879708",
     "password": "Akwinara2005!",
     "role": "admin",

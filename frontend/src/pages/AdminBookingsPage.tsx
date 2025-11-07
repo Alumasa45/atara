@@ -3,6 +3,8 @@ import { getJson } from '../api';
 import toast from 'react-hot-toast';
 import '../styles.css';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface Booking {
   booking_id: number;
   user_id: number;
@@ -117,7 +119,7 @@ export default function AdminBookingsPage() {
       setUpdatingId(bookingId);
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:3000/admin/bookings/${bookingId}/status`,
+        `${BASE}/admin/bookings/${bookingId}/status`,
         {
           method: 'PATCH',
           headers: {

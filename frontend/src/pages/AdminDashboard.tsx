@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import UserManagement from '../components/UserManagement';
 import AdminMembershipsManager from '../components/AdminMembershipsManager';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState<any>(null);
@@ -33,7 +35,7 @@ export default function AdminDashboard() {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 
-        const res = await fetch(`http://localhost:3000/admin/stats`, {
+        const res = await fetch(`${BASE}/admin/stats`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
