@@ -28,10 +28,9 @@ RUN pnpm install --frozen-lockfile
 # Build frontend with production environment
 RUN VITE_API_BASE_URL=https://atara-dajy.onrender.com/api pnpm build
 
-# Copy built frontend to backend public directory
+# Skip copying frontend build for now to test API
 WORKDIR /app
 RUN mkdir -p /app/public
-RUN if [ -d "/app/frontend/dist" ]; then cp -r /app/frontend/dist/* /app/public/; else echo "Frontend dist not found"; fi
 
 # Create logs directory
 RUN mkdir -p /app/applogs
