@@ -36,6 +36,51 @@ export class DashboardService {
   ) {}
 
   /**
+   * Get user profile
+   */
+  async getUserProfile(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { user_id: userId },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  /**
+   * Get booking statistics
+   */
+  async getBookingStats(userId: number) {
+    const totalBookings = await this.bookingRepository.count({
+      where: { user_id: userId }
+    });
+    
+    const confirmedBookings = await this.bookingRepository.count({
+      where: { user_id: userId, status: BookingStatus.booked }
+    });
+    
+    const cancelledBookings = await this.bookingRepository.count({
+      where: { user_id: userId, status: BookingStatus.cancelled }
+    });
+    
+    return {
+      totalBookings,
+      confirmedBookings,
+      cancelledBookings,
+      pendingBookings: totalBookings - confirmedBookings - cancelledBookings,
+    };
+  }
+
+  /**
+   * Get upcoming schedules
+   */
+  async getUpcomingSchedules() {
+    return await this.scheduleRepository.find({
+      take: 10,
+      order: { date: 'ASC' }
+    });
+  }
+
+  /**
    * Get client dashboard data
    */
   async getClientDashboard(userId: number) {

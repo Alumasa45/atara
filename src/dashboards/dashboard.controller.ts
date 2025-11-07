@@ -38,24 +38,17 @@ export class DashboardController {
         throw new ForbiddenException('User ID not found');
       }
       
-      // Return basic dashboard data
-      const basicProfile = {
-        username: user.username || 'User',
-        email: user.email || 'user@example.com',
-        created_at: new Date().toISOString()
-      };
+      // Get real user data
+      const userProfile = await this.dashboardService.getUserProfile(userId);
+      const bookingStats = await this.dashboardService.getBookingStats(userId);
+      const schedules = await this.dashboardService.getUpcomingSchedules();
       
       return {
-        profile: basicProfile,
+        profile: userProfile,
         upcomingBookings: [],
         pastBookings: [],
-        upcomingSchedules: [],
-        stats: {
-          totalBookings: 0,
-          confirmedBookings: 0,
-          cancelledBookings: 0,
-          pendingBookings: 0,
-        },
+        upcomingSchedules: schedules,
+        stats: bookingStats,
       };
     } catch (error) {
       console.error('Dashboard controller error:', error);
