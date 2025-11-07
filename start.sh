@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Running database migrations..."
-node dist/main.js migrate || true
+npm run migration:run || echo "Migration failed, continuing anyway..."
 
 echo "Starting application..."
-node dist/main.js
+npm run start:prod
