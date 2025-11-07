@@ -1,6 +1,7 @@
 // Production API URL: https://atara-dajy.onrender.com
 const BASE =
-  (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:3000';
+  (import.meta as any).env?.VITE_API_BASE_URL ??
+  'https://atara-dajy.onrender.com';
 
 async function getJson(path: string) {
   const token = localStorage.getItem('token');
