@@ -224,26 +224,16 @@ export class AdminService {
         where.status = query.filter;
       }
 
-      // Use find() instead of queryBuilder to avoid TypeORM issues
+      // Get bookings without complex relations first
       const [bookings, total] = await this.bookingRepository.findAndCount({
         where,
-        relations: ['user', 'schedule'],
         order: { date_booked: 'DESC' },
         skip,
         take: limit,
       });
 
-      // Apply search filter in application layer
-      let filtered = bookings;
-      if (query?.search) {
-        const searchLower = query.search.toLowerCase();
-        filtered = bookings.filter((b: any) => {
-          return b.user?.username?.toLowerCase().includes(searchLower);
-        });
-      }
-
       return {
-        data: filtered,
+        data: bookings,
         total,
         page,
         limit,
