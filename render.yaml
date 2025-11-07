@@ -73,6 +73,8 @@ services:
         fromDatabase:
           name: atara-db
           property: connectionString
+      - key: VITE_API_BASE_URL
+        value: https://atara-dajy.onrender.com
 
 databases:
   - name: atara-db
