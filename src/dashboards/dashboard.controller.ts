@@ -15,6 +15,11 @@ export class DashboardController {
   /**
    * Client dashboard: their bookings, profile, stats
    */
+  @Get('test')
+  async testDashboard() {
+    return { message: 'Dashboard endpoint working', timestamp: new Date() };
+  }
+
   @Get('client')
   @UseGuards(JwtAuthGuard)
   async getClientDashboard(@Req() req: any) {
