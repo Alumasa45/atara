@@ -20,10 +20,17 @@ export class DashboardController {
   async getClientDashboard(@Req() req: any) {
     const user = req.user;
     console.log('Dashboard client request - user:', user);
-    if (!user || user.role !== 'client') {
-      throw new ForbiddenException('Only clients can access this endpoint');
+    if (!user) {
+      throw new ForbiddenException('User not authenticated');
     }
-    return await this.dashboardService.getClientDashboard(user.userId);
+    
+    const userId = user.userId || user.user_id || user.sub;
+    if (!userId) {
+      throw new ForbiddenException('User ID not found');
+    }
+    
+    // Allow all authenticated users to access client dashboard
+    return await this.dashboardService.getClientDashboard(userId);
   }
 
   /**

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import '../styles.css';
 import toast from 'react-hot-toast';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface UserProfile {
   user_id: number;
   username: string;
@@ -29,7 +31,7 @@ export default function UserProfilePage() {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/users/me', {
+        const response = await fetch(`${BASE}/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
