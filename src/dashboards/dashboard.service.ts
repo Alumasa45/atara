@@ -50,17 +50,25 @@ export class DashboardService {
    * Get booking statistics
    */
   async getBookingStats(userId: number) {
-    const totalBookings = await this.bookingRepository.count({
-      where: { user_id: userId }
-    });
+    const totalBookings = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .leftJoin('booking.user', 'user')
+      .where('user.user_id = :userId', { userId })
+      .getCount();
     
-    const confirmedBookings = await this.bookingRepository.count({
-      where: { user_id: userId, status: BookingStatus.booked }
-    });
+    const confirmedBookings = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .leftJoin('booking.user', 'user')
+      .where('user.user_id = :userId', { userId })
+      .andWhere('booking.status = :status', { status: BookingStatus.booked })
+      .getCount();
     
-    const cancelledBookings = await this.bookingRepository.count({
-      where: { user_id: userId, status: BookingStatus.cancelled }
-    });
+    const cancelledBookings = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .leftJoin('booking.user', 'user')
+      .where('user.user_id = :userId', { userId })
+      .andWhere('booking.status = :status', { status: BookingStatus.cancelled })
+      .getCount();
     
     return {
       totalBookings,
