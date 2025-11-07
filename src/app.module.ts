@@ -6,6 +6,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthController } from './auth/auth.controller';
+import { HealthController } from './health/health.controller';
 import { TrainersModule } from './trainers/trainers.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { ScheduleModule } from './schedule/schedule.module';
@@ -72,7 +73,7 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
     LoyaltyModule,
     TrainerReviewsModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, HealthController],
   providers: [],
 })
 export class AppModule {}
