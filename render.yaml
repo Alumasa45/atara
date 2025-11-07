@@ -76,6 +76,19 @@ services:
       - key: VITE_API_BASE_URL
         value: https://atara-dajy.onrender.com
 
+  # Frontend Static Site
+  - type: web
+    name: atara-1
+    env: static
+    region: oregon
+    plan: free
+    buildCommand: cd frontend && pnpm install --frozen-lockfile && VITE_API_BASE_URL=https://atara-dajy.onrender.com pnpm build
+    staticPublishPath: ./frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
 databases:
   - name: atara-db
     databaseName: atara
