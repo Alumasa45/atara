@@ -54,11 +54,9 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'public'),
-    //   serveRoot: '/',
-    //   exclude: ['/api*', '/auth*', '/dashboard*', '/users*', '/trainers*', '/sessions*', '/schedule*', '/bookings*', '/cancellation-requests*', '/profiles*', '/memberships*', '/loyalty*', '/admin*', '/manager*'],
-    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     // slides endpoint to list public images
     require('./slides/slides.module').SlidesModule,
     UsersModule,

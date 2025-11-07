@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com/api';
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);

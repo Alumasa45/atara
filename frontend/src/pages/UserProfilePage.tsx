@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles.css';
 import toast from 'react-hot-toast';
 
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com/api';
 
 interface UserProfile {
   user_id: number;

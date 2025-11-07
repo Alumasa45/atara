@@ -3,7 +3,7 @@ import TrainerCard from '../components/TrainerCard';
 import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com/api';
 
 export default function TrainersPage() {
   const [trainers, setTrainers] = useState<any[]>([]);
