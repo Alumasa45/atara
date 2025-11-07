@@ -23,6 +23,7 @@ import {
 import { Session } from '../sessions/entities/session.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { ScheduleTimeSlot } from '../schedule/entities/schedule-time-slot.entity';
+import { SessionGroup } from '../session-groups/entities/session-group.entity';
 import {
   UpdateUserRoleDto,
   AdminQueryDto,
@@ -48,6 +49,8 @@ export class AdminService {
     private readonly scheduleRepository: Repository<Schedule>,
     @InjectRepository(ScheduleTimeSlot)
     private readonly timeSlotRepository: Repository<ScheduleTimeSlot>,
+    @InjectRepository(SessionGroup)
+    private readonly sessionGroupRepository: Repository<SessionGroup>,
   ) {}
 
   /**
@@ -213,35 +216,108 @@ export class AdminService {
    * Get all bookings with pagination and filtering
    */
   async getAllBookings(query?: AdminQueryDto) {
+    console.log('🔍 [AdminService] getAllBookings called with query:', query);
     const page = query?.page || 1;
     const limit = query?.limit || 20;
     const skip = (page - 1) * limit;
 
     try {
+      // First, try a simple query without relations to test basic connectivity
+      console.log('🔍 Testing basic booking repository connection...');
+      const testCount = await this.bookingRepository.count();
+      console.log(`📊 Total bookings in database: ${testCount}`);
+
+      // If no bookings exist, return empty result
+      if (testCount === 0) {
+        console.log('📊 No bookings found in database');
+        return {
+          data: [],
+          total: 0,
+          page: page,
+          limit: limit,
+          pages: 0,
+        };
+      }
+
       // Build where conditions
       const where: any = {};
       if (query?.filter && query.filter !== 'all') {
-        where.status = query.filter;
+        // Validate filter value against enum
+        const validStatuses = ['booked', 'cancelled', 'completed', 'missed'];
+        if (validStatuses.includes(query.filter)) {
+          where.status = query.filter;
+        } else {
+          console.log(`⚠️ Invalid filter status: ${query.filter}`);
+        }
       }
 
-      // Get bookings without complex relations first
-      const [bookings, total] = await this.bookingRepository.findAndCount({
-        where,
-        order: { date_booked: 'DESC' },
-        skip,
-        take: limit,
-      });
+      console.log('📋 WHERE conditions:', where);
+      console.log(`📄 Pagination - page: ${page}, limit: ${limit}, skip: ${skip}`);
 
-      return {
-        data: bookings,
+      // Try with query builder for better error handling
+      const queryBuilder = this.bookingRepository
+        .createQueryBuilder('booking')
+        .orderBy('booking.date_booked', 'DESC')
+        .skip(skip)
+        .take(limit);
+
+      // Add where conditions if any
+      if (Object.keys(where).length > 0) {
+        Object.keys(where).forEach(key => {
+          queryBuilder.andWhere(`booking.${key} = :${key}`, { [key]: where[key] });
+        });
+      }
+
+      const [bookings, total] = await queryBuilder.getManyAndCount();
+
+      console.log(`✅ Found ${bookings.length} bookings (total in DB: ${total})`);
+      console.log('📊 Sample booking data:', bookings.slice(0, 1));
+
+      // Apply search filter in application layer
+      let filtered = bookings;
+      if (query?.search) {
+        const searchLower = query.search.toLowerCase();
+        filtered = bookings.filter((b: any) => {
+          return (
+            b.guest_name?.toLowerCase().includes(searchLower) ||
+            b.guest_email?.toLowerCase().includes(searchLower) ||
+            b.guest_phone?.toLowerCase().includes(searchLower) ||
+            b.payment_reference?.toLowerCase().includes(searchLower)
+          );
+        });
+        console.log(`🔍 After search filter: ${filtered.length} bookings`);
+      }
+
+      const response = {
+        data: filtered,
         total,
         page,
         limit,
         pages: Math.ceil(total / limit),
       };
+
+      console.log('📤 Response structure:', {
+        dataLength: response.data.length,
+        total: response.total,
+        page: response.page,
+        limit: response.limit,
+        pages: response.pages
+      });
+      return response;
     } catch (error) {
-      console.error('Error in getAllBookings:', error);
-      throw error;
+      console.error('❌ Error in getAllBookings:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
+      
+      // Return a safe error response instead of throwing
+      return {
+        data: [],
+        total: 0,
+        page: page,
+        limit: limit,
+        pages: 0,
+        error: error.message
+      };
     }
   }
 
@@ -883,5 +959,59 @@ export class AdminService {
     }
 
     return updated;
+  }
+
+  /**
+   * Test database connectivity
+   */
+  async testDatabaseConnection() {
+    try {
+      console.log('🔍 Testing database connection...');
+      
+      // Test basic user count
+      const userCount = await this.userRepository.count();
+      console.log(`👥 Users count: ${userCount}`);
+      
+      // Test basic booking count
+      const bookingCount = await this.bookingRepository.count();
+      console.log(`📅 Bookings count: ${bookingCount}`);
+      
+      // Test basic trainer count
+      const trainerCount = await this.trainerRepository.count();
+      console.log(`🏋️ Trainers count: ${trainerCount}`);
+      
+      // Test basic session count
+      const sessionCount = await this.sessionRepository.count();
+      console.log(`🏃 Sessions count: ${sessionCount}`);
+      
+      // Test basic schedule count
+      const scheduleCount = await this.scheduleRepository.count();
+      console.log(`📅 Schedules count: ${scheduleCount}`);
+      
+      // Test basic session group count
+      const sessionGroupCount = await this.sessionGroupRepository.count();
+      console.log(`👥 Session groups count: ${sessionGroupCount}`);
+      
+      // Test basic time slot count
+      const timeSlotCount = await this.timeSlotRepository.count();
+      console.log(`⏰ Time slots count: ${timeSlotCount}`);
+      
+      return {
+        success: true,
+        message: 'Database connection successful',
+        counts: {
+          users: userCount,
+          bookings: bookingCount,
+          trainers: trainerCount,
+          sessions: sessionCount,
+          schedules: scheduleCount,
+          sessionGroups: sessionGroupCount,
+          timeSlots: timeSlotCount
+        }
+      };
+    } catch (error) {
+      console.error('❌ Database connection test failed:', error);
+      throw error;
+    }
   }
 }

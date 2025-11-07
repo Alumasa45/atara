@@ -9,6 +9,7 @@ import { Booking } from '../bookings/entities/booking.entity';
 import { Session } from '../sessions/entities/session.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { ScheduleTimeSlot } from '../schedule/entities/schedule-time-slot.entity';
+import { SessionGroup } from '../session-groups/entities/session-group.entity';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { AuthModule } from '../auth/auth.module';
       Session,
       Schedule,
       ScheduleTimeSlot,
+      SessionGroup,
     ]),
   ],
   controllers: [AdminController],

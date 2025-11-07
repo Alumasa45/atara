@@ -129,6 +129,25 @@ export class AdminController {
   }
 
   /**
+   * Debug endpoint: test database connectivity
+   */
+  @Get('debug/db-test')
+  async dbTest() {
+    console.log('🔍 [AdminController /admin/debug/db-test] request received');
+    try {
+      const result = await this.adminService.testDatabaseConnection();
+      return result;
+    } catch (error) {
+      console.error('❌ Database test failed:', error);
+      return {
+        success: false,
+        error: error.message,
+        stack: error.stack
+      };
+    }
+  }
+
+  /**
    * Get all trainers with pagination and filtering
    */
   @Get('trainers')
@@ -166,7 +185,12 @@ export class AdminController {
    */
   @Get('bookings')
   async getAllBookings(@Query() query: AdminQueryDto) {
-    return this.adminService.getAllBookings(query);
+    console.log('🚀 [AdminController] GET /admin/bookings called');
+    console.log('📋 Query params:', query);
+    console.log('📝 Query keys:', Object.keys(query));
+    const result = await this.adminService.getAllBookings(query);
+    console.log('✅ [AdminController] Returning bookings result');
+    return result;
   }
 
   /**
