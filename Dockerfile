@@ -22,7 +22,11 @@ RUN mkdir -p /app/applogs
 # Build the application
 RUN pnpm build
 
+# Copy start script
+COPY start.sh ./
+RUN chmod +x start.sh
+
 EXPOSE 3000
 
-# Use production start command
-CMD ["node", "dist/main"]
+# Use startup script that runs migrations then starts app
+CMD ["./start.sh"]
