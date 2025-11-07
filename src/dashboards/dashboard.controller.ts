@@ -38,19 +38,8 @@ export class DashboardController {
         throw new ForbiddenException('User ID not found');
       }
       
-      // Return minimal data for now
-      return {
-        profile: { username: user.username || 'User', email: user.email || 'N/A' },
-        upcomingBookings: [],
-        pastBookings: [],
-        upcomingSchedules: [],
-        stats: {
-          totalBookings: 0,
-          confirmedBookings: 0,
-          cancelledBookings: 0,
-          pendingBookings: 0,
-        },
-      };
+      // Call the actual dashboard service
+      return await this.dashboardService.getClientDashboard(userId);
     } catch (error) {
       console.error('Dashboard controller error:', error);
       throw error;
