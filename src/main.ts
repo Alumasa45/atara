@@ -24,9 +24,29 @@ async function bootstrap() {
 
   app.enableCors({
     origin: corsOrigins,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+    exposedHeaders: ['Content-Length', 'X-Foo', 'X-Bar'],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
+  });
+
+  // Additional CORS middleware for edge cases
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (corsOrigins.includes(origin)) {
+      res.header('Access-Control-Allow-Origin', origin);
+    }
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(200);
+    } else {
+      next();
+    }
   });
 
   // apply a simple rate limiter for sensitive auth endpoints
