@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <path d="M190 65L240 65L320 280L350 350L380 280L320 360L290 430L360 455L190 65Z" fill="#000"/>
+  <path d="M95 280C95 350 150 400 220 400C290 400 345 350 345 280C345 210 290 160 220 160C150 160 95 210 95 280Z" fill="none" stroke="#000" stroke-width="25"/>
+  <path d="M135 235L265 235" stroke="#000" stroke-width="15"/>
+  <path d="M200 235L200 400L200 455" stroke="#000" stroke-width="15"/>
+  <path d="M220 270L270 270L270 330" stroke="#000" stroke-width="12"/>
+</svg>

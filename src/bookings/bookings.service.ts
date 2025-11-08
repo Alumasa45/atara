@@ -39,17 +39,19 @@ export class BookingsService {
   }
 
   async create(createBookingDto: CreateBookingDto) {
-    const { user_id, time_slot_id, guest_name, guest_email, guest_phone } =
-      createBookingDto as any;
+    try {
+      console.log('Creating booking with data:', createBookingDto);
+      const { user_id, time_slot_id, guest_name, guest_email, guest_phone } =
+        createBookingDto as any;
 
-    // Get the time slot with its related session and schedule
-    const timeSlot = await this.timeSlotRepository.findOne({
-      where: { slot_id: time_slot_id },
-      relations: ['schedule', 'session'],
-    });
-    if (!timeSlot) throw new NotFoundException('Time slot not found');
-    if (!timeSlot.schedule) throw new NotFoundException('Schedule not found for time slot');
-    if (!timeSlot.session) throw new NotFoundException('Session not found for time slot');
+      // Get the time slot with its related session and schedule
+      const timeSlot = await this.timeSlotRepository.findOne({
+        where: { slot_id: time_slot_id },
+        relations: ['schedule', 'session'],
+      });
+      if (!timeSlot) throw new NotFoundException('Time slot not found');
+      if (!timeSlot.schedule) throw new NotFoundException('Schedule not found for time slot');
+      if (!timeSlot.session) throw new NotFoundException('Session not found for time slot');
 
     const schedule = timeSlot.schedule;
     const session = timeSlot.session;
@@ -123,9 +125,14 @@ export class BookingsService {
       return saved;
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      console.error('Transaction error:', err);
       throw err;
     } finally {
       await queryRunner.release();
+    }
+    } catch (error) {
+      console.error('Booking service error:', error);
+      throw error;
     }
   }
 

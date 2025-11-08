@@ -66,14 +66,18 @@ CREATE TABLE IF NOT EXISTS schedule_time_slots (
 -- 6. Create bookings table
 CREATE TABLE IF NOT EXISTS bookings (
     booking_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
     schedule_id INTEGER REFERENCES schedules(schedule_id) ON DELETE SET NULL,
     time_slot_id INTEGER REFERENCES schedule_time_slots(slot_id) ON DELETE SET NULL,
     session_id INTEGER REFERENCES sessions(session_id) ON DELETE SET NULL,
+    group_id INTEGER REFERENCES session_groups(id) ON DELETE SET NULL,
     booking_date DATE NOT NULL,
     status VARCHAR(50) DEFAULT 'confirmed',
     payment_status VARCHAR(50) DEFAULT 'pending',
     payment_reference VARCHAR(255),
+    guest_name VARCHAR(100),
+    guest_email VARCHAR(100),
+    guest_phone VARCHAR(15),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -122,7 +126,18 @@ CREATE TABLE IF NOT EXISTS membership_plans (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 11. Create trainer_reviews table
+-- 11. Create session_groups table (CRITICAL - was missing!)
+CREATE TABLE IF NOT EXISTS session_groups (
+    id SERIAL PRIMARY KEY,
+    schedule_id INTEGER NOT NULL REFERENCES schedules(schedule_id) ON DELETE CASCADE,
+    group_number INTEGER NOT NULL DEFAULT 0,
+    capacity INTEGER NOT NULL,
+    current_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 12. Create trainer_reviews table
 CREATE TABLE IF NOT EXISTS trainer_reviews (
     review_id SERIAL PRIMARY KEY,
     trainer_id INTEGER NOT NULL REFERENCES trainers(trainer_id) ON DELETE CASCADE,
@@ -142,6 +157,8 @@ CREATE INDEX IF NOT EXISTS idx_schedules_date ON schedules(date);
 CREATE INDEX IF NOT EXISTS idx_schedule_time_slots_schedule_id ON schedule_time_slots(schedule_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_schedule_id ON bookings(schedule_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_group_id ON bookings(group_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_session_groups_schedule_group ON session_groups(schedule_id, group_number);
 
 -- Create migrations table (so TypeORM knows migrations were run)
 CREATE TABLE IF NOT EXISTS migrations (
