@@ -48,6 +48,8 @@ export class BookingsService {
       relations: ['schedule', 'session'],
     });
     if (!timeSlot) throw new NotFoundException('Time slot not found');
+    if (!timeSlot.schedule) throw new NotFoundException('Schedule not found for time slot');
+    if (!timeSlot.session) throw new NotFoundException('Session not found for time slot');
 
     const schedule = timeSlot.schedule;
     const session = timeSlot.session;

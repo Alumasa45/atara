@@ -34,11 +34,17 @@ export class MembershipsService {
   }
 
   async getAllPlans(activeOnly: boolean = true) {
-    const query = this.planRepository.createQueryBuilder('p');
-    if (activeOnly) {
-      query.where('p.is_active = :active', { active: true });
+    try {
+      const query = this.planRepository.createQueryBuilder('p');
+      if (activeOnly) {
+        query.where('p.is_active = :active', { active: true });
+      }
+      return query.orderBy('p.sort_order', 'ASC').getMany();
+    } catch (error) {
+      console.error('Error fetching membership plans:', error);
+      // Return empty array if table doesn't exist yet
+      return [];
     }
-    return query.orderBy('p.sort_order', 'ASC').getMany();
   }
 
   async getPlanById(id: number) {
