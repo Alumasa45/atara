@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getJson } from '../api';
 import '../styles.css';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface Trainer {
   trainer_id: number;
   user_id: number;
@@ -78,7 +80,7 @@ export default function AdminTrainersPage() {
   const handleCreateTrainer = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/trainers', {
+      const response = await fetch(`${BASE}/trainers`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

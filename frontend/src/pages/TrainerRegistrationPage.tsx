@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getJson, postJson } from '../api';
 import '../styles.css';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface TrainerProfile {
   trainer_id: number;
   user_id: number;
@@ -95,7 +97,7 @@ export default function TrainerRegistrationPage() {
     e.preventDefault();
     try {
       // First create user account
-      const userResponse = await fetch('http://localhost:3000/auth/register', {
+      const userResponse = await fetch(`${BASE}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +119,7 @@ export default function TrainerRegistrationPage() {
       const userId = userData.user?.user_id || userData.user_id;
 
       // Then create trainer profile
-      const trainerResponse = await fetch('http://localhost:3000/trainers', {
+      const trainerResponse = await fetch(`${BASE}/trainers`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +162,7 @@ export default function TrainerRegistrationPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/trainers/${editingTrainer.trainer_id}`,
+        `${BASE}/trainers/${editingTrainer.trainer_id}`,
         {
           method: 'PATCH',
           headers: {

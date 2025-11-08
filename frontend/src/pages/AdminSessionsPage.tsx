@@ -170,7 +170,7 @@ export default function AdminSessionsPage() {
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       const BASE =
-        (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:3000';
+        (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
 
       const response = await fetch(`${BASE}/sessions`, {
         method: 'POST',

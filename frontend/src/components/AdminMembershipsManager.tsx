@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../api';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface MembershipPlan {
   plan_id: number;
   name: string;
@@ -48,7 +50,7 @@ export default function AdminMembershipsManager() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/memberships/plans', {
+      const response = await fetch(`${BASE}/memberships/plans`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -116,8 +118,8 @@ export default function AdminMembershipsManager() {
 
       const method = editingId ? 'PUT' : 'POST';
       const url = editingId
-        ? `http://localhost:3000/memberships/admin/plans/${editingId}`
-        : 'http://localhost:3000/memberships/admin/plans';
+        ? `${BASE}/memberships/admin/plans/${editingId}`
+        : `${BASE}/memberships/admin/plans`;
 
       const response = await fetch(url, {
         method,
@@ -176,7 +178,7 @@ export default function AdminMembershipsManager() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:3000/memberships/admin/plans/${planId}`,
+        `${BASE}/memberships/admin/plans/${planId}`,
         {
           method: 'DELETE',
           headers: {

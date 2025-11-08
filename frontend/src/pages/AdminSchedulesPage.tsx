@@ -47,7 +47,7 @@ export default function AdminSchedulesPage() {
   ]);
 
   const BASE =
-    (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:3000';
+    (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
 
   // Fetch schedules and sessions on mount
   useEffect(() => {

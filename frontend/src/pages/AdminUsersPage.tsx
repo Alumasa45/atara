@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getJson, postJson } from '../api';
 import '../styles.css';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface User {
   user_id: number;
   username: string;
@@ -68,7 +70,7 @@ export default function AdminUsersPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/users/${editingUser.user_id}`,
+        `${BASE}/admin/users/${editingUser.user_id}`,
         {
           method: 'PATCH',
           headers: {
@@ -104,7 +106,7 @@ export default function AdminUsersPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/admin/users/${userId}`,
+        `${BASE}/admin/users/${userId}`,
         {
           method: 'DELETE',
           headers: {

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getCurrentUserFromToken } from '../api';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 interface User {
   user_id: number;
   username: string;
@@ -41,7 +43,7 @@ export default function UserManagement({
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
 
-      const res = await fetch(`http://localhost:3000/users?limit=100`, {
+      const res = await fetch(`${BASE}/users?limit=100`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -93,7 +95,7 @@ export default function UserManagement({
         updatePayload.status = editForm.status;
       }
 
-      const res = await fetch(`http://localhost:3000/users/${editingId}`, {
+      const res = await fetch(`${BASE}/users/${editingId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +126,7 @@ export default function UserManagement({
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
 
-      const res = await fetch(`http://localhost:3000/users/${userId}`, {
+      const res = await fetch(`${BASE}/users/${userId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
