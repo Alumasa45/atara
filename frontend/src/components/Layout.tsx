@@ -6,19 +6,18 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Update mobile state on window resize
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-      // Keep sidebar open on desktop
-      if (window.innerWidth > 768) {
-        setSidebarOpen(true);
-      }
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      // Auto-open sidebar on desktop, close on mobile
+      setSidebarOpen(!mobile);
     };
 
+    handleResize(); // Set initial state
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -32,71 +31,44 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
-      {/* Hamburger Toggle Button - visible on mobile only */}
+      {/* Mobile Header with Hamburger */}
       {isMobile && (
-        <button
-          onClick={toggleSidebar}
-          style={{
-            position: 'fixed',
-            top: 16,
-            left: 16,
-            zIndex: 1000,
-            backgroundColor: 'transparent',
-            border: 'none',
-            fontSize: 24,
-            cursor: 'pointer',
-            color: '#333',
-          }}
-          className="hamburger-toggle"
-          title="Toggle sidebar"
-        >
-          ☰
-        </button>
+        <div className="mobile-header">
+          <button
+            onClick={toggleSidebar}
+            className="hamburger-btn"
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div className="mobile-logo">
+            <div className="logo">🧘</div>
+            <div>
+              <div className="sidebar-title">ATARA</div>
+              <div className="sidebar-subtitle">MOVEMENT STUDIO</div>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* Sidebar - always rendered, transform only on mobile */}
-      <div
-        style={{
-          transition: 'transform 0.3s ease',
-          transform:
-            isMobile && !sidebarOpen ? 'translateX(-100%)' : 'translateX(0)',
-        }}
-      >
-        <Sidebar onClose={() => isMobile && setSidebarOpen(false)} />
+      {/* Sidebar */}
+      <div className={`sidebar-container ${isMobile ? 'mobile' : 'desktop'} ${sidebarOpen ? 'open' : 'closed'}`}>
+        <Sidebar onClose={() => setSidebarOpen(false)} />
       </div>
 
-      {/* Overlay when sidebar is open on mobile */}
+      {/* Mobile Overlay */}
       {isMobile && sidebarOpen && (
-        <div
-          onClick={() => setSidebarOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 500,
-          }}
-          className="sidebar-overlay"
-        />
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <main className="main-content">{children}</main>
+      {/* Main Content */}
+      <main className={`main-content ${isMobile ? 'mobile' : 'desktop'}`}>
+        {children}
+      </main>
 
-      {/* CSS for responsive behavior */}
-      <style>{`
-        .layout > div:nth-child(2) {
-          position: relative;
-        }
 
-        @media (max-width: 768px) {
-          .layout > div:nth-child(2) {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            zIndex: 600;
-          }
-        }
-      `}</style>
     </div>
   );
 }
