@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+
 export default function AdminProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ export default function AdminProfilePage() {
       const userId = currentUser?.userId || currentUser?.sub;
       if (!userId) throw new Error('User ID not found in token');
 
-      const res = await fetch(`http://localhost:3000/users/${userId}`, {
+      const res = await fetch(`${BASE}/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -80,7 +82,7 @@ export default function AdminProfilePage() {
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       // Fetch admin stats
-      const adminRes = await fetch(`http://localhost:3000/admin/stats`, {
+      const adminRes = await fetch(`${BASE}/admin/stats`, {
         headers,
       });
       if (adminRes.ok) {
@@ -122,7 +124,7 @@ export default function AdminProfilePage() {
       const token = localStorage.getItem('token');
       const userId = profile.user_id;
 
-      const res = await fetch(`http://localhost:3000/users/${userId}`, {
+      const res = await fetch(`${BASE}/users/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +176,7 @@ export default function AdminProfilePage() {
       const userId = profile.user_id;
 
       const res = await fetch(
-        `http://localhost:3000/users/${userId}/password`,
+        `${BASE}/users/${userId}/password`,
         {
           method: 'POST',
           headers: {
