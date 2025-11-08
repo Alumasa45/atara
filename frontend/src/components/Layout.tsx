@@ -31,27 +31,25 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
-      {/* Mobile Header with Hamburger */}
-      {isMobile && (
-        <div className="mobile-header">
-          <button
-            onClick={toggleSidebar}
-            className="hamburger-btn"
-            aria-label="Toggle menu"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-          <div className="mobile-logo">
-            <div className="logo">🧘</div>
-            <div>
-              <div className="sidebar-title">ATARA</div>
-              <div className="sidebar-subtitle">MOVEMENT STUDIO</div>
-            </div>
+      {/* Mobile Header with Hamburger - Always rendered, CSS controls visibility */}
+      <div className="mobile-header">
+        <button
+          onClick={toggleSidebar}
+          className="hamburger-btn"
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div className="mobile-logo">
+          <div className="logo">A</div>
+          <div>
+            <div className="sidebar-title">ATARA</div>
+            <div className="sidebar-subtitle">MOVEMENT STUDIO</div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Sidebar */}
       <div className={`sidebar-container ${isMobile ? 'mobile' : 'desktop'} ${sidebarOpen ? 'open' : 'closed'}`}>

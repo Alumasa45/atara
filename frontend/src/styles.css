@@ -11,7 +11,7 @@
 }
 
 *{box-sizing:border-box}
-html,body,#root{height:100%}
+html,body,#root{height:100%;width:100%;overflow-x:hidden}
 body{
   margin:0;
   font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
@@ -23,7 +23,9 @@ body{
 .layout {
   display: flex;
   height: 100vh;
+  width: 100%;
   background: linear-gradient(180deg,var(--bg), #f6efe7);
+  overflow-x: hidden;
 }
 
 
@@ -254,10 +256,10 @@ body{
   height: 60px;
   background: linear-gradient(180deg, #F5EFE7 0%, #FDFBF7 100%);
   border-bottom: 2px solid #DDB892;
-  display: flex;
+  display: none;
   align-items: center;
   padding: 0 16px;
-  z-index: 1000;
+  z-index: 1001;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -268,25 +270,70 @@ body{
   margin-left: 16px;
 }
 
+.mobile-logo .logo {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  font-size: 16px;
+}
+
+.mobile-logo .sidebar-title {
+  font-size: 14px;
+}
+
+.mobile-logo .sidebar-subtitle {
+  font-size: 10px;
+}
+
 /* Hamburger Button */
 .hamburger-btn {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  border: none;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  background: var(--primary);
+  border: 2px solid var(--accent-2);
+  border-radius: 8px;
   cursor: pointer;
-  padding: 0;
+  padding: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1002;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  background: var(--accent-1);
+  transform: scale(1.05);
+}
+
+.hamburger-btn:active {
+  transform: scale(0.95);
 }
 
 .hamburger-btn span {
-  width: 24px;
+  width: 100%;
   height: 3px;
-  background: var(--accent-2);
+  background: white;
   border-radius: 2px;
   transition: 0.3s;
+  display: block;
+}
+
+/* Hamburger animation when open */
+.sidebar-container.mobile.open ~ .mobile-header .hamburger-btn span:nth-child(1) {
+  transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.sidebar-container.mobile.open ~ .mobile-header .hamburger-btn span:nth-child(2) {
+  opacity: 0;
+}
+
+.sidebar-container.mobile.open ~ .mobile-header .hamburger-btn span:nth-child(3) {
+  transform: rotate(45deg) translate(-5px, -6px);
 }
 
 /* Sidebar Container */
@@ -300,6 +347,7 @@ body{
 .sidebar-container.desktop {
   width: 280px;
   position: relative;
+  height: 100vh;
 }
 
 .sidebar-container.mobile {
@@ -307,13 +355,15 @@ body{
   top: 0;
   left: 0;
   width: 280px;
+  max-width: 85vw;
   height: 100vh;
-  z-index: 999;
+  z-index: 1000;
   transform: translateX(-100%);
 }
 
 .sidebar-container.mobile.open {
   transform: translateX(0);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar {
@@ -323,6 +373,7 @@ body{
   flex-direction: column;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Sidebar Overlay */
@@ -333,7 +384,17 @@ body{
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 998;
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .main-content {
@@ -344,18 +405,48 @@ body{
 
 .main-content.mobile {
   padding-top: 60px;
+  width: 100%;
 }
 
 .main-content.desktop {
   padding-top: 0;
 }
 
-/* Responsive layout: stack columns on small screens */
+/* Mobile header - hidden by default, shown on mobile */
+@media (min-width: 769px) {
+  .mobile-header {
+    display: none !important;
+  }
+}
+
 @media (max-width: 768px) {
+  /* Ensure layout is full width */
+  .layout {
+    flex-direction: column;
+  }
+  
+  /* Show mobile header */
+  .mobile-header {
+    display: flex !important;
+  }
+  
+  /* Adjust sidebar for mobile - needs top padding for header */
+  .sidebar-container.mobile {
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+  
+  /* Main content adjustments */
+  .main-content.mobile {
+    padding: 70px 8px 8px 8px;
+    width: 100%;
+  }
+  
   .app { 
-    margin: 8px; 
-    padding: 12px;
+    margin: 0; 
+    padding: 16px;
     max-width: none;
+    width: 100%;
   }
   
   .palette { flex-wrap: wrap }
@@ -363,15 +454,39 @@ body{
   /* Stack grid layouts */
   [style*="gridTemplateColumns"]{ 
     grid-template-columns: 1fr !important;
-    gap: 16px !important;
+    gap: 12px !important;
   }
   
-  .logo{width:48px;height:48px}
+  /* Force single column for dashboard stats */
+  .app > div > div[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .logo{
+    width:40px;
+    height:40px;
+    font-size: 16px;
+  }
+  
+  /* Header adjustments */
+  .header {
+    flex-wrap: wrap;
+  }
+  
+  .header .title {
+    font-size: 18px;
+  }
   
   /* Card adjustments for mobile */
   .card {
-    padding: 12px;
+    padding: 14px;
     margin-bottom: 12px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .card h3 {
+    font-size: 16px;
   }
   
   /* Form adjustments */
@@ -383,11 +498,13 @@ body{
   .input {
     padding: 12px;
     font-size: 16px; /* Prevent zoom on iOS */
+    width: 100%;
   }
   
   .button {
     padding: 12px 16px;
     font-size: 16px;
+    width: 100%;
   }
   
   /* Modal adjustments */
@@ -396,6 +513,72 @@ body{
     padding: 16px;
     max-height: 90vh;
     overflow-y: auto;
+    width: calc(100vw - 16px);
+  }
+  
+  /* Sidebar adjustments for mobile */
+  .sidebar {
+    padding: 16px;
+    padding-top: 70px;
+  }
+  
+  .sidebar-header {
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .nav-item {
+    padding: 14px 12px;
+    font-size: 15px;
+    min-height: 48px;
+  }
+  
+  .nav-icon {
+    font-size: 20px;
+  }
+  
+  .sidebar-user {
+    padding: 12px;
+  }
+  
+  .logout-btn {
+    padding: 14px 12px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+  
+  /* Ensure proper spacing */
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Fix any overflow issues */
+  * {
+    max-width: 100%;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 380px) {
+  .sidebar-container.mobile {
+    width: 260px;
+  }
+  
+  .mobile-header {
+    padding: 0 12px;
+  }
+  
+  .mobile-logo {
+    margin-left: 8px;
+  }
+  
+  .mobile-logo .sidebar-title {
+    font-size: 12px;
+  }
+  
+  .mobile-logo .sidebar-subtitle {
+    font-size: 9px;
   }
 }
 
