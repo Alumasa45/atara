@@ -76,6 +76,11 @@ export class AuthController {
     return this.usersService.logout(Number(id));
   }
 
+  @Post('test')
+  async test() {
+    return { message: 'Auth routes working', timestamp: new Date().toISOString() };
+  }
+
   @Post('change-password')
   @UseGuards(JwtAuthGuard)
   async changePassword(

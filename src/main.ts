@@ -45,8 +45,8 @@ async function bootstrap() {
     res.header('Access-Control-Allow-Credentials', 'true');
     
     // Fix Cross-Origin-Opener-Policy issues for Google OAuth
-    res.header('Cross-Origin-Opener-Policy', 'unsafe-none');
-    res.header('Cross-Origin-Embedder-Policy', 'unsafe-none');
+    res.removeHeader('Cross-Origin-Opener-Policy');
+    res.removeHeader('Cross-Origin-Embedder-Policy');
     
     if (req.method === 'OPTIONS') {
       res.sendStatus(200);
