@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -19,7 +19,7 @@ console.log('  JWT_EXPIRES_IN:', jwtExpiresIn);
       secret: jwtSecret,
       signOptions: { expiresIn: jwtExpiresIn },
     }),
-    UsersModule,
+    forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],
   providers: [JwtAuthGuard, RolesGuard, OwnerGuard],
