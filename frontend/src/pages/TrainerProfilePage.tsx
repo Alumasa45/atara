@@ -38,7 +38,7 @@ export default function TrainerProfilePage() {
       if (!userId) throw new Error('User ID not found in token');
 
       // Fetch user profile
-      const res = await fetch(`http://localhost:3000/users/${userId}`, {
+      const res = await fetch(`https://atara-dajy.onrender.com/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -56,7 +56,7 @@ export default function TrainerProfilePage() {
 
       // Fetch trainer profile associated with this user
       try {
-        const trainerRes = await fetch('http://localhost:3000/trainers', {
+        const trainerRes = await fetch('https://atara-dajy.onrender.com/trainers', {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
@@ -132,7 +132,7 @@ export default function TrainerProfilePage() {
         return;
       }
 
-      const res = await fetch(`http://localhost:3000/trainers/${trainerId}`, {
+      const res = await fetch(`https://atara-dajy.onrender.com/trainers/${trainerId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ export default function TrainerProfilePage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3000/auth/change-password', {
+      const res = await fetch('https://atara-dajy.onrender.com/auth/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +212,7 @@ export default function TrainerProfilePage() {
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(
-        'http://localhost:3000/auth/send-verification-email',
+        'https://atara-dajy.onrender.com/auth/send-verification-email',
         {
           method: 'POST',
           headers: {
