@@ -1,5 +1,5 @@
-// Production API URL: https://atara-dajy.onrender.com
-const BASE = 'https://atara-dajy.onrender.com';
+// Use same domain as frontend to avoid CORS issues
+const BASE = window.location.origin;
 console.log('API BASE URL:', BASE);
 
 async function getJson(path: string) {

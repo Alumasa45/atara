@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../api';
 
-const BASE = 'https://atara-dajy.onrender.com';
+const BASE = window.location.origin;
 
 interface MembershipPlan {
   plan_id: number;
