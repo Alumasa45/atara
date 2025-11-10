@@ -59,6 +59,14 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
+  console.log('📋 Available routes:');
+  console.log('  GET  /health');
+  console.log('  GET  /schedule');
+  console.log('  GET  /trainers');
+  console.log('  GET  /sessions');
+  console.log('  POST /auth/login');
+  console.log('  POST /auth/google');
+  console.log('  POST /auth/register');
 }
 
 bootstrap();

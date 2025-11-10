@@ -1,5 +1,5 @@
-// Use same domain as frontend to avoid CORS issues
-const BASE = window.location.origin;
+// Use environment variable or fallback to backend URL
+const BASE = import.meta.env.VITE_API_BASE_URL || 'https://atara-backend.onrender.com';
 console.log('API BASE URL:', BASE);
 
 // Test server connectivity on load

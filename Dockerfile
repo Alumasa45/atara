@@ -26,7 +26,7 @@ WORKDIR /app/frontend
 RUN pnpm install --frozen-lockfile
 
 # Build frontend with production environment
-RUN VITE_API_BASE_URL=https://atara-dajy.onrender.com/api pnpm build
+RUN VITE_API_BASE_URL=https://atara-backend.onrender.com pnpm build
 
 # Skip copying frontend build for now to test API
 WORKDIR /app
