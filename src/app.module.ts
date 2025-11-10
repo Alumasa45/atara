@@ -2,10 +2,9 @@ import { Module } from '@nestjs/common';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
 import { HealthController } from './health/health.controller';
 import { TrainersModule } from './trainers/trainers.module';
 import { SessionsModule } from './sessions/sessions.module';
@@ -55,12 +54,11 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
+
     // slides endpoint to list public images
     require('./slides/slides.module').SlidesModule,
     UsersModule,
+    AuthModule,
     TrainersModule,
     SessionsModule,
     ScheduleModule,
@@ -73,7 +71,7 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
     LoyaltyModule,
     TrainerReviewsModule,
   ],
-  controllers: [AuthController, HealthController],
+  controllers: [HealthController],
   providers: [],
 })
 export class AppModule {}

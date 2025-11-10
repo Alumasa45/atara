@@ -43,6 +43,7 @@ export class AuthController {
   // Login (email/password) - public
   @Post('login')
   async login(@Body() body: LoginDto) {
+    console.log('POST /auth/login received:', { email: body.email });
     return this.usersService.login(body.email, body.password);
   }
 

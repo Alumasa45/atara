@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { rateLimitMiddleware } from './common/rate-limit.middleware';
+import * as express from 'express';
+import { join } from 'path';
 
 async function bootstrap() {
   // startup validation for required envs
@@ -12,7 +14,8 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  // Remove global prefix for now
+  // Add global prefix to separate API from static files
+  // app.setGlobalPrefix('api');
 
   // Enable CORS so the frontend dev server can call this API.
   // Allow configuring origins via CORS_ORIGIN env var (comma-separated).
@@ -42,6 +45,10 @@ async function bootstrap() {
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
     res.header('Access-Control-Allow-Credentials', 'true');
     
+    // Fix Cross-Origin-Opener-Policy issues for Google OAuth
+    res.header('Cross-Origin-Opener-Policy', 'unsafe-none');
+    res.header('Cross-Origin-Embedder-Policy', 'unsafe-none');
+    
     if (req.method === 'OPTIONS') {
       res.sendStatus(200);
     } else {
@@ -49,11 +56,44 @@ async function bootstrap() {
     }
   });
 
+  // Add debugging middleware to log all requests
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url} - ${new Date().toISOString()}`);
+    next();
+  });
+
   // apply a simple rate limiter for sensitive auth endpoints
   app.use(rateLimitMiddleware as any);
 
   // enable global validation pipe (whitelists DTO props)
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  // Serve static files from public directory
+  app.use(express.static(join(__dirname, '..', 'public')));
+
+  // Serve index.html for all non-API routes (SPA fallback)
+  app.use('*', (req, res, next) => {
+    // Skip API routes
+    if (req.originalUrl.startsWith('/auth') || 
+        req.originalUrl.startsWith('/health') ||
+        req.originalUrl.startsWith('/trainers') ||
+        req.originalUrl.startsWith('/sessions') ||
+        req.originalUrl.startsWith('/schedule') ||
+        req.originalUrl.startsWith('/bookings') ||
+        req.originalUrl.startsWith('/memberships') ||
+        req.originalUrl.startsWith('/admin') ||
+        req.originalUrl.startsWith('/managers') ||
+        req.originalUrl.startsWith('/dashboards') ||
+        req.originalUrl.startsWith('/slides') ||
+        req.originalUrl.startsWith('/loyalty') ||
+        req.originalUrl.startsWith('/profiles') ||
+        req.originalUrl.startsWith('/cancellation-requests') ||
+        req.originalUrl.startsWith('/trainer-reviews')) {
+      return next();
+    }
+    // Serve index.html for frontend routes
+    res.sendFile(join(__dirname, '..', 'public', 'index.html'));
+  });
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
