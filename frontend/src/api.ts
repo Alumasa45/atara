@@ -10,7 +10,14 @@ async function getJson(path: string) {
   console.log('Making GET request to:', url);
   const res = await fetch(url, { headers });
   if (!res.ok) throw new Error(`Request failed ${res.status}`);
-  return res.json();
+  const text = await res.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('JSON parse error:', e, 'Response text:', text);
+    throw new Error('Invalid JSON response');
+  }
 }
 
 /**
@@ -28,7 +35,14 @@ async function postJson(path: string, body: any) {
     body: JSON.stringify(body || {}),
   });
   if (!res.ok) throw new Error(`Request failed ${res.status}`);
-  return res.json();
+  const text = await res.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('JSON parse error:', e, 'Response text:', text);
+    throw new Error('Invalid JSON response');
+  }
 }
 
 /**
