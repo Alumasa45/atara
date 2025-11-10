@@ -1,11 +1,14 @@
 // Production API URL: https://atara-dajy.onrender.com
 const BASE = 'https://atara-dajy.onrender.com';
+console.log('API BASE URL:', BASE);
 
 async function getJson(path: string) {
   const token = localStorage.getItem('token');
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(`${BASE}${path}`, { headers });
+  const url = `${BASE}${path}`;
+  console.log('Making GET request to:', url);
+  const res = await fetch(url, { headers });
   if (!res.ok) throw new Error(`Request failed ${res.status}`);
   return res.json();
 }
