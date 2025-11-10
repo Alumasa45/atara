@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { rateLimitMiddleware } from './common/rate-limit.middleware';
-import * as express from 'express';
 import { join } from 'path';
 
 async function bootstrap() {
@@ -67,33 +66,6 @@ async function bootstrap() {
 
   // enable global validation pipe (whitelists DTO props)
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
-  // Serve static files from public directory
-  app.use(express.static(join(__dirname, '..', 'public')));
-
-  // Serve index.html for all non-API routes (SPA fallback)
-  app.use('*', (req, res, next) => {
-    // Skip API routes
-    if (req.originalUrl.startsWith('/auth') || 
-        req.originalUrl.startsWith('/health') ||
-        req.originalUrl.startsWith('/trainers') ||
-        req.originalUrl.startsWith('/sessions') ||
-        req.originalUrl.startsWith('/schedule') ||
-        req.originalUrl.startsWith('/bookings') ||
-        req.originalUrl.startsWith('/memberships') ||
-        req.originalUrl.startsWith('/admin') ||
-        req.originalUrl.startsWith('/managers') ||
-        req.originalUrl.startsWith('/dashboards') ||
-        req.originalUrl.startsWith('/slides') ||
-        req.originalUrl.startsWith('/loyalty') ||
-        req.originalUrl.startsWith('/profiles') ||
-        req.originalUrl.startsWith('/cancellation-requests') ||
-        req.originalUrl.startsWith('/trainer-reviews')) {
-      return next();
-    }
-    // Serve index.html for frontend routes
-    res.sendFile(join(__dirname, '..', 'public', 'index.html'));
-  });
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

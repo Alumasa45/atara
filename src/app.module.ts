@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -53,6 +54,11 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
       logging: process.env.DB_LOGGING === 'true',
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/',
+      exclude: ['/auth*', '/health*', '/trainers*', '/sessions*', '/schedule*', '/bookings*', '/memberships*', '/admin*', '/managers*', '/dashboards*', '/slides*', '/loyalty*', '/profiles*', '/cancellation-requests*', '/trainer-reviews*'],
     }),
 
     // slides endpoint to list public images
