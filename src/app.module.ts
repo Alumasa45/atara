@@ -58,7 +58,7 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/',
-      exclude: ['/auth/*', '/health/*', '/api/*'],
+      exclude: ['/auth/*', '/health/*', '/api/*', '/dashboard/*', '/users/*', '/trainers/*', '/sessions/*', '/bookings/*', '/schedule/*', '/admin/*'],
     }),
 
     // slides endpoint to list public images

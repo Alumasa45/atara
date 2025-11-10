@@ -8,16 +8,16 @@ POST https://atara-dajy.onrender.com/auth/register
 Content-Type: application/json
 
 {
-    "username": "alumasa",
-    "email": "aquinatta@gmail.com",
-    "phone": "0715879708",
-    "password": "Akwinara2005!",
+    "username": "atara",
+    "email": "atara@gmail.com",
+    "phone": "0791525442",
+    "password": "blessedwell25",
     "role": "admin",
     "status": "active"
 }
 
 ###Sign up a trainer
-POST http://localhost:3000/auth/register
+POST https://atara-dajy.onrender.com/auth/register
 Content-Type: application/json
 
 {
