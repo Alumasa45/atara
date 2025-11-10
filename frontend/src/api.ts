@@ -1,11 +1,5 @@
-// Use environment variable or fallback to backend URL
-let BASE = import.meta.env.VITE_API_BASE_URL || 'https://atara-backend.onrender.com';
-
-// If in development and no local backend, use production backend
-if (window.location.hostname === 'localhost' && !import.meta.env.VITE_API_BASE_URL) {
-  BASE = 'https://atara-backend.onrender.com';
-}
-
+// Always use production backend for now
+const BASE = 'https://atara-backend.onrender.com';
 console.log('API BASE URL:', BASE);
 
 // Test server connectivity on load
