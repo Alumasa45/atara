@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
@@ -14,8 +14,8 @@ import { ProfilesModule } from '../profiles/profiles.module';
   providers: [UsersService, MailService],
   imports: [
     TypeOrmModule.forFeature([User, EmailVerification]),
-    ProfilesModule,
-    AuthModule,
+    forwardRef(() => ProfilesModule),
+    forwardRef(() => AuthModule),
   ],
   exports: [TypeOrmModule, UsersService, AuthModule],
 })
