@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../api';
 
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+const BASE = 'https://atara-dajy.onrender.com';
 
 interface MembershipPlan {
   plan_id: number;

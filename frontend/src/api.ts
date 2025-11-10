@@ -1,7 +1,5 @@
 // Production API URL: https://atara-dajy.onrender.com
-const BASE =
-  (import.meta as any).env?.VITE_API_BASE_URL ??
-  'https://atara-dajy.onrender.com';
+const BASE = 'https://atara-dajy.onrender.com';
 
 async function getJson(path: string) {
   const token = localStorage.getItem('token');
@@ -140,6 +138,7 @@ export async function register(body: {
 // ============ MEMBERSHIP ENDPOINTS ============
 
 export async function fetchMembershipPlans() {
+  console.log('Fetching from:', BASE + '/memberships/plans');
   return getJson('/memberships/plans');
 }
 
