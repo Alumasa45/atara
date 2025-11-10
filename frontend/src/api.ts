@@ -1,5 +1,5 @@
 // Always use production backend for now
-const BASE = 'https://atara-backend.onrender.com';
+const BASE = 'https://atara-dajy.onrender.com';
 console.log('API BASE URL:', BASE);
 
 // Test server connectivity on load
