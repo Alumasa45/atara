@@ -2,6 +2,12 @@
 const BASE = window.location.origin;
 console.log('API BASE URL:', BASE);
 
+// Test server connectivity on load
+fetch(`${BASE}/health`)
+  .then(res => res.text())
+  .then(text => console.log('Server health check:', text))
+  .catch(err => console.error('Server health check failed:', err));
+
 async function getJson(path: string) {
   const token = localStorage.getItem('token');
   const headers: Record<string, string> = { Accept: 'application/json' };
