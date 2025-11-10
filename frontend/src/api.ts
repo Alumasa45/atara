@@ -125,12 +125,22 @@ export async function login(credentials: { email: string; password: string }) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
   });
-  if (!res.ok) throw new Error(`Login failed ${res.status}`);
-  const data = await res.json();
-  // if server returns token in body, store it here for convenience
-  const t = data?.access_token ?? data?.token ?? null;
-  if (t) localStorage.setItem('token', t);
-  return data;
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('Login failed:', res.status, errorText);
+    throw new Error(`Login failed ${res.status}`);
+  }
+  const text = await res.text();
+  if (!text) throw new Error('Empty response from server');
+  try {
+    const data = JSON.parse(text);
+    const t = data?.access_token ?? data?.token ?? null;
+    if (t) localStorage.setItem('token', t);
+    return data;
+  } catch (e) {
+    console.error('Login JSON parse error:', e, 'Response:', text);
+    throw new Error('Invalid response from server');
+  }
 }
 
 export async function googleSignIn(body: {
@@ -139,7 +149,17 @@ export async function googleSignIn(body: {
   username?: string;
   google_id?: string;
 }) {
-  return postJson('/auth/google', body);
+  console.log('Google sign in attempt with:', { ...body, idToken: 'HIDDEN' });
+  const result = await postJson('/auth/google', body);
+  console.log('Google sign in result:', result);
+  const t = result?.access_token ?? result?.token ?? null;
+  if (t) {
+    localStorage.setItem('token', t);
+    console.log('Token stored successfully');
+  } else {
+    console.error('No token in Google sign in response:', result);
+  }
+  return result;
 }
 
 export async function register(body: {
