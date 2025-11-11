@@ -42,7 +42,7 @@ export const ManagerUserManagement: React.FC<ManagerUserManagementProps> = ({
         ...(searchTerm && { search: searchTerm }),
       });
 
-      const res = await fetch(`http://localhost:3000/admin/users?${params}`, {
+      const res = await fetch(`https://atara-dajy.onrender.com/admin/users?${params}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -78,7 +78,7 @@ export const ManagerUserManagement: React.FC<ManagerUserManagementProps> = ({
       const token = localStorage.getItem('token');
 
       const res = await fetch(
-        `http://localhost:3000/admin/users/${selectedUser.user_id}`,
+        `https://atara-dajy.onrender.com/admin/users/${selectedUser.user_id}`,
         {
           method: 'PATCH',
           headers: {

@@ -35,7 +35,7 @@ export const ManagerSchedules: React.FC = () => {
       });
 
       const res = await fetch(
-        `http://localhost:3000/admin/schedules?${params}`,
+        `https://atara-dajy.onrender.com/admin/schedules?${params}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -278,7 +278,7 @@ export const ManagerSessions: React.FC = () => {
       });
 
       const res = await fetch(
-        `http://localhost:3000/admin/sessions?${params}`,
+        `https://atara-dajy.onrender.com/admin/sessions?${params}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -522,7 +522,7 @@ export const ManagerTrainers: React.FC = () => {
       });
 
       const res = await fetch(
-        `http://localhost:3000/admin/trainers?${params}`,
+        `https://atara-dajy.onrender.com/admin/trainers?${params}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

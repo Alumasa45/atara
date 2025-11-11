@@ -1,4 +1,4 @@
-@url=http://localhost:3000
+@url=https://atara-dajy.onrender.com
 @adminToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MjQyNjQxMywiZXhwIjoxNzYyNDMwMDEzfQ.E8aOjur0lHyU1j5WkbHt9nAIrwKVJeUiMbokvcexugI
 @trainerToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjgsInJvbGUiOiJ0cmFpbmVyIiwiaWF0IjoxNzYyMjUwMTc2LCJleHAiOjE3NjIyNTEwNzZ9.wXV7CaDrKmcoMebS12EML7ea_JOzcX0rTf941G593qQ
 @clientToken=PASTE_CLIENT_TOKEN_HERE
@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ###Sign up a manager
-POST http://localhost:3000/auth/register
+POST https://atara-dajy.onrender.com/auth/register
 Content-Type: application/json
 
 {
@@ -43,7 +43,7 @@ Content-Type: application/json
 }
 
 ###Sign up a client (default)
-POST http://localhost:3000/auth/register
+POST https://atara-dajy.onrender.com/auth/register
 Content-Type: application/json
 
 {
@@ -65,7 +65,7 @@ Content-Type: application/json
 }
 
 ###Login - Trainer User
-POST http://localhost:3000/auth/login
+POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -74,7 +74,7 @@ Content-Type: application/json
 }
 
 ###Login - Manager User
-POST http://localhost:3000/auth/login
+POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -83,7 +83,7 @@ Content-Type: application/json
 }
 
 ###Login - Client User
-POST http://localhost:3000/auth/login
+POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -93,19 +93,19 @@ Content-Type: application/json
 
 ###Get all users (requires authorization)
 ### Use the access_token from any login response above
-GET http://localhost:3000/users
+GET https://atara-dajy.onrender.com/users
 Authorization: Bearer {{adminToken}}
 
 ###Get one user by ID (requires authorization)
-GET http://localhost:3000/users/4
+GET https://atara-dajy.onrender.com/users/4
 Authorization: Bearer {{adminToken}}
 
 ###Remove user by ID (requires authorization)
-DELETE http://localhost:3000/users/6
+DELETE https://atara-dajy.onrender.com/users/6
 Authorization: Bearer {{adminToken}}
 
 ###Update user by ID (requires authorization)
-PATCH http://localhost:3000/users/3
+PATCH https://atara-dajy.onrender.com/users/3
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
@@ -118,7 +118,7 @@ Content-Type: application/json
 
 ### 1. Login as trainer (get token)
 ### Copy the access_token from response and use below
-POST http://localhost:3000/auth/login
+POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -128,26 +128,26 @@ Content-Type: application/json
 
 ### 2. Test Trainer Dashboard Endpoint
 ### This should return: trainer, sessions, upcomingSchedules, bookings, cancellations, stats
-GET http://localhost:3000/dashboard/trainer
+GET https://atara-dajy.onrender.com/dashboard/trainer
 Authorization: Bearer {{trainerToken}}
 
 ### 3. Get Trainer Profile (trainers/:id endpoint)
 ### Replace ID with actual trainer ID from dashboard response
-GET http://localhost:3000/trainers/1
+GET https://atara-dajy.onrender.com/trainers/1
 Authorization: Bearer {{trainerToken}}
 
 ### 4. Get All Trainers (PUBLIC - no auth required)
-GET http://localhost:3000/trainers
+GET https://atara-dajy.onrender.com/trainers
 Authorization: Bearer {{adminToken}}
 
 ### 4a. Get All Trainers (ADMIN ENDPOINT - requires admin token)
 ### This is what the dashboard uses - must use {{adminToken}}
-GET http://localhost:3000/admin/trainers?page=1&limit=100
+GET https://atara-dajy.onrender.com/admin/trainers?page=1&limit=100
 Authorization: Bearer {{adminToken}}
 
 ### 4b. Create New Trainer (ADMIN ONLY - NEW ENDPOINT!)
 ### This is the new POST endpoint added to fix the issue
-POST http://localhost:3000/admin/trainers
+POST https://atara-dajy.onrender.com/admin/trainers
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
@@ -163,11 +163,11 @@ Content-Type: application/json
 
 ### 5. Get All Sessions
 ### Should show all sessions (for reference)
-GET http://localhost:3000/sessions
+GET https://atara-dajy.onrender.com/sessions
 Authorization: Bearer {{trainerToken}}
 
 ### Create a session (for testing bookings)
-POST http://localhost:3000/sessions
+POST https://atara-dajy.onrender.com/sessions
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
@@ -184,16 +184,16 @@ Content-Type: application/json
 
 ### 6. Get All Bookings
 ### Should show all bookings (for reference)
-GET http://localhost:3000/bookings
+GET https://atara-dajy.onrender.com/bookings
 Authorization: Bearer {{trainerToken}}
 
 ### 7. Get All Schedules
-GET http://localhost:3000/schedule
+GET https://atara-dajy.onrender.com/schedule
 Authorization: Bearer {{trainerToken}}
 
 ### 8. Test Client Dashboard (for comparison)
 ### Login as client first and get token
-POST http://localhost:3000/auth/login
+POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -202,21 +202,21 @@ Content-Type: application/json
 }
 
 ### Then test client dashboard
-GET http://localhost:3000/dashboard/client
+GET https://atara-dajy.onrender.com/dashboard/client
 Authorization: Bearer {{clientToken}}
 
 ### 9. Test Health Check
 ### Simple endpoint to verify server is responding
-GET http://localhost:3000/
+GET https://atara-dajy.onrender.com/
 
 ### 10. DEBUG: Check Admin User Role
 ### This endpoint tells you what role the token has
-GET http://localhost:3000/admin/debug/whoami
+GET https://atara-dajy.onrender.com/admin/debug/whoami
 Authorization: Bearer {{adminToken}}
 
 ### 11. TEST: Create Multiple Schedules on Same Day
 ### First Schedule - Morning Session
-POST http://localhost:3000/admin/schedules
+POST https://atara-dajy.onrender.com/admin/schedules
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
@@ -228,7 +228,7 @@ Content-Type: application/json
 
 ### 11b. TEST: Create Second Schedule on Same Day - Noon
 ### This should work without any conflicts
-POST http://localhost:3000/admin/schedules
+POST https://atara-dajy.onrender.com/admin/schedules
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
@@ -240,7 +240,7 @@ Content-Type: application/json
 
 ### 11c. TEST: Create Third Schedule on Same Day - Evening
 ### Admin can create as many as needed on one day
-POST http://localhost:3000/admin/schedules
+POST https://atara-dajy.onrender.com/admin/schedules
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
@@ -251,7 +251,7 @@ Content-Type: application/json
 }
 
 ### 12. Get All Schedules (to verify multiple schedules created)
-GET http://localhost:3000/admin/schedules
+GET https://atara-dajy.onrender.com/admin/schedules
 Authorization: Bearer {{adminToken}}
 
 ### TROUBLESHOOTING GUIDE:
@@ -290,7 +290,7 @@ Authorization: Bearer {{adminToken}}
 ### Test the complete implementation of all 5 features
 
 ### Feature 1: Get Client Dashboard (should include upcomingSchedules)
-POST http://localhost:3000/auth/login
+POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -299,7 +299,7 @@ Content-Type: application/json
 }
 
 ### Save the token and use in next request
-### GET http://localhost:3000/dashboard/client
+### GET https://atara-dajy.onrender.com/dashboard/client
 ### Authorization: Bearer {{clientToken}}
 ### Expected: upcomingSchedules array with all schedules
 

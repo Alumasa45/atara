@@ -68,7 +68,7 @@ export default function ManagerDashboard() {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 
-        const res = await fetch(`http://localhost:3000/admin/stats`, {
+        const res = await fetch(`https://atara-dajy.onrender.com/admin/stats`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
@@ -100,9 +100,9 @@ export default function ManagerDashboard() {
 
         console.log(
           'Fetching analytics from:',
-          `http://localhost:3000/admin/analytics`,
+          `https://atara-dajy.onrender.com/admin/analytics`,
         );
-        const res = await fetch(`http://localhost:3000/admin/analytics`, {
+        const res = await fetch(`https://atara-dajy.onrender.com/admin/analytics`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',

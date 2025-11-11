@@ -46,7 +46,7 @@ export const ManagerBookings: React.FC = () => {
       });
 
       const res = await fetch(
-        `http://localhost:3000/admin/bookings?${params}`,
+        `https://atara-dajy.onrender.com/admin/bookings?${params}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ export const ManagerBookings: React.FC = () => {
       const token = localStorage.getItem('token');
 
       const res = await fetch(
-        `http://localhost:3000/admin/bookings/${selectedBooking.booking_id}/status`,
+        `https://atara-dajy.onrender.com/admin/bookings/${selectedBooking.booking_id}/status`,
         {
           method: 'PATCH',
           headers: {
