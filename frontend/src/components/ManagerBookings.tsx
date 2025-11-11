@@ -5,6 +5,7 @@ interface Booking {
   user_id: number;
   session_id: number;
   status: string;
+  payment_reference?: string;
   created_at: string;
   user?: {
     username: string;
@@ -32,6 +33,7 @@ export const ManagerBookings: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [newStatus, setNewStatus] = useState('');
+  const [paymentReference, setPaymentReference] = useState('');
 
   const fetchBookings = async (page: number = 1) => {
     try {
@@ -87,7 +89,10 @@ export const ManagerBookings: React.FC = () => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ status: newStatus }),
+          body: JSON.stringify({ 
+            status: newStatus,
+            ...(paymentReference && { payment_reference: paymentReference })
+          }),
         },
       );
 
@@ -106,6 +111,7 @@ export const ManagerBookings: React.FC = () => {
   const openStatusModal = (booking: Booking) => {
     setSelectedBooking(booking);
     setNewStatus(booking.status);
+    setPaymentReference(booking.payment_reference || '');
     setShowStatusModal(true);
   };
 
@@ -233,6 +239,15 @@ export const ManagerBookings: React.FC = () => {
                         fontWeight: 'bold',
                       }}
                     >
+                      Payment Ref
+                    </th>
+                    <th
+                      style={{
+                        padding: 12,
+                        textAlign: 'left',
+                        fontWeight: 'bold',
+                      }}
+                    >
                       Date
                     </th>
                     <th
@@ -280,6 +295,9 @@ export const ManagerBookings: React.FC = () => {
                           >
                             {booking.status.toUpperCase()}
                           </span>
+                        </td>
+                        <td style={{ padding: 12, fontSize: 11, color: '#666' }}>
+                          {booking.payment_reference || 'N/A'}
                         </td>
                         <td style={{ padding: 12 }}>
                           {new Date(booking.created_at).toLocaleDateString()}
@@ -414,10 +432,38 @@ export const ManagerBookings: React.FC = () => {
               </select>
             </div>
 
+            {newStatus === 'confirmed' && (
+              <div style={{ marginBottom: 16 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: 4,
+                    fontWeight: 'bold',
+                    fontSize: 12,
+                  }}
+                >
+                  Payment Reference (Required for Confirmation)
+                </label>
+                <input
+                  type="text"
+                  value={paymentReference}
+                  onChange={(e) => setPaymentReference(e.target.value)}
+                  placeholder="Enter payment reference number"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: 4,
+                    fontSize: 13,
+                  }}
+                />
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: 12 }}>
               <button
                 onClick={handleStatusChange}
-                disabled={loading}
+                disabled={loading || (newStatus === 'confirmed' && !paymentReference)}
                 style={{
                   flex: 1,
                   backgroundColor: '#4CAF50',

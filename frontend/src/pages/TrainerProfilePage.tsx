@@ -20,6 +20,7 @@ export default function TrainerProfilePage() {
   const [messageType, setMessageType] = useState<'success' | 'error'>(
     'success',
   );
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -205,6 +206,61 @@ export default function TrainerProfilePage() {
     } catch (err: any) {
       setMessage(err.message);
       setMessageType('error');
+    }
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage('Please select an image file');
+      setMessageType('error');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage('Image size must be less than 5MB');
+      setMessageType('error');
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+      const token = localStorage.getItem('token');
+      const trainerId = trainer?.trainer_id;
+
+      if (!trainerId) {
+        setMessage('Trainer profile not found');
+        setMessageType('error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const res = await fetch(`https://atara-dajy.onrender.com/trainers/${trainerId}/profile-image`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const updated = await res.json();
+      setTrainer(updated);
+      setMessage('Profile picture updated successfully');
+      setMessageType('success');
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err: any) {
+      setMessage(err.message);
+      setMessageType('error');
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -490,6 +546,62 @@ export default function TrainerProfilePage() {
             >
               {editMode ? 'Cancel' : 'Edit'}
             </button>
+          </div>
+
+          {/* Profile Picture Section */}
+          <div style={{ marginBottom: 20, textAlign: 'center' }}>
+            <div
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                backgroundColor: '#f0f0f0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 12px',
+                overflow: 'hidden',
+                border: '3px solid #ddd',
+              }}
+            >
+              {trainer?.profile_image ? (
+                <img
+                  src={trainer.profile_image}
+                  alt="Profile"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              ) : (
+                <span style={{ fontSize: 48, color: '#999' }}>👤</span>
+              )}
+            </div>
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+                id="profile-image-upload"
+              />
+              <label
+                htmlFor="profile-image-upload"
+                style={{
+                  display: 'inline-block',
+                  padding: '8px 16px',
+                  backgroundColor: uploadingImage ? '#ccc' : '#2196F3',
+                  color: 'white',
+                  borderRadius: 4,
+                  cursor: uploadingImage ? 'not-allowed' : 'pointer',
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}
+              >
+                {uploadingImage ? 'Uploading...' : '📷 Upload Photo'}
+              </label>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gap: 16 }}>

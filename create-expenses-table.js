@@ -29,16 +29,7 @@ async function createExpensesTable() {
     await client.query('CREATE INDEX IF NOT EXISTS idx_expenses_status ON expenses(status);');
     await client.query('CREATE INDEX IF NOT EXISTS idx_expenses_date ON expenses(date);');
 
-    console.log('Inserting sample data...');
-    await client.query(`
-      INSERT INTO expenses (name, date, cost, status) VALUES
-      ('Office Rent', '2024-01-01', 2500.00, 'approved'),
-      ('Equipment Purchase', '2024-01-15', 1200.50, 'approved'),
-      ('Marketing Campaign', '2024-01-20', 800.00, 'cancelled'),
-      ('Utilities', '2024-02-01', 350.75, 'approved'),
-      ('Staff Training', '2024-02-10', 600.00, 'approved')
-      ON CONFLICT DO NOTHING;
-    `);
+    console.log('Expenses table ready for use...');
 
     console.log('✅ Expenses table created successfully!');
   } catch (error) {
