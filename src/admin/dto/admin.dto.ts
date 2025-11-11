@@ -118,16 +118,9 @@ export class UpdateScheduleDto {
 }
 
 // Booking DTOs
-export enum BookingStatus {
-  booked = 'booked',
-  cancelled = 'cancelled',
-  completed = 'completed',
-  missed = 'missed',
-}
-
 export class UpdateBookingStatusDto {
-  @IsEnum(BookingStatus)
-  status: BookingStatus;
+  @IsEnum(['booked', 'cancelled', 'completed', 'missed'])
+  status: 'booked' | 'cancelled' | 'completed' | 'missed';
 
   @IsOptional()
   @IsString()
