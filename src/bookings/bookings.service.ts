@@ -41,7 +41,7 @@ export class BookingsService {
   async create(createBookingDto: CreateBookingDto) {
     try {
       console.log('Creating booking with data:', createBookingDto);
-      const { user_id, time_slot_id, guest_name, guest_email, guest_phone, payment_reference } =
+      const { user_id, time_slot_id, guest_name, guest_email, guest_phone, payment_reference, payment_method, amount } =
         createBookingDto as any;
 
       // Validate guest booking requirements
@@ -126,7 +126,12 @@ export class BookingsService {
       if (guest_email) booking.guest_email = guest_email;
       if (guest_phone) booking.guest_phone = guest_phone;
       if (payment_reference) booking.payment_reference = payment_reference;
-      booking.status = BookingStatus.booked;
+      // Set initial status based on payment method
+      if (payment_method === 'mpesa' && payment_reference) {
+        booking.status = BookingStatus.completed; // M-Pesa payments are instant
+      } else {
+        booking.status = BookingStatus.booked; // Cash payments pending
+      }
 
       const saved = await queryRunner.manager.save(booking);
       await queryRunner.commitTransaction();

@@ -5,6 +5,7 @@ import BookingForm from '../components/BookingForm';
 import BookingFlow from '../components/BookingFlow';
 import MembershipCard from '../components/MembershipCard';
 import NavigationHeader from '../components/NavigationHeader';
+import { PaymentTestCard } from '../components/PaymentTestCard';
 import api from '../api';
 
 export default function Home() {
@@ -194,6 +195,9 @@ export default function Home() {
               </div>
             )}
           </div>
+          
+          <div style={{ height: 16 }} />
+          <PaymentTestCard />
         </aside>
       </div>
     </div>
