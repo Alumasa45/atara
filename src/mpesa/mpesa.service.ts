@@ -15,7 +15,11 @@ export class MpesaService {
   constructor(
     @InjectRepository(MpesaTransaction)
     private transactionRepository: Repository<MpesaTransaction>,
-  ) {}
+  ) {
+    if (!this.consumerKey || !this.consumerSecret || !this.passkey) {
+      console.warn('⚠️ M-Pesa environment variables not configured');
+    }
+  }
 
   private async getAccessToken(): Promise<string> {
     const auth = Buffer.from(`${this.consumerKey}:${this.consumerSecret}`).toString('base64');
@@ -27,8 +31,24 @@ export class MpesaService {
       },
     });
 
-    const data = await response.json();
-    return data.access_token;
+    if (!response.ok) {
+      throw new Error(`Failed to get access token: ${response.status}`);
+    }
+
+    const text = await response.text();
+    if (!text) {
+      throw new Error('Empty response from M-Pesa API');
+    }
+
+    try {
+      const data = JSON.parse(text);
+      if (!data.access_token) {
+        throw new Error('No access token in response');
+      }
+      return data.access_token;
+    } catch (e) {
+      throw new Error(`Invalid JSON response: ${text}`);
+    }
   }
 
   private generateTimestamp(): string {
@@ -49,6 +69,10 @@ export class MpesaService {
 
   async initiateSTKPush(paymentData: InitiatePaymentDto) {
     try {
+      if (!this.consumerKey || !this.consumerSecret || !this.passkey) {
+        throw new Error('M-Pesa credentials not configured');
+      }
+
       const accessToken = await this.getAccessToken();
       const timestamp = this.generateTimestamp();
       const password = this.generatePassword();
@@ -76,7 +100,17 @@ export class MpesaService {
         body: JSON.stringify(stkPushData),
       });
 
-      const result = await response.json();
+      const text = await response.text();
+      if (!text) {
+        throw new Error('Empty response from STK Push API');
+      }
+
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (e) {
+        throw new Error(`Invalid JSON response: ${text}`);
+      }
 
       if (result.ResponseCode === '0') {
         const transaction = this.transactionRepository.create({
@@ -94,6 +128,7 @@ export class MpesaService {
 
       return result;
     } catch (error) {
+      console.error('M-Pesa STK Push Error:', error);
       throw new Error(`STK Push failed: ${error.message}`);
     }
   }
