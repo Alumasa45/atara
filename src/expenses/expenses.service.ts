@@ -34,7 +34,11 @@ export class ExpensesService {
 
   async updateStatus(id: number, updateStatusDto: UpdateExpenseStatusDto): Promise<Expense> {
     await this.expenseRepository.update(id, { status: updateStatusDto.status });
-    return this.expenseRepository.findOne({ where: { expense_id: id } });
+    const expense = await this.expenseRepository.findOne({ where: { expense_id: id } });
+    if (!expense) {
+      throw new Error('Expense not found');
+    }
+    return expense;
   }
 
   async getTotalExpenses(): Promise<{ total: number; approved: number; cancelled: number }> {
