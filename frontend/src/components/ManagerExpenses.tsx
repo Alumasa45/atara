@@ -103,6 +103,41 @@ export const ManagerExpenses: React.FC = () => {
     }
   };
 
+  const clearAllExpenses = async () => {
+    if (!window.confirm('Are you sure you want to delete ALL expenses? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`https://atara-dajy.onrender.com/admin/expenses/clear-all`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error('Failed to clear expenses');
+      
+      const result = await res.json();
+      await fetchExpenses(1); // Refresh to page 1
+      setError(null);
+      
+      // Show success message
+      if (result.deletedCount > 0) {
+        alert(`Successfully deleted ${result.deletedCount} expenses`);
+      } else {
+        alert('No expenses to delete');
+      }
+    } catch (err: any) {
+      setError(err.message);
+      alert('Failed to clear expenses: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchExpenses(1);
   }, []);
@@ -113,21 +148,39 @@ export const ManagerExpenses: React.FC = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <h3>💰 Expenses Management</h3>
           {isAdmin && (
-            <button
-              onClick={() => setShowCreateModal(true)}
-              style={{
-                backgroundColor: '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: 4,
-                padding: '8px 16px',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: 'bold',
-              }}
-            >
-              ➕ Add Expense
-            </button>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                style={{
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '8px 16px',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 'bold',
+                }}
+              >
+                ➕ Add Expense
+              </button>
+              <button
+                onClick={clearAllExpenses}
+                disabled={loading || expenses.length === 0}
+                style={{
+                  backgroundColor: expenses.length === 0 ? '#ccc' : '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '8px 16px',
+                  cursor: expenses.length === 0 ? 'not-allowed' : 'pointer',
+                  fontSize: 13,
+                  fontWeight: 'bold',
+                }}
+              >
+                🗑️ Clear All
+              </button>
+            </div>
           )}
         </div>
 

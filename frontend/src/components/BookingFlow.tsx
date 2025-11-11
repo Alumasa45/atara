@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import api, { getCurrentUserFromToken } from '../api';
 import toast from 'react-hot-toast';
+import { MpesaPayment } from './MpesaPayment';
 
-type Step = 'pickDate' | 'pickClass' | 'confirm' | 'chooseBookingMethod';
+type Step = 'pickDate' | 'pickClass' | 'confirm' | 'chooseBookingMethod' | 'choosePaymentMethod';
 type BookingMethod = 'registered' | 'guest' | null;
+type PaymentMethod = 'mpesa' | 'cash' | null;
 
 export default function BookingFlow({
   onDone,
@@ -28,6 +30,8 @@ export default function BookingFlow({
   const [guestPhone, setGuestPhone] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [paymentRef, setPaymentRef] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
+  const [sessionPrice, setSessionPrice] = useState(500); // Default price in KES
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const currentUser = getCurrentUserFromToken();
@@ -165,6 +169,8 @@ export default function BookingFlow({
     try {
       const payload: any = {
         payment_reference: paymentRef || null,
+        payment_method: paymentMethod,
+        amount: sessionPrice,
       };
 
       // Use time_slot_id if we have it (new flow)
@@ -190,21 +196,26 @@ export default function BookingFlow({
 
       const res = await api.createBooking(payload);
       toast.success('Booking created #' + (res?.booking_id ?? ''));
-      // call confirm endpoint (backend will verify payment ref and may auto-complete)
-      try {
-        const confirmRes: any = await api.confirmBooking(
-          res.booking_id,
-          paymentRef || undefined,
-        );
-        if (confirmRes?.verified) {
-          toast.success('Payment verified — booking completed');
-        } else {
-          toast.success(
-            'Payment reference submitted for verification. You will receive SMS once confirmed.',
+      
+      // Handle payment method specific confirmation
+      if (paymentMethod === 'mpesa' && paymentRef) {
+        // M-Pesa payment already processed, just confirm
+        try {
+          const confirmRes: any = await api.confirmBooking(
+            res.booking_id,
+            paymentRef,
           );
+          if (confirmRes?.verified) {
+            toast.success('M-Pesa payment verified — booking completed');
+          } else {
+            toast.success('M-Pesa payment submitted for verification.');
+          }
+        } catch (e: any) {
+          toast.error('Failed to verify M-Pesa payment');
         }
-      } catch (e: any) {
-        toast.error('Failed to submit payment reference for verification');
+      } else if (paymentMethod === 'cash') {
+        // Cash payment - booking pending until payment at studio
+        toast.success('Booking confirmed! Please pay KES ' + sessionPrice.toLocaleString('en-KE') + ' at the studio.');
       }
       setLoading(false);
       onDone && onDone();
@@ -479,7 +490,7 @@ export default function BookingFlow({
             <div style={{ display: 'flex', gap: 8 }}>
               <button
                 className="button"
-                onClick={() => setStep('confirm')}
+                onClick={() => setStep('choosePaymentMethod')}
                 disabled={!bookingMethod}
                 style={{ opacity: !bookingMethod ? 0.5 : 1 }}
               >
@@ -496,7 +507,81 @@ export default function BookingFlow({
           </div>
         )}
 
-      {step === 'confirm' && selectedSchedule && bookingMethod && (
+      {step === 'choosePaymentMethod' && bookingMethod && (
+        <div className="card">
+          <h3>Choose Payment Method</h3>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 8 }}>
+              Session Price: KES {sessionPrice.toLocaleString('en-KE')}
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            {/* M-Pesa Payment */}
+            <div
+              onClick={() => setPaymentMethod('mpesa')}
+              style={{
+                padding: 16,
+                border: paymentMethod === 'mpesa' ? '2px solid #2E7D32' : '2px solid #ddd',
+                borderRadius: 8,
+                cursor: 'pointer',
+                backgroundColor: paymentMethod === 'mpesa' ? '#E8F5E9' : '#fff',
+                transition: 'all 0.2s',
+              }}
+            >
+              <div style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 16 }}>
+                📱 M-Pesa
+              </div>
+              <div style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>
+                Pay instantly with your phone
+              </div>
+              <div style={{ fontSize: 12, color: '#2E7D32', fontWeight: 'bold' }}>
+                Paybill: 4188419
+              </div>
+            </div>
+
+            {/* Cash Payment */}
+            <div
+              onClick={() => setPaymentMethod('cash')}
+              style={{
+                padding: 16,
+                border: paymentMethod === 'cash' ? '2px solid #2E7D32' : '2px solid #ddd',
+                borderRadius: 8,
+                cursor: 'pointer',
+                backgroundColor: paymentMethod === 'cash' ? '#E8F5E9' : '#fff',
+                transition: 'all 0.2s',
+              }}
+            >
+              <div style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 16 }}>
+                💵 Cash
+              </div>
+              <div style={{ fontSize: 13, color: '#666' }}>
+                Pay at the studio before class
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              className="button"
+              onClick={() => setStep('confirm')}
+              disabled={!paymentMethod}
+              style={{ opacity: !paymentMethod ? 0.5 : 1 }}
+            >
+              Continue
+            </button>
+            <button
+              className="button"
+              style={{ background: 'var(--accent-2)' }}
+              onClick={() => setStep('chooseBookingMethod')}
+            >
+              Back
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 'confirm' && selectedSchedule && bookingMethod && paymentMethod && (
         <div className="card">
           <h3>Confirm booking</h3>
           <div style={{ marginBottom: 8 }}>
@@ -505,20 +590,21 @@ export default function BookingFlow({
           <div style={{ marginBottom: 16 }}>
             Time: {new Date(selectedSchedule.start_time).toLocaleString()}
           </div>
-          <div
-            style={{
-              marginBottom: 16,
-              padding: 8,
-              backgroundColor: '#f5f5f5',
-              borderRadius: 4,
-            }}
-          >
-            Booking as:{' '}
-            <strong>
-              {bookingMethod === 'registered'
-                ? '✅ Registered User'
-                : '👤 Guest'}
-            </strong>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+            <div style={{ padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
+              Booking as:{' '}
+              <strong>
+                {bookingMethod === 'registered'
+                  ? '✅ Registered User'
+                  : '👤 Guest'}
+              </strong>
+            </div>
+            <div style={{ padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
+              Payment:{' '}
+              <strong>
+                {paymentMethod === 'mpesa' ? '📱 M-Pesa' : '💵 Cash'}
+              </strong>
+            </div>
           </div>
 
           {/* Show fields based on booking method */}
@@ -593,32 +679,64 @@ export default function BookingFlow({
             </>
           )}
 
-          <input
-            className="input"
-            placeholder="Payment reference"
-            value={paymentRef}
-            onChange={(e) => setPaymentRef(e.target.value)}
-          />
+          {/* M-Pesa Payment */}
+          {paymentMethod === 'mpesa' && (
+            <div style={{ marginBottom: 16 }}>
+              <MpesaPayment
+                amount={sessionPrice}
+                accountReference={bookingMethod === 'guest' ? guestName : (currentUser?.name || currentUser?.username || 'User')}
+                description={`${selectedTimeSlot?.session?.title || selectedSchedule?.session?.description || 'Fitness Session'} - ${new Date(selectedSchedule?.date || selectedSchedule?.start_time).toLocaleDateString()}`}
+                onSuccess={(receiptNumber) => {
+                  setPaymentRef(receiptNumber);
+                  toast.success('Payment successful!');
+                  completeBooking();
+                }}
+                onError={(error) => {
+                  toast.error(error);
+                }}
+              />
+            </div>
+          )}
 
-          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-            <button
-              className="button"
-              onClick={completeBooking}
-              disabled={loading}
-            >
-              {loading ? 'Processing...' : 'Complete booking'}
-            </button>
-            <button
-              className="button"
-              style={{ background: 'var(--accent-2)' }}
-              onClick={() => {
-                setBookingMethod(null);
-                setStep('chooseBookingMethod');
-              }}
-            >
-              Back
-            </button>
-          </div>
+          {/* Cash Payment */}
+          {paymentMethod === 'cash' && (
+            <>
+              <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#FFF3E0', borderRadius: 4 }}>
+                <div style={{ fontWeight: 'bold', marginBottom: 8, color: '#E65100' }}>
+                  💵 Cash Payment Instructions
+                </div>
+                <div style={{ fontSize: 14, color: '#666' }}>
+                  • Please arrive 15 minutes early to pay at the studio
+                  • Amount: KES {sessionPrice.toLocaleString('en-KE')}
+                  • Your booking will be confirmed upon payment
+                </div>
+              </div>
+              
+              <input
+                className="input"
+                placeholder="Payment reference (optional)"
+                value={paymentRef}
+                onChange={(e) => setPaymentRef(e.target.value)}
+              />
+
+              <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+                <button
+                  className="button"
+                  onClick={completeBooking}
+                  disabled={loading}
+                >
+                  {loading ? 'Processing...' : 'Complete Booking'}
+                </button>
+                <button
+                  className="button"
+                  style={{ background: 'var(--accent-2)' }}
+                  onClick={() => setStep('choosePaymentMethod')}
+                >
+                  Back
+                </button>
+              </div>
+            </>
+          )}
 
           {notice && (
             <div style={{ marginTop: 12, color: 'var(--muted)' }}>{notice}</div>
