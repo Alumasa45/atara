@@ -9,7 +9,7 @@ export class MpesaService {
   private readonly consumerKey = process.env.MPESA_CONSUMER_KEY;
   private readonly consumerSecret = process.env.MPESA_CONSUMER_SECRET;
   private readonly businessShortCode = '174379'; // M-Pesa sandbox test merchant
-  private readonly passkey = process.env.MPESA_PASSKEY;
+  private readonly passkey = process.env.MPESA_PASSKEY || 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919f'; // Sandbox default
   private readonly callbackUrl = process.env.MPESA_CALLBACK_URL || 'https://atara-dajy.onrender.com/mpesa/callback';
 
   constructor(
@@ -17,9 +17,9 @@ export class MpesaService {
     private transactionRepository: Repository<MpesaTransaction>,
   ) {
     console.log('M-Pesa Config Check:');
-    console.log('Consumer Key:', this.consumerKey ? 'SET' : 'MISSING');
+    console.log('Consumer Key:', this.consumerKey ? `${this.consumerKey.substring(0, 10)}...` : 'MISSING');
     console.log('Consumer Secret:', this.consumerSecret ? 'SET' : 'MISSING');
-    console.log('Passkey:', this.passkey ? 'SET' : 'MISSING');
+    console.log('Passkey:', this.passkey ? `${this.passkey.substring(0, 10)}...` : 'MISSING');
     console.log('Business Code:', this.businessShortCode);
     
     if (!this.consumerKey || !this.consumerSecret || !this.passkey) {
