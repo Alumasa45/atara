@@ -10,6 +10,7 @@ import api from '../api';
 export default function Home() {
   const [trainers, setTrainers] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
+  const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
   const [showFlow, setShowFlow] = useState(false);
   const [initialSessionId, setInitialSessionId] = useState<number | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -44,10 +45,29 @@ export default function Home() {
     api
       .fetchSessions()
       .then((s: any) => {
-        setSessions(Array.isArray(s) ? s : s?.data || []);
+        const allSessions = Array.isArray(s) ? s : s?.data || [];
+        setSessions(allSessions);
+        
+        // Filter for upcoming sessions only
+        const now = new Date();
+        const upcoming = allSessions.filter((session: any) => {
+          // Check if session is active
+          if (session.status !== 'active') return false;
+          
+          // Check if session date is in the future
+          if (session.date) {
+            const sessionDate = new Date(session.date);
+            return sessionDate >= now;
+          }
+          
+          return true; // Include sessions without dates for now
+        });
+        
+        setUpcomingSessions(upcoming);
       })
       .catch(() => {
         setSessions([]);
+        setUpcomingSessions([]);
       });
   }, []);
 
@@ -95,16 +115,20 @@ export default function Home() {
         <div>
           <div className="card">
             <h3>Upcoming Sessions</h3>
-            {sessions.slice(0, 3).map((s: any) => (
-              <SessionCard
-                key={s.session_id}
-                sessionId={s.session_id}
-                description={s.description}
-                category={s.category}
-                duration={s.duration_minutes}
-                price={Number(s.price)}
-              />
-            ))}
+            {upcomingSessions.length === 0 ? (
+              <p style={{ color: '#666', fontStyle: 'italic' }}>No upcoming sessions available</p>
+            ) : (
+              upcomingSessions.slice(0, 3).map((s: any) => (
+                <SessionCard
+                  key={s.session_id}
+                  sessionId={s.session_id}
+                  description={s.description}
+                  category={s.category}
+                  duration={s.duration_minutes}
+                  price={Number(s.price)}
+                />
+              ))
+            )}
           </div>
 
           <div style={{ height: 16 }} />
