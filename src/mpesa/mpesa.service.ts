@@ -68,6 +68,10 @@ export class MpesaService {
   }
 
   private formatPhoneNumber(phone: string): string | null {
+    if (!phone || typeof phone !== 'string') {
+      return null;
+    }
+    
     // Remove all non-digit characters
     const cleaned = phone.replace(/\D/g, '');
     
@@ -96,10 +100,12 @@ export class MpesaService {
       }
 
       // Validate and format phone number
+      console.log('Received payment data:', paymentData);
       const phoneNumber = this.formatPhoneNumber(paymentData.phone_number);
       if (!phoneNumber) {
-        throw new Error('Invalid phone number format');
+        throw new Error(`Invalid phone number format: ${paymentData.phone_number}`);
       }
+      console.log('Formatted phone number:', phoneNumber);
 
       const accessToken = await this.getAccessToken();
       const timestamp = this.generateTimestamp();
