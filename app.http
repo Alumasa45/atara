@@ -546,3 +546,34 @@ GET https://atara-dajy.onrender.com/trainers/3
 ### Check any session response
 ### Expected price format: "KES 2000" not "$20.00"
 
+
+### EXPENSES ENDPOINTS - Testing Real Data (No Mock Data)
+
+### Get All Expenses (should return empty array initially)
+GET https://atara-dajy.onrender.com/admin/expenses?page=1&limit=10
+Authorization: Bearer {{adminToken}}
+
+### Get Expenses Totals (should return all zeros initially)
+GET https://atara-dajy.onrender.com/admin/expenses/totals
+Authorization: Bearer {{adminToken}}
+
+### Create Test Expense (Admin Only)
+POST https://atara-dajy.onrender.com/admin/expenses
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "name": "Office Supplies",
+    "date": "2024-01-15",
+    "cost": 2500.00,
+    "status": "approved"
+}
+
+### Update Expense Status
+PATCH https://atara-dajy.onrender.com/admin/expenses/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "cancelled"
+}

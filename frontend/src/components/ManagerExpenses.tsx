@@ -135,15 +135,15 @@ export const ManagerExpenses: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 20 }}>
           <div style={{ backgroundColor: '#E3F2FD', padding: 12, borderRadius: 4, textAlign: 'center' }}>
             <div style={{ fontSize: 11, color: '#1565C0', fontWeight: 'bold' }}>TOTAL EXPENSES</div>
-            <div style={{ fontSize: 18, fontWeight: 'bold', color: '#1565C0' }}>${totals.total.toFixed(2)}</div>
+            <div style={{ fontSize: 18, fontWeight: 'bold', color: '#1565C0' }}>KES {totals.total.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
           </div>
           <div style={{ backgroundColor: '#E8F5E9', padding: 12, borderRadius: 4, textAlign: 'center' }}>
             <div style={{ fontSize: 11, color: '#2E7D32', fontWeight: 'bold' }}>APPROVED</div>
-            <div style={{ fontSize: 18, fontWeight: 'bold', color: '#2E7D32' }}>${totals.approved.toFixed(2)}</div>
+            <div style={{ fontSize: 18, fontWeight: 'bold', color: '#2E7D32' }}>KES {totals.approved.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
           </div>
           <div style={{ backgroundColor: '#FFEBEE', padding: 12, borderRadius: 4, textAlign: 'center' }}>
             <div style={{ fontSize: 11, color: '#C62828', fontWeight: 'bold' }}>CANCELLED</div>
-            <div style={{ fontSize: 18, fontWeight: 'bold', color: '#C62828' }}>${totals.cancelled.toFixed(2)}</div>
+            <div style={{ fontSize: 18, fontWeight: 'bold', color: '#C62828' }}>KES {totals.cancelled.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
           </div>
         </div>
 
@@ -177,7 +177,7 @@ export const ManagerExpenses: React.FC = () => {
                     <tr key={expense.expense_id} style={{ borderBottom: '1px solid #eee', backgroundColor: index % 2 === 0 ? '#fff' : '#f9f9f9' }}>
                       <td style={{ padding: 12 }}><strong>{expense.name}</strong></td>
                       <td style={{ padding: 12 }}>{new Date(expense.date).toLocaleDateString()}</td>
-                      <td style={{ padding: 12, textAlign: 'right', fontWeight: 'bold' }}>${expense.cost}</td>
+                      <td style={{ padding: 12, textAlign: 'right', fontWeight: 'bold' }}>KES {expense.cost.toLocaleString('en-KE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                       <td style={{ padding: 12, textAlign: 'center' }}>
                         <span style={{
                           backgroundColor: expense.status === 'approved' ? '#E8F5E9' : '#FFEBEE',
@@ -281,13 +281,14 @@ export const ManagerExpenses: React.FC = () => {
             </div>
 
             <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', fontSize: 12 }}>Cost</label>
+              <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', fontSize: 12 }}>Cost (KES)</label>
               <input
                 type="number"
                 step="0.01"
                 value={newExpense.cost}
                 onChange={(e) => setNewExpense({ ...newExpense, cost: parseFloat(e.target.value) || 0 })}
                 style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 4, fontSize: 13 }}
+                placeholder="Enter amount in Kenyan Shillings"
               />
             </div>
 
