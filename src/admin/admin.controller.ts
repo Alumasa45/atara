@@ -22,6 +22,7 @@ import {
   AdminQueryDto,
   CreateScheduleDto,
   UpdateScheduleDto,
+  UpdateBookingStatusDto,
 } from './dto/admin.dto';
 import { CreateTrainerDto } from '../trainers/dto/create-trainer.dto';
 
@@ -249,9 +250,9 @@ export class AdminController {
   @Patch('bookings/:id/status')
   async updateBookingStatus(
     @Param('id', ParseIntPipe) bookingId: number,
-    @Body() body: { status: string },
+    @Body() updateDto: UpdateBookingStatusDto,
   ) {
-    return this.adminService.updateBookingStatus(bookingId, body.status as any);
+    return this.adminService.updateBookingStatus(bookingId, updateDto.status, updateDto.payment_reference);
   }
 
   /**

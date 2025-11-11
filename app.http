@@ -56,7 +56,7 @@ Content-Type: application/json
 }
 
 ###Login - Admin User
-POST http://localhost:3000/auth/login
+POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
@@ -308,7 +308,52 @@ Content-Type: application/json
 ### POST requests 11, 11b, 11c above
 
 ### Feature 3: Get Carousel Images
-GET http://localhost:30
+GET http://localhost:3000/
+
+### BOOKING PAYMENT REFERENCE CONFIRMATION TESTS
+### These endpoints test the payment reference confirmation workflow
+
+### 1. Update booking status to 'booked' (confirmed) with payment reference
+### This requires both status and payment_reference fields
+PATCH http://localhost:3000/admin/bookings/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "booked",
+    "payment_reference": "PAY-123456789"
+}
+
+### 2. Update booking status to 'cancelled' (no payment reference needed)
+PATCH http://localhost:3000/admin/bookings/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "cancelled"
+}
+
+### 3. Update booking status to 'completed' (awards loyalty points)
+PATCH http://localhost:3000/admin/bookings/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "completed"
+}
+
+### 4. Try to confirm booking without payment reference (should fail)
+PATCH http://localhost:3000/admin/bookings/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "booked"
+}
+
+### 5. Confirm payment using dedicated endpoint (alternative method)
+PATCH http://localhost:3000/admin/bookings/1/confirm-payment
+Authorization: Bearer {{adminToken}}
 
 ### PAYMENT CONFIRMATION ENDPOINTS (ADMIN ONLY)
 

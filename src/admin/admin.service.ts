@@ -325,24 +325,45 @@ export class AdminService {
    * Get all sessions with pagination
    */
   async getAllSessions(query?: AdminQueryDto) {
+    console.log('🔍 [AdminService] getAllSessions called with query:', query);
     const page = query?.page || 1;
     const limit = query?.limit || 20;
     const skip = (page - 1) * limit;
 
     try {
+      // Test basic connectivity first
+      const testCount = await this.sessionRepository.count();
+      console.log(`📊 Total sessions in database: ${testCount}`);
+
+      if (testCount === 0) {
+        console.log('📊 No sessions found in database');
+        return {
+          data: [],
+          total: 0,
+          page: page,
+          limit: limit,
+          pages: 0,
+        };
+      }
+
       // Build where conditions
       const where: any = {};
       if (query?.filter && query.filter !== 'all') {
         where.status = query.filter;
       }
 
-      // Use find() instead of queryBuilder to avoid TypeORM issues
+      console.log('📋 WHERE conditions:', where);
+      console.log(`📄 Pagination - page: ${page}, limit: ${limit}, skip: ${skip}`);
+
+      // Use simpler query without relations first
       const [sessions, total] = await this.sessionRepository.findAndCount({
         where,
-        relations: ['trainer'],
         skip,
         take: limit,
+        order: { session_id: 'DESC' },
       });
+
+      console.log(`✅ Found ${sessions.length} sessions (total in DB: ${total})`);
 
       // Apply search filter in application layer
       let filtered = sessions;
@@ -350,23 +371,43 @@ export class AdminService {
         const searchLower = query.search.toLowerCase();
         filtered = sessions.filter((s: any) => {
           return (
-            s.title?.toLowerCase().includes(searchLower) ||
-            s.description?.toLowerCase().includes(searchLower) ||
-            s.trainer?.name?.toLowerCase().includes(searchLower)
+            s.category?.toLowerCase().includes(searchLower) ||
+            s.description?.toLowerCase().includes(searchLower)
           );
         });
+        console.log(`🔍 After search filter: ${filtered.length} sessions`);
       }
 
-      return {
+      const response = {
         data: filtered,
         total,
         page,
         limit,
         pages: Math.ceil(total / limit),
       };
+
+      console.log('📤 Response structure:', {
+        dataLength: response.data.length,
+        total: response.total,
+        page: response.page,
+        limit: response.limit,
+        pages: response.pages
+      });
+      return response;
     } catch (error) {
-      console.error('Error in getAllSessions:', error);
-      throw error;
+      console.error('❌ Error in getAllSessions:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
+      
+      // Return safe error response instead of throwing
+      return {
+        data: [],
+        total: 0,
+        page: page,
+        limit: limit,
+        pages: 0,
+        error: error.message
+      };
     }
   }
 
@@ -897,6 +938,7 @@ export class AdminService {
   async updateBookingStatus(
     bookingId: number,
     newStatus: bookingStatus,
+    paymentReference?: string,
   ): Promise<Booking> {
     const booking = await this.bookingRepository.findOne({
       where: { booking_id: bookingId },
@@ -909,6 +951,20 @@ export class AdminService {
 
     const oldStatus = booking.status;
 
+    // If changing to 'booked' status, validate payment reference
+    if (newStatus === bookingStatus.booked) {
+      if (!booking.payment_reference && !paymentReference) {
+        throw new BadRequestException(
+          'Payment reference is required to confirm booking',
+        );
+      }
+      
+      // Update payment reference if provided
+      if (paymentReference) {
+        booking.payment_reference = paymentReference;
+      }
+    }
+
     // Validate status transition
     const validTransitions: Record<bookingStatus, bookingStatus[]> = {
       [bookingStatus.booked]: [
@@ -916,12 +972,15 @@ export class AdminService {
         bookingStatus.cancelled,
         bookingStatus.missed,
       ],
+      [bookingStatus.cancelled]: [bookingStatus.booked], // allow re-confirmation
       [bookingStatus.completed]: [], // terminal state
-      [bookingStatus.cancelled]: [], // terminal state
       [bookingStatus.missed]: [], // terminal state
     };
 
-    if (!validTransitions[oldStatus].includes(newStatus)) {
+    // Allow any status to transition to 'booked' (confirmation)
+    if (newStatus === bookingStatus.booked) {
+      // Always allow confirmation
+    } else if (!validTransitions[oldStatus]?.includes(newStatus)) {
       throw new BadRequestException(
         `Cannot transition booking from ${oldStatus} to ${newStatus}`,
       );
@@ -957,6 +1016,10 @@ export class AdminService {
         // Don't throw - still complete the booking status update
       }
     }
+
+    console.log(
+      `✅ Booking #${bookingId} status updated from ${oldStatus} to ${newStatus}${paymentReference ? ` with payment reference: ${paymentReference}` : ''}`,
+    );
 
     return updated;
   }

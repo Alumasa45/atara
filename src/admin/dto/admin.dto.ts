@@ -116,3 +116,20 @@ export class UpdateScheduleDto {
   @Type(() => UpdateTimeSlotDto)
   timeSlots?: UpdateTimeSlotDto[];
 }
+
+// Booking DTOs
+export enum BookingStatus {
+  booked = 'booked',
+  cancelled = 'cancelled',
+  completed = 'completed',
+  missed = 'missed',
+}
+
+export class UpdateBookingStatusDto {
+  @IsEnum(BookingStatus)
+  status: BookingStatus;
+
+  @IsOptional()
+  @IsString()
+  payment_reference?: string;
+}

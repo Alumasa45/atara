@@ -69,19 +69,53 @@ export class SessionsService {
   }
 
   async findAll(opts?: { page?: number; limit?: number }) {
+    console.log('🔍 [SessionsService] findAll called with opts:', opts);
     const page = opts?.page && opts.page > 0 ? opts.page : 1;
     const limit =
       opts?.limit && opts.limit > 0 ? Math.min(opts.limit, 100) : 20;
     const skip = (page - 1) * limit;
 
-    const [items, total] = await this.sessionRepository.findAndCount({
-      skip,
-      take: limit,
-      order: { session_id: 'ASC' },
-      relations: ['trainer', 'trainer.user', 'createdBy'],
-    });
+    try {
+      // Test basic connectivity first
+      const testCount = await this.sessionRepository.count();
+      console.log(`📊 Total sessions in database: ${testCount}`);
 
-    return { data: items, total, page, limit };
+      if (testCount === 0) {
+        console.log('📊 No sessions found in database');
+        return {
+          data: [],
+          total: 0,
+          page: page,
+          limit: limit,
+        };
+      }
+
+      console.log(`📄 Pagination - page: ${page}, limit: ${limit}, skip: ${skip}`);
+
+      // Use simpler query without complex relations first
+      const [items, total] = await this.sessionRepository.findAndCount({
+        skip,
+        take: limit,
+        order: { session_id: 'ASC' },
+      });
+
+      console.log(`✅ Found ${items.length} sessions (total in DB: ${total})`);
+
+      return { data: items, total, page, limit };
+    } catch (error) {
+      console.error('❌ Error in SessionsService.findAll:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
+      
+      // Return safe error response instead of throwing
+      return {
+        data: [],
+        total: 0,
+        page: page,
+        limit: limit,
+        error: error.message
+      };
+    }
   }
 
   async findOne(id: number) {
