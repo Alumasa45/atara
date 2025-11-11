@@ -16,6 +16,12 @@ export class MpesaService {
     @InjectRepository(MpesaTransaction)
     private transactionRepository: Repository<MpesaTransaction>,
   ) {
+    console.log('M-Pesa Config Check:');
+    console.log('Consumer Key:', this.consumerKey ? 'SET' : 'MISSING');
+    console.log('Consumer Secret:', this.consumerSecret ? 'SET' : 'MISSING');
+    console.log('Passkey:', this.passkey ? 'SET' : 'MISSING');
+    console.log('Business Code:', this.businessShortCode);
+    
     if (!this.consumerKey || !this.consumerSecret || !this.passkey) {
       console.warn('⚠️ M-Pesa environment variables not configured');
     }
@@ -125,6 +131,8 @@ export class MpesaService {
         TransactionDesc: paymentData.transaction_desc,
       };
 
+      console.log('STK Push Request:', JSON.stringify(stkPushData, null, 2));
+      
       const response = await fetch('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', {
         method: 'POST',
         headers: {
@@ -135,6 +143,8 @@ export class MpesaService {
       });
 
       const text = await response.text();
+      console.log('STK Push Response:', text);
+      
       if (!text) {
         throw new Error('Empty response from STK Push API');
       }
