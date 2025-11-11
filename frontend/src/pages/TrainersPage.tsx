@@ -84,6 +84,7 @@ export default function TrainersPage() {
                 phone={trainer.phone}
                 email={trainer.email}
                 bio={trainer.bio}
+                profile_image={trainer.profile_image}
               />
             </div>
           ))}
