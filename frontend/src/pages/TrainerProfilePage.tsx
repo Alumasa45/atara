@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { ImageCropper } from '../components/ImageCropper';
 
 export default function TrainerProfilePage() {
   const [profile, setProfile] = useState<any>(null);
@@ -21,6 +22,8 @@ export default function TrainerProfilePage() {
     'success',
   );
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [showCropper, setShowCropper] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchProfile();
@@ -209,7 +212,7 @@ export default function TrainerProfilePage() {
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -225,8 +228,18 @@ export default function TrainerProfilePage() {
       return;
     }
 
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setSelectedImage(e.target?.result as string);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
     try {
       setUploadingImage(true);
+      setShowCropper(false);
       const token = localStorage.getItem('token');
       const trainerId = trainer?.trainer_id;
 
@@ -237,7 +250,7 @@ export default function TrainerProfilePage() {
       }
 
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('image', croppedBlob, 'profile.jpg');
 
       const res = await fetch(`https://atara-dajy.onrender.com/trainers/${trainerId}/upload-image`, {
         method: 'POST',
@@ -252,7 +265,7 @@ export default function TrainerProfilePage() {
       }
 
       const updated = await res.json();
-      setTrainer(updated);
+      setTrainer(updated.trainer || updated);
       setMessage('Profile picture updated successfully');
       setMessageType('success');
       setTimeout(() => setMessage(null), 3000);
@@ -261,6 +274,7 @@ export default function TrainerProfilePage() {
       setMessageType('error');
     } finally {
       setUploadingImage(false);
+      setSelectedImage(null);
     }
   };
 
@@ -582,7 +596,7 @@ export default function TrainerProfilePage() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={handleImageSelect}
                 style={{ display: 'none' }}
                 id="profile-image-upload"
               />
@@ -1078,6 +1092,18 @@ export default function TrainerProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Image Cropper Modal */}
+      {showCropper && selectedImage && (
+        <ImageCropper
+          imageSrc={selectedImage}
+          onCrop={handleCropComplete}
+          onCancel={() => {
+            setShowCropper(false);
+            setSelectedImage(null);
+          }}
+        />
+      )}
     </div>
   );
 }
