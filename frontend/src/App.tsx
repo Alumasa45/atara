@@ -21,6 +21,7 @@ import AdminMembershipsPage from './pages/AdminMembershipsPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import UserProfilePage from './pages/UserProfilePage';
 import AdminMembershipManagement from './pages/AdminMembershipManagement';
+import ExpensesPage from './pages/ExpensesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -173,6 +174,16 @@ export default function App() {
             <ProtectedRoute>
               <Layout>
                 <AdminProfilePage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ExpensesPage />
               </Layout>
             </ProtectedRoute>
           }

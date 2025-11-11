@@ -42,6 +42,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
       { label: 'Schedule', path: '/schedule', icon: '📅' },
       { label: 'All Bookings', path: '/admin/bookings', icon: '📋' },
       { label: 'Users', path: '/admin/users', icon: '👥' },
+      { label: 'Expenses', path: '/expenses', icon: '💰' },
     ],
     admin: [
       { label: 'Home', path: '/', icon: '🏠' },
@@ -51,6 +52,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
       { label: 'Bookings', path: '/admin/bookings', icon: '📋' },
       { label: 'Sessions', path: '/admin/sessions', icon: '📅' },
       { label: 'Schedules', path: '/admin/schedules', icon: '⏰' },
+      { label: 'Expenses', path: '/expenses', icon: '💰' },
       { label: 'My Profile', path: '/my-profile', icon: '⭐' },
       { label: 'Profile', path: '/admin/profile', icon: '👤' },
     ],
