@@ -239,7 +239,7 @@ export default function TrainerProfilePage() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`https://atara-dajy.onrender.com/trainers/${trainerId}/profile-image`, {
+      const res = await fetch(`https://atara-dajy.onrender.com/trainers/${trainerId}/upload-image`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
