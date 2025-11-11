@@ -12,6 +12,7 @@ import {
 } from '../bookings/entities/booking.entity';
 import { Trainer } from '../trainers/entities/trainer.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
+import { ScheduleTimeSlot } from '../schedule/entities/schedule-time-slot.entity';
 import { Session } from '../sessions/entities/session.entity';
 import {
   CancellationRequest,
@@ -29,6 +30,8 @@ export class DashboardService {
     private readonly trainerRepository: Repository<Trainer>,
     @InjectRepository(Schedule)
     private readonly scheduleRepository: Repository<Schedule>,
+    @InjectRepository(ScheduleTimeSlot)
+    private readonly scheduleTimeSlotRepository: Repository<ScheduleTimeSlot>,
     @InjectRepository(Session)
     private readonly sessionRepository: Repository<Session>,
     @InjectRepository(CancellationRequest)
@@ -181,23 +184,34 @@ export class DashboardService {
         .where('trainer.trainer_id = :trainerId', { trainerId: trainer.trainer_id })
         .getMany();
 
-      // Get all schedules (simplified - no complex joins)
+      // Get student bookings for this trainer's sessions
+      const bookings = await this.bookingRepository
+        .createQueryBuilder('b')
+        .leftJoinAndSelect('b.user', 'u')
+        .leftJoinAndSelect('b.timeSlot', 'ts')
+        .leftJoinAndSelect('ts.session', 's')
+        .leftJoinAndSelect('s.trainer', 't')
+        .where('t.trainer_id = :trainerId', { trainerId: trainer.trainer_id })
+        .orderBy('b.date_booked', 'DESC')
+        .take(20)
+        .getMany();
+
+      // Get all schedules (simplified)
       const upcomingSchedules = await this.scheduleRepository.find({
         take: 10,
         order: { date: 'ASC' }
       });
 
-      // Return minimal data structure
       return {
         trainer,
         sessions: sessions || [],
         upcomingSchedules: upcomingSchedules || [],
-        bookings: [],
+        bookings: bookings || [],
         cancellations: [],
         stats: {
           totalSessions: sessions ? sessions.length : 0,
-          totalBookings: 0,
-          cancelledBookings: 0,
+          totalBookings: bookings ? bookings.length : 0,
+          cancelledBookings: bookings ? bookings.filter(b => b.status === BookingStatus.cancelled).length : 0,
           upcomingCount: upcomingSchedules ? upcomingSchedules.length : 0,
         },
       };

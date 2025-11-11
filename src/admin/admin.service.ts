@@ -962,6 +962,33 @@ export class AdminService {
   }
 
   /**
+   * Confirm booking payment reference (admin only)
+   * Updates booking status from any status to 'booked' (confirmed)
+   */
+  async confirmBookingPayment(bookingId: number): Promise<Booking> {
+    const booking = await this.bookingRepository.findOne({
+      where: { booking_id: bookingId },
+      relations: ['user'],
+    });
+
+    if (!booking) {
+      throw new NotFoundException(`Booking ${bookingId} not found`);
+    }
+
+    if (!booking.payment_reference) {
+      throw new BadRequestException('No payment reference found for this booking');
+    }
+
+    // Update status to confirmed (booked)
+    booking.status = bookingStatus.booked;
+    const updated = await this.bookingRepository.save(booking);
+
+    console.log(`✅ Payment confirmed for booking #${bookingId} with reference: ${booking.payment_reference}`);
+    
+    return updated;
+  }
+
+  /**
    * Test database connectivity
    */
   async testDatabaseConnection() {

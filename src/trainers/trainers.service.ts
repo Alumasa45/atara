@@ -60,7 +60,13 @@ export class TrainersService {
       relations: ['user'],
     });
 
-    return { data: items, total, page, limit };
+    // Remove phone numbers from public trainer listings
+    const publicItems = items.map(trainer => {
+      const { phone, ...trainerWithoutPhone } = trainer;
+      return trainerWithoutPhone;
+    });
+
+    return { data: publicItems, total, page, limit };
   }
 
   async findOne(id: number) {
@@ -98,5 +104,16 @@ export class TrainersService {
     if (!trainer) throw new NotFoundException('Trainer not found');
     await this.trainerRepository.delete({ trainer_id: id });
     return { ok: true };
+  }
+
+  async updateProfileImage(id: number, filename: string) {
+    const trainer = await this.trainerRepository.findOne({
+      where: { trainer_id: id },
+    });
+    if (!trainer) throw new NotFoundException('Trainer not found');
+
+    trainer.profile_image = filename;
+    const saved = await this.trainerRepository.save(trainer);
+    return { message: 'Profile image updated successfully', trainer: saved };
   }
 }

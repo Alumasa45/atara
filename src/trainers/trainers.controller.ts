@@ -10,7 +10,12 @@ import {
   Query,
   Req,
   ForbiddenException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { TrainersService } from './trainers.service';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { UpdateTrainerDto } from './dto/update-trainer.dto';
@@ -78,5 +83,54 @@ export class TrainersController {
   @Roles('manager')
   async remove(@Param('id') id: string) {
     return await this.trainersService.remove(+id);
+  }
+
+  @Post(':id/upload-image')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './public/images/trainers',
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `trainer-${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only image files are allowed!'), false);
+        }
+      },
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    }),
+  )
+  async uploadImage(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: any,
+  ) {
+    const currentUser = req.user;
+    // Check if user can update this trainer (same logic as update method)
+    if (
+      currentUser &&
+      (currentUser.role === 'admin' || currentUser.role === 'manager')
+    ) {
+      return await this.trainersService.updateProfileImage(+id, file.filename);
+    }
+
+    if (currentUser && currentUser.role === 'trainer') {
+      const trainer = await this.trainersService.findOne(+id);
+      const ownerUserId = trainer.user?.user_id ?? trainer.user_id;
+      if (
+        ownerUserId === currentUser.userId ||
+        ownerUserId === currentUser.user_id
+      ) {
+        return await this.trainersService.updateProfileImage(+id, file.filename);
+      }
+    }
+
+    throw new ForbiddenException('Not allowed to update this trainer image');
   }
 }

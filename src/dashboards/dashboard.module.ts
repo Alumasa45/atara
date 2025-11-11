@@ -7,6 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { Booking } from '../bookings/entities/booking.entity';
 import { Trainer } from '../trainers/entities/trainer.entity';
 import { Schedule } from '../schedule/entities/schedule.entity';
+import { ScheduleTimeSlot } from '../schedule/entities/schedule-time-slot.entity';
 import { Session } from '../sessions/entities/session.entity';
 import { CancellationRequest } from '../cancellation-requests/entities/cancellation-request.entity';
 
@@ -17,6 +18,7 @@ import { CancellationRequest } from '../cancellation-requests/entities/cancellat
       Booking,
       Trainer,
       Schedule,
+      ScheduleTimeSlot,
       Session,
       CancellationRequest,
     ]),

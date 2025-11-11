@@ -308,7 +308,43 @@ Content-Type: application/json
 ### POST requests 11, 11b, 11c above
 
 ### Feature 3: Get Carousel Images
-GET http://localhost:3000/slides
+GET http://localhost:30
+
+### PAYMENT CONFIRMATION ENDPOINTS (ADMIN ONLY)
+
+### Get all bookings (admin view)
+GET https://atara-dajy.onrender.com/admin/bookings
+Authorization: Bearer {{adminToken}}
+
+### Confirm payment reference for a booking
+### Replace :id with actual booking ID
+PATCH https://atara-dajy.onrender.com/admin/bookings/1/confirm-payment
+Authorization: Bearer {{adminToken}}
+
+### Update booking status (existing endpoint)
+### Replace :id with actual booking ID
+PATCH https://atara-dajy.onrender.com/admin/bookings/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "completed"
+}
+
+### TRAINER PROFILE IMAGE UPLOAD
+
+### Upload trainer profile image (trainer can upload their own, admin can upload any)
+### Replace :id with actual trainer ID
+### NOTE: This requires multipart/form-data with 'image' field
+POST https://atara-dajy.onrender.com/trainers/3/upload-image
+Authorization: Bearer {{trainerToken}}
+Content-Type: multipart/form-data
+
+### Get trainer with profile image (public endpoint)
+GET https://atara-dajy.onrender.com/trainers/3
+
+### Access uploaded image (public)
+### GET https://atara-dajy.onrender.com/images/trainers/trainer-123456789.jpg00/slides
 ### Expected: Array of 3 Unsplash image URLs
 
 ### Feature 4: Check Responsive Session Card

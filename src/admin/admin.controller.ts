@@ -253,4 +253,14 @@ export class AdminController {
   ) {
     return this.adminService.updateBookingStatus(bookingId, body.status as any);
   }
+
+  /**
+   * Confirm payment reference and update booking to confirmed status
+   */
+  @Patch('bookings/:id/confirm-payment')
+  async confirmPayment(
+    @Param('id', ParseIntPipe) bookingId: number,
+  ) {
+    return this.adminService.confirmBookingPayment(bookingId);
+  }
 }
