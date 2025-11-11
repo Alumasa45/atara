@@ -67,10 +67,38 @@ export class MpesaService {
     return password;
   }
 
+  private formatPhoneNumber(phone: string): string | null {
+    // Remove all non-digit characters
+    const cleaned = phone.replace(/\D/g, '');
+    
+    // Must be 12 digits starting with 254
+    if (cleaned.length === 12 && cleaned.startsWith('254')) {
+      return cleaned;
+    }
+    
+    // Convert 0712345678 to 254712345678
+    if (cleaned.length === 10 && cleaned.startsWith('0')) {
+      return '254' + cleaned.substring(1);
+    }
+    
+    // Convert 712345678 to 254712345678
+    if (cleaned.length === 9 && (cleaned.startsWith('7') || cleaned.startsWith('1'))) {
+      return '254' + cleaned;
+    }
+    
+    return null; // Invalid format
+  }
+
   async initiateSTKPush(paymentData: InitiatePaymentDto) {
     try {
       if (!this.consumerKey || !this.consumerSecret || !this.passkey) {
         throw new Error('M-Pesa credentials not configured');
+      }
+
+      // Validate and format phone number
+      const phoneNumber = this.formatPhoneNumber(paymentData.phone_number);
+      if (!phoneNumber) {
+        throw new Error('Invalid phone number format');
       }
 
       const accessToken = await this.getAccessToken();
@@ -83,9 +111,9 @@ export class MpesaService {
         Timestamp: timestamp,
         TransactionType: 'CustomerPayBillOnline',
         Amount: paymentData.amount,
-        PartyA: paymentData.phone_number,
+        PartyA: phoneNumber,
         PartyB: this.businessShortCode,
-        PhoneNumber: paymentData.phone_number,
+        PhoneNumber: phoneNumber,
         CallBackURL: this.callbackUrl,
         AccountReference: paymentData.account_reference,
         TransactionDesc: paymentData.transaction_desc,

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export const PaymentTestCard: React.FC = () => {
   const [testName, setTestName] = useState('John Doe');
-  const [testPhone, setTestPhone] = useState('254708374149');
+  const [testPhone, setTestPhone] = useState('254712345678');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
 
@@ -78,7 +78,8 @@ export const PaymentTestCard: React.FC = () => {
           • Paybill: 4188419<br/>
           • Account: {testName}<br/>
           • Amount: KES 500<br/>
-          • Phone: {testPhone}
+          • Phone: {testPhone}<br/>
+          • Format: 254XXXXXXXXX (12 digits)
         </div>
       </div>
 
