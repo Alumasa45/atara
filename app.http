@@ -310,6 +310,55 @@ Content-Type: application/json
 ### Feature 3: Get Carousel Images
 GET http://localhost:3000/
 
+### BOOKING WITH PAYMENT REFERENCE TESTS
+### These endpoints test the updated booking workflow
+
+### 1. Create guest booking with required name, phone, and payment reference
+POST http://localhost:3000/bookings
+Content-Type: application/json
+
+{
+    "time_slot_id": 1,
+    "guest_name": "John Doe",
+    "guest_phone": "+1234567890",
+    "guest_email": "john@example.com",
+    "payment_reference": "PAY-123456789"
+}
+
+### 2. Try to create guest booking without required fields (should fail)
+POST http://localhost:3000/bookings
+Content-Type: application/json
+
+{
+    "time_slot_id": 1,
+    "guest_email": "incomplete@example.com"
+}
+
+### 3. Create registered user booking with payment reference
+POST http://localhost:3000/bookings
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+    "time_slot_id": 1,
+    "user_id": 1,
+    "payment_reference": "CONF-987654321"
+}
+
+### 4. Admin confirms booking with payment reference validation
+PATCH http://localhost:3000/admin/bookings/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "booked",
+    "payment_reference": "VERIFIED-PAY-123456789"
+}
+
+### 5. Get all bookings to see guest info and payment references
+GET http://localhost:3000/admin/bookings
+Authorization: Bearer {{adminToken}}calhost:3000/
+
 ### BOOKING PAYMENT REFERENCE CONFIRMATION TESTS
 ### These endpoints test the payment reference confirmation workflow
 

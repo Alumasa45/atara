@@ -106,14 +106,5 @@ export class TrainersService {
     return { ok: true };
   }
 
-  async updateProfileImage(id: number, filename: string) {
-    const trainer = await this.trainerRepository.findOne({
-      where: { trainer_id: id },
-    });
-    if (!trainer) throw new NotFoundException('Trainer not found');
 
-    trainer.profile_image = filename;
-    const saved = await this.trainerRepository.save(trainer);
-    return { message: 'Profile image updated successfully', trainer: saved };
-  }
 }

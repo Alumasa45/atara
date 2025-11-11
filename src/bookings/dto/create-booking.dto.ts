@@ -28,7 +28,7 @@ export class CreateBookingDto {
   schedule_id?: number;
 
   @ApiProperty({
-    description: 'Guest name (if not registered)',
+    description: 'Guest name (required for guest bookings)',
     required: false,
   })
   @IsOptional()
@@ -36,7 +36,7 @@ export class CreateBookingDto {
   guest_name?: string;
 
   @ApiProperty({
-    description: 'Guest email (if not registered)',
+    description: 'Guest email (optional for guest bookings)',
     required: false,
   })
   @IsOptional()
@@ -44,10 +44,18 @@ export class CreateBookingDto {
   guest_email?: string;
 
   @ApiProperty({
-    description: 'Guest phone (if not registered)',
+    description: 'Guest phone (required for guest bookings)',
     required: false,
   })
   @IsOptional()
   @IsString()
   guest_phone?: string;
+
+  @ApiProperty({
+    description: 'Payment reference number for booking confirmation',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  payment_reference?: string;
 }

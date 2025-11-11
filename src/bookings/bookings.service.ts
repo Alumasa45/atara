@@ -41,8 +41,15 @@ export class BookingsService {
   async create(createBookingDto: CreateBookingDto) {
     try {
       console.log('Creating booking with data:', createBookingDto);
-      const { user_id, time_slot_id, guest_name, guest_email, guest_phone } =
+      const { user_id, time_slot_id, guest_name, guest_email, guest_phone, payment_reference } =
         createBookingDto as any;
+
+      // Validate guest booking requirements
+      if (!user_id) {
+        if (!guest_name || !guest_phone) {
+          throw new ConflictException('Guest bookings require name and phone number');
+        }
+      }
 
       // Get the time slot with its related session and schedule
       const timeSlot = await this.timeSlotRepository.findOne({
@@ -118,6 +125,7 @@ export class BookingsService {
       if (guest_name) booking.guest_name = guest_name;
       if (guest_email) booking.guest_email = guest_email;
       if (guest_phone) booking.guest_phone = guest_phone;
+      if (payment_reference) booking.payment_reference = payment_reference;
       booking.status = BookingStatus.booked;
 
       const saved = await queryRunner.manager.save(booking);
