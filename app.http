@@ -300,7 +300,73 @@ Content-Type: application/json
 
 ### Save the token and use in next request
 ### GET https://atara-dajy.onrender.com/dashboard/client
+### Expected: upcomingSchedules array with all schedules
+
+### EXPENSES ENDPOINTS
+### Admin can create expenses, both admin and manager can view/update status
+
+### Get all expenses (Admin/Manager only)
+GET https://atara-dajy.onrender.com/admin/expenses?page=1&limit=10
+Authorization: Bearer {{adminToken}}
+
+### Get expense totals (Admin/Manager only)
+GET https://atara-dajy.onrender.com/admin/expenses/totals
+Authorization: Bearer {{adminToken}}
+
+### Create new expense (Admin only)
+POST https://atara-dajy.onrender.com/admin/expenses
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "name": "Office Supplies",
+    "date": "2024-01-15",
+    "cost": 150.75,
+    "status": "approved"
+}
+
+### Update expense status (Admin/Manager)
+PATCH https://atara-dajy.onrender.com/admin/expenses/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "cancelled"
+}
+
+### EXPENSES ENDPOINTS
+### Admin can create expenses, both admin and manager can view/update status
+
+### Get all expenses (Admin/Manager only)
+GET https://atara-dajy.onrender.com/admin/expenses?page=1&limit=10
+Authorization: Bearer {{adminToken}}
+
+### Get expense totals (Admin/Manager only)
+GET https://atara-dajy.onrender.com/admin/expenses/totals
+Authorization: Bearer {{adminToken}}
+
+### Create new expense (Admin only)
+POST https://atara-dajy.onrender.com/admin/expenses
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "name": "Office Supplies",
+    "date": "2024-01-15",
+    "cost": 150.75,
+    "status": "approved"
+}
+
+### Update expense status (Admin/Manager)
+PATCH https://atara-dajy.onrender.com/admin/expenses/1/status
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "status": "cancelled"
+}
 ### Authorization: Bearer {{clientToken}}
+### Expected: upcomingSchedules array with all schedules
 ### Expected: upcomingSchedules array with all schedules
 
 ### Feature 2: Verify Multiple Schedules Same Day

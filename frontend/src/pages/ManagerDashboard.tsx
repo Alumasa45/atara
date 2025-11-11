@@ -7,6 +7,7 @@ import {
   ManagerSessions,
   ManagerTrainers,
 } from '../components/ManagerSchedulesSessionsTrainers';
+import { ManagerExpenses } from '../components/ManagerExpenses';
 import {
   SystemAnalysisChart,
   UserIntakeChart,
@@ -22,6 +23,7 @@ type DashboardTab =
   | 'schedules'
   | 'sessions'
   | 'trainers'
+  | 'expenses'
   | 'analytics';
 
 interface DashboardStats {
@@ -180,6 +182,7 @@ export default function ManagerDashboard() {
             { id: 'schedules', label: '⏰ Schedules', icon: '⏰' },
             { id: 'sessions', label: '🎯 Sessions', icon: '🎯' },
             { id: 'trainers', label: '⚡ Trainers', icon: '⚡' },
+            { id: 'expenses', label: '💰 Expenses', icon: '💰' },
             { id: 'analytics', label: '📊 Analytics', icon: '📊' },
           ].map((tab) => (
             <button
@@ -355,6 +358,21 @@ export default function ManagerDashboard() {
                   ⏰ View Schedules
                 </button>
                 <button
+                  onClick={() => setActiveTab('expenses')}
+                  style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#E91E63',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    fontSize: 13,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  💰 Manage Expenses
+                </button>
+                <button
                   onClick={() => setActiveTab('analytics')}
                   style={{
                     padding: '12px 16px',
@@ -402,6 +420,9 @@ export default function ManagerDashboard() {
                   <strong>Trainers:</strong> View trainer information
                 </li>
                 <li>
+                  <strong>Expenses:</strong> Manage business expenses and budgets
+                </li>
+                <li>
                   <strong>Analytics:</strong> View trends and monthly analysis
                 </li>
               </ul>
@@ -425,6 +446,9 @@ export default function ManagerDashboard() {
 
         {/* Trainers Tab */}
         {activeTab === 'trainers' && <ManagerTrainers />}
+
+        {/* Expenses Tab */}
+        {activeTab === 'expenses' && <ManagerExpenses />}
 
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (

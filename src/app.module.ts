@@ -18,6 +18,7 @@ import { ManagerModule } from './managers/manager.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { LoyaltyModule } from './loyalty/loyalty.module';
 import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
+import { ExpensesModule } from './expenses/expenses.module';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
     MembershipsModule,
     LoyaltyModule,
     TrainerReviewsModule,
+    ExpensesModule,
   ],
   controllers: [HealthController],
   providers: [],
