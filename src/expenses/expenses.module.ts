@@ -10,7 +10,7 @@ import { Expense } from './entities/expense.entity';
     TypeOrmModule.forFeature([Expense]),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'mysecretkey',
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN || '3600s' },
+      signOptions: { expiresIn: '3600s' },
     }),
   ],
   controllers: [ExpensesController],
