@@ -60,10 +60,13 @@ export class TrainersService {
       relations: ['user'],
     });
 
-    // Remove phone numbers from public trainer listings
+    // Remove phone numbers from public trainer listings but keep profile_image
     const publicItems = items.map(trainer => {
       const { phone, ...trainerWithoutPhone } = trainer;
-      return trainerWithoutPhone;
+      return {
+        ...trainerWithoutPhone,
+        profile_image: trainer.profile_image, // Ensure profile_image is included
+      };
     });
 
     return { data: publicItems, total, page, limit };
