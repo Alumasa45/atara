@@ -24,6 +24,7 @@ import {
   UpdateScheduleDto,
   UpdateBookingStatusDto,
 } from './dto/admin.dto';
+import { status as bookingStatus } from '../bookings/entities/booking.entity';
 import { CreateTrainerDto } from '../trainers/dto/create-trainer.dto';
 
 @Controller('admin')
@@ -252,7 +253,7 @@ export class AdminController {
     @Param('id', ParseIntPipe) bookingId: number,
     @Body() updateDto: UpdateBookingStatusDto,
   ) {
-    return this.adminService.updateBookingStatus(bookingId, updateDto.status, updateDto.payment_reference);
+    return this.adminService.updateBookingStatus(bookingId, updateDto.status as bookingStatus, updateDto.payment_reference);
   }
 
   /**

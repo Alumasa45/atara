@@ -118,9 +118,11 @@ export class UpdateScheduleDto {
 }
 
 // Booking DTOs
+import { status as BookingStatus } from '../../bookings/entities/booking.entity';
+
 export class UpdateBookingStatusDto {
-  @IsEnum(['booked', 'cancelled', 'completed', 'missed'])
-  status: 'booked' | 'cancelled' | 'completed' | 'missed';
+  @IsEnum(BookingStatus)
+  status: BookingStatus;
 
   @IsOptional()
   @IsString()
