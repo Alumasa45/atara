@@ -75,7 +75,7 @@ export const PaymentTestCard: React.FC = () => {
           Test Details:
         </div>
         <div style={{ fontSize: 11, color: '#666' }}>
-          • Paybill: 4188419<br/>
+          • Paybill: 174379 (Sandbox)<br/>
           • Account: {testName}<br/>
           • Amount: KES 500<br/>
           • Phone: {testPhone}<br/>

@@ -8,7 +8,7 @@ import { InitiatePaymentDto, MpesaCallbackDto } from './dto/mpesa.dto';
 export class MpesaService {
   private readonly consumerKey = process.env.MPESA_CONSUMER_KEY;
   private readonly consumerSecret = process.env.MPESA_CONSUMER_SECRET;
-  private readonly businessShortCode = '4188419';
+  private readonly businessShortCode = '174379'; // M-Pesa sandbox test merchant
   private readonly passkey = process.env.MPESA_PASSKEY;
   private readonly callbackUrl = process.env.MPESA_CALLBACK_URL || 'https://atara-dajy.onrender.com/mpesa/callback';
 

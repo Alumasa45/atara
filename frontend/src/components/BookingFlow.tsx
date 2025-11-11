@@ -536,7 +536,7 @@ export default function BookingFlow({
                 Pay instantly with your phone
               </div>
               <div style={{ fontSize: 12, color: '#2E7D32', fontWeight: 'bold' }}>
-                Paybill: 4188419
+                Paybill: 174379 (Sandbox)
               </div>
             </div>
 
