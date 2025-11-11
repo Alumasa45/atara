@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards, Delete } from '@nestjs/common';
 import { ExpensesService } from './expenses.service';
 import { CreateExpenseDto, UpdateExpenseStatusDto } from './dto/create-expense.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -32,5 +32,11 @@ export class ExpensesController {
   @Roles('admin', 'manager')
   updateStatus(@Param('id') id: string, @Body() updateStatusDto: UpdateExpenseStatusDto) {
     return this.expensesService.updateStatus(+id, updateStatusDto);
+  }
+
+  @Delete('clear-all')
+  @Roles('admin')
+  clearAll() {
+    return this.expensesService.clearAll();
   }
 }

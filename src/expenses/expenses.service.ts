@@ -65,4 +65,12 @@ export class ExpensesService {
       cancelled: parseFloat(cancelled?.sum || '0'),
     };
   }
+
+  async clearAll(): Promise<{ message: string; deletedCount: number }> {
+    const result = await this.expenseRepository.delete({});
+    return {
+      message: 'All expenses cleared successfully',
+      deletedCount: result.affected || 0,
+    };
+  }
 }

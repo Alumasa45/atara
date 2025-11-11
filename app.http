@@ -577,3 +577,10 @@ Content-Type: application/json
 {
     "status": "cancelled"
 }
+### CLEAR ALL EXPENSES (Admin Only)
+DELETE https://atara-dajy.onrender.com/admin/expenses/clear-all
+Authorization: Bearer {{adminToken}}
+
+### Verify Expenses Are Cleared
+GET https://atara-dajy.onrender.com/admin/expenses/totals
+Authorization: Bearer {{adminToken}}
