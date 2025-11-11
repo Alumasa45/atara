@@ -415,38 +415,78 @@ export class AdminService {
    * Get all schedules with pagination
    */
   async getAllSchedules(query?: AdminQueryDto) {
+    console.log('🔍 [AdminService] getAllSchedules called with query:', query);
     const page = query?.page || 1;
     const limit = query?.limit || 20;
     const skip = (page - 1) * limit;
 
     try {
-      // Use find() instead of queryBuilder to avoid TypeORM issues
+      // Test basic connectivity first
+      const testCount = await this.scheduleRepository.count();
+      console.log(`📊 Total schedules in database: ${testCount}`);
+
+      if (testCount === 0) {
+        console.log('📊 No schedules found in database');
+        return {
+          data: [],
+          total: 0,
+          page: page,
+          limit: limit,
+          pages: 0,
+        };
+      }
+
+      console.log(`📄 Pagination - page: ${page}, limit: ${limit}, skip: ${skip}`);
+
+      // Use simpler query without complex relations first
       const [schedules, total] = await this.scheduleRepository.findAndCount({
-        relations: ['timeSlots', 'timeSlots.session'],
         order: { date: 'DESC' },
         skip,
         take: limit,
       });
+
+      console.log(`✅ Found ${schedules.length} schedules (total in DB: ${total})`);
 
       // Apply search filter in application layer
       let filtered = schedules;
       if (query?.search) {
         const searchLower = query.search.toLowerCase();
         filtered = schedules.filter((sch: any) => {
-          return sch.session?.title?.toLowerCase().includes(searchLower);
+          return sch.date?.toString().toLowerCase().includes(searchLower);
         });
+        console.log(`🔍 After search filter: ${filtered.length} schedules`);
       }
 
-      return {
+      const response = {
         data: filtered,
         total,
         page,
         limit,
         pages: Math.ceil(total / limit),
       };
+
+      console.log('📤 Response structure:', {
+        dataLength: response.data.length,
+        total: response.total,
+        page: response.page,
+        limit: response.limit,
+        pages: response.pages
+      });
+      return response;
     } catch (error) {
-      console.error('Error in getAllSchedules:', error);
-      throw error;
+      console.error('❌ Error in getAllSchedules:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
+      
+      // Return safe error response instead of throwing
+      return {
+        data: [],
+        total: 0,
+        page: page,
+        limit: limit,
+        pages: 0,
+        error: error.message
+      };
     }
   }
 
@@ -454,49 +494,64 @@ export class AdminService {
    * Get admin system statistics
    */
   async getAdminStats() {
-    const [
-      totalUsers,
-      totalTrainers,
-      totalBookings,
-      totalSessions,
-      totalSchedules,
-      activeUsers,
-      activeTrainers,
-      confirmedBookings,
-      activeSessions,
-    ] = await Promise.all([
-      this.userRepository.count(),
-      this.trainerRepository.count(),
-      this.bookingRepository.count(),
-      this.sessionRepository.count(),
-      this.scheduleRepository.count(),
-      this.userRepository.countBy({ status: userStatus.active }),
-      this.trainerRepository.countBy({ status: trainerStatus.active }),
-      this.bookingRepository.countBy({ status: bookingStatus.booked }),
-      this.sessionRepository.count(), // Sessions don't have status field in some versions
-    ]);
+    console.log('🔍 [AdminService] getAdminStats called');
+    try {
+      const [
+        totalUsers,
+        totalTrainers,
+        totalBookings,
+        totalSessions,
+        totalSchedules,
+        activeUsers,
+        activeTrainers,
+        confirmedBookings,
+        activeSessions,
+      ] = await Promise.all([
+        this.userRepository.count(),
+        this.trainerRepository.count(),
+        this.bookingRepository.count(),
+        this.sessionRepository.count(),
+        this.scheduleRepository.count(),
+        this.userRepository.countBy({ status: userStatus.active }),
+        this.trainerRepository.countBy({ status: trainerStatus.active }),
+        this.bookingRepository.countBy({ status: bookingStatus.booked }),
+        this.sessionRepository.count(),
+      ]);
 
-    return {
-      users: {
-        total: totalUsers,
-        active: activeUsers,
-      },
-      trainers: {
-        total: totalTrainers,
-        active: activeTrainers,
-      },
-      bookings: {
-        total: totalBookings,
-        confirmed: confirmedBookings,
-      },
-      sessions: {
-        total: totalSessions,
-        active: activeSessions,
-      },
-      schedules: {
-        total: totalSchedules,
-      },
-    };
+      console.log('✅ Stats collected successfully');
+      return {
+        users: {
+          total: totalUsers,
+          active: activeUsers,
+        },
+        trainers: {
+          total: totalTrainers,
+          active: activeTrainers,
+        },
+        bookings: {
+          total: totalBookings,
+          confirmed: confirmedBookings,
+        },
+        sessions: {
+          total: totalSessions,
+          active: activeSessions,
+        },
+        schedules: {
+          total: totalSchedules,
+        },
+      };
+    } catch (error) {
+      console.error('❌ Error in getAdminStats:', error);
+      // Return safe default stats
+      return {
+        users: { total: 0, active: 0 },
+        trainers: { total: 0, active: 0 },
+        bookings: { total: 0, confirmed: 0 },
+        sessions: { total: 0, active: 0 },
+        schedules: { total: 0 },
+        error: error.message
+      };
+    }
   }
 
   /**

@@ -29,8 +29,26 @@ export class UsersController {
   @ApiOperation({ summary: 'Get current user profile' })
   @UseGuards(JwtAuthGuard)
   async getCurrentUser(@Req() req: any) {
-    const userId = req.user.userId;
-    return this.usersService.findOne(userId);
+    console.log('🔍 [UsersController] /users/me called');
+    console.log('📋 req.user payload:', req.user);
+    
+    try {
+      // Handle different JWT payload structures
+      const userId = req.user?.userId || req.user?.user_id || req.user?.id;
+      
+      if (!userId) {
+        console.error('❌ No userId found in JWT payload');
+        throw new ForbiddenException('Invalid token payload');
+      }
+      
+      console.log(`🔍 Looking up user with ID: ${userId}`);
+      const user = await this.usersService.findOne(userId);
+      console.log('✅ User found successfully');
+      return user;
+    } catch (error) {
+      console.error('❌ Error in getCurrentUser:', error);
+      throw error;
+    }
   }
 
   @Get()
