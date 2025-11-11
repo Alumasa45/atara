@@ -357,7 +357,38 @@ Content-Type: application/json
 
 ### 5. Get all bookings to see guest info and payment references
 GET http://localhost:3000/admin/bookings
-Authorization: Bearer {{adminToken}}calhost:3000/
+Authorization: Bearer {{adminToken}}
+
+### TRAINER FUNCTIONALITY TESTS
+### These endpoints test trainer-specific features
+
+### 1. Get trainer's sessions (My Sessions)
+GET http://localhost:3000/dashboard/trainer/sessions
+Authorization: Bearer {{trainerToken}}
+
+### 2. Get trainer's student bookings (Student Bookings)
+GET http://localhost:3000/dashboard/trainer/bookings
+Authorization: Bearer {{trainerToken}}
+
+### 3. Upload trainer profile image
+### Use multipart/form-data with 'image' field
+POST http://localhost:3000/trainers/1/upload-image
+Authorization: Bearer {{trainerToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="trainer.jpg"
+Content-Type: image/jpeg
+
+[Binary image data would go here]
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 4. Get trainer profile with image
+GET http://localhost:3000/trainers/1
+Authorization: Bearer {{trainerToken}}
+
+### 5. Get public trainers list (should not show phone numbers)
+GET http://localhost:3000/trainerscalhost:3000/
 
 ### BOOKING PAYMENT REFERENCE CONFIRMATION TESTS
 ### These endpoints test the payment reference confirmation workflow

@@ -397,4 +397,40 @@ export class DashboardService {
       pendingCancellationsList,
     };
   }
+
+  /**
+   * Get trainer's sessions (My Sessions)
+   */
+  async getTrainerSessions(userId: number) {
+    const trainer = await this.trainerRepository.findOne({
+      where: { user_id: userId },
+    });
+    if (!trainer) throw new NotFoundException('Trainer profile not found');
+
+    return await this.sessionRepository.find({
+      where: { trainer: { trainer_id: trainer.trainer_id } },
+      relations: ['trainer'],
+      order: { session_id: 'DESC' },
+    });
+  }
+
+  /**
+   * Get trainer's student bookings (Student Bookings)
+   */
+  async getTrainerBookings(userId: number) {
+    const trainer = await this.trainerRepository.findOne({
+      where: { user_id: userId },
+    });
+    if (!trainer) throw new NotFoundException('Trainer profile not found');
+
+    return await this.bookingRepository
+      .createQueryBuilder('b')
+      .leftJoinAndSelect('b.user', 'u')
+      .leftJoinAndSelect('b.timeSlot', 'ts')
+      .leftJoinAndSelect('ts.session', 's')
+      .leftJoinAndSelect('s.trainer', 't')
+      .where('t.trainer_id = :trainerId', { trainerId: trainer.trainer_id })
+      .orderBy('b.date_booked', 'DESC')
+      .getMany();
+  }
 }

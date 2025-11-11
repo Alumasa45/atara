@@ -94,4 +94,30 @@ export class DashboardController {
     }
     return await this.dashboardService.getAdminDashboard();
   }
+
+  /**
+   * Get trainer's sessions (My Sessions)
+   */
+  @Get('trainer/sessions')
+  @UseGuards(JwtAuthGuard)
+  async getTrainerSessions(@Req() req: any) {
+    const user = req.user;
+    if (!user || user.role !== 'trainer') {
+      throw new ForbiddenException('Only trainers can access this endpoint');
+    }
+    return await this.dashboardService.getTrainerSessions(user.userId);
+  }
+
+  /**
+   * Get trainer's student bookings (Student Bookings)
+   */
+  @Get('trainer/bookings')
+  @UseGuards(JwtAuthGuard)
+  async getTrainerBookings(@Req() req: any) {
+    const user = req.user;
+    if (!user || user.role !== 'trainer') {
+      throw new ForbiddenException('Only trainers can access this endpoint');
+    }
+    return await this.dashboardService.getTrainerBookings(user.userId);
+  }
 }

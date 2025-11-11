@@ -72,5 +72,13 @@ export class Trainer {
   @Column({ type: 'enum', enum: status, default: status.active })
   status: status;
 
+  @ApiProperty({
+    description: 'Profile image URL',
+    example: '/images/trainers/trainer-123.jpg',
+    required: false,
+  })
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  profile_image?: string;
+
 
 }
