@@ -164,11 +164,15 @@ export class AdminService {
       );
       console.log('📊 Trainers data:', JSON.stringify(trainers, null, 2));
 
+      // Filter out trainers with deleted/null users first
+      const validTrainers = trainers.filter(trainer => trainer.user !== null);
+      console.log(`🔍 After user validation filter: ${validTrainers.length} trainers`);
+      
       // Apply search filter in application layer
-      let filtered = trainers;
+      let filtered = validTrainers;
       if (query?.search) {
         const searchLower = query.search.toLowerCase();
-        filtered = trainers.filter((t: any) => {
+        filtered = validTrainers.filter((t: any) => {
           return (
             t.name?.toLowerCase().includes(searchLower) ||
             t.email?.toLowerCase().includes(searchLower) ||
@@ -181,10 +185,10 @@ export class AdminService {
 
       const response = {
         data: filtered,
-        total,
+        total: validTrainers.length,
         page,
         limit,
-        pages: Math.ceil(total / limit),
+        pages: Math.ceil(validTrainers.length / limit),
       };
 
       console.log('📤 Response being sent:', JSON.stringify(response, null, 2));

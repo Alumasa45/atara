@@ -60,8 +60,9 @@ export class TrainersService {
       relations: ['user'],
     });
 
-    // Remove phone numbers from public trainer listings but keep profile_image
-    const publicItems = items.map(trainer => {
+    // Filter out trainers with deleted/null users and remove phone numbers
+    const validTrainers = items.filter(trainer => trainer.user !== null);
+    const publicItems = validTrainers.map(trainer => {
       const { phone, ...trainerWithoutPhone } = trainer;
       return {
         ...trainerWithoutPhone,
@@ -69,7 +70,7 @@ export class TrainersService {
       };
     });
 
-    return { data: publicItems, total, page, limit };
+    return { data: publicItems, total: validTrainers.length, page, limit };
   }
 
   async findOne(id: number) {
