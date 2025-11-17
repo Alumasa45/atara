@@ -10,8 +10,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY pnpm-lock.yaml ./
 
-# Install backend dependencies
-RUN pnpm install --frozen-lockfile
+# Install backend dependencies with timeout and retry
+RUN pnpm install --frozen-lockfile --network-timeout 300000
 
 # Copy source code
 COPY . .
@@ -19,21 +19,8 @@ COPY . .
 # Build the backend application
 RUN pnpm build
 
-# Build frontend
-WORKDIR /app/frontend
-
-# Install frontend dependencies
-RUN pnpm install --frozen-lockfile
-
-# Build frontend with production environment
-RUN VITE_API_BASE_URL=https://atara-backend.onrender.com pnpm build
-
-# Skip copying frontend build for now to test API
-WORKDIR /app
-RUN mkdir -p /app/public
-
-# Create logs directory
-RUN mkdir -p /app/applogs
+# Create required directories
+RUN mkdir -p /app/public /app/applogs
 
 # Copy start script
 COPY start.sh ./
