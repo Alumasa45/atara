@@ -3,20 +3,8 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { rateLimitMiddleware } from './common/rate-limit.middleware';
 import { join } from 'path';
-import AppDataSource from './data-source';
 
 async function bootstrap() {
-  // Run migrations on startup
-  try {
-    console.log('🔄 Running database migrations...');
-    await AppDataSource.initialize();
-    await AppDataSource.runMigrations();
-    console.log('✅ Migrations completed successfully');
-    await AppDataSource.destroy();
-  } catch (error) {
-    console.error('❌ Migration failed:', error.message);
-    // Continue startup - tables might already exist
-  }
   // startup validation for required envs
   if (!process.env.GOOGLE_CLIENT_ID) {
     console.error('Missing required env: GOOGLE_CLIENT_ID');

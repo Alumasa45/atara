@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { DataSource } from 'typeorm';
 import { join } from 'path';
 
@@ -27,7 +26,7 @@ const AppDataSource = new DataSource({
     : process.env.DB_NAME || process.env.DB_DATABASE || 'atara',
   // Render requires SSL
   ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
-  synchronize: false,
+  synchronize: true,
   logging: process.env.DB_LOGGING === 'true',
   entities: [join(srcPath, '**', '*.entity.{ts,js}')],
   migrations: [join(srcPath, 'migrations', '*.{ts,js}')],
