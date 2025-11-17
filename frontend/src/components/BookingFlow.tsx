@@ -91,6 +91,10 @@ export default function BookingFlow({
           if (foundSlot && foundSchedule) {
             setSelectedTimeSlot(foundSlot);
             setSelectedSchedule(foundSchedule);
+            // Set session price from the selected time slot
+            if (foundSlot.session?.price) {
+              setSessionPrice(Number(foundSlot.session.price));
+            }
             setStep('chooseBookingMethod');
             setBookingMethod(null);
           }
@@ -102,6 +106,10 @@ export default function BookingFlow({
           );
           if (found) {
             setSelectedSchedule(found);
+            // Set session price from the selected schedule's session
+            if (found.session?.price) {
+              setSessionPrice(Number(found.session.price));
+            }
             setStep('confirm');
           }
         }
@@ -120,6 +128,10 @@ export default function BookingFlow({
             )[0];
           if (found) {
             setSelectedSchedule(found);
+            // Set session price from the selected schedule's session
+            if (found.session?.price) {
+              setSessionPrice(Number(found.session.price));
+            }
             setStep('confirm');
           }
         }
@@ -143,6 +155,10 @@ export default function BookingFlow({
 
   function pickClass(s: any) {
     setSelectedSchedule(s);
+    // Set session price from the selected schedule's session
+    if (s.session?.price) {
+      setSessionPrice(Number(s.session.price));
+    }
     setStep('chooseBookingMethod');
     setBookingMethod(null);
   }
@@ -320,6 +336,10 @@ export default function BookingFlow({
                             onClick={() => {
                               setSelectedTimeSlot(ts);
                               setSelectedSchedule(s);
+                              // Set session price from the selected time slot
+                              if (ts.session?.price) {
+                                setSessionPrice(Number(ts.session.price));
+                              }
                               setStep('chooseBookingMethod');
                               setBookingMethod(null);
                             }}
@@ -376,6 +396,10 @@ export default function BookingFlow({
                     onClick={() => {
                       setSelectedTimeSlot(ts);
                       setSelectedSchedule(s);
+                      // Set session price from the selected time slot
+                      if (ts.session?.price) {
+                        setSessionPrice(Number(ts.session.price));
+                      }
                       setStep('chooseBookingMethod');
                       setBookingMethod(null);
                     }}
@@ -724,6 +748,7 @@ export default function BookingFlow({
                 <div style={{ fontSize: 14, color: '#666' }}>
                   • Please arrive 15 minutes early to pay at the studio
                   • Amount: KES {sessionPrice.toLocaleString('en-KE')}
+                  • Paybill: 4188419, Account number: YOUR NAME
                   • Your booking will be confirmed upon payment
                 </div>
               </div>

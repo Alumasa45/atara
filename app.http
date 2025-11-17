@@ -34,7 +34,7 @@ POST https://atara-dajy.onrender.com/auth/register
 Content-Type: application/json
 
 {
-    "username": "AtaraManager",
+    "username": "victry",
     "email": "atarastudio25@gmail.com",
     "phone": "0716914453",
     "password": "Manager1",

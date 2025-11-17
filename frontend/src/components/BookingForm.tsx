@@ -11,6 +11,7 @@ export default function BookingForm() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetchingSchedules, setFetchingSchedules] = useState(true);
+  const [sessionPrice, setSessionPrice] = useState(500); // Default price in KES
 
   // Fetch available schedules on component mount
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function BookingForm() {
         guest_email: guestEmail || null,
         guest_phone: guestPhone || null,
         payment_reference: paymentRef || null,
+        amount: sessionPrice,
       };
 
       const res = await api.createBooking(payload);
@@ -206,7 +208,13 @@ export default function BookingForm() {
                     (sch.timeSlots || []).map((ts: any) => (
                       <div
                         key={`${sch.schedule_id}-${ts.slot_id}`}
-                        onClick={() => setSelectedTimeSlot(ts)}
+                        onClick={() => {
+                          setSelectedTimeSlot(ts);
+                          // Set session price from the selected time slot
+                          if (ts.session?.price) {
+                            setSessionPrice(Number(ts.session.price));
+                          }
+                        }}
                         style={{
                           padding: 10,
                           border:
