@@ -359,12 +359,13 @@ export class AdminService {
       console.log('📋 WHERE conditions:', where);
       console.log(`📄 Pagination - page: ${page}, limit: ${limit}, skip: ${skip}`);
 
-      // Use simpler query without relations first
+      // Include trainer relations for better data display
       const [sessions, total] = await this.sessionRepository.findAndCount({
         where,
         skip,
         take: limit,
         order: { session_id: 'DESC' },
+        relations: ['trainer'],
       });
 
       console.log(`✅ Found ${sessions.length} sessions (total in DB: ${total})`);

@@ -4,13 +4,12 @@ import '../styles.css';
 
 interface Session {
   session_id: number;
-  trainer_id: number;
-  title: string;
+  trainer_id?: number;
+  category: string;
   description: string;
-  type: string;
+  duration_minutes: number;
   capacity: number;
-  status: 'active' | 'inactive' | 'archived';
-  created_at: string;
+  price: number;
   trainer?: {
     trainer_id: number;
     name: string;
@@ -56,6 +55,36 @@ export default function AdminSessionsPage() {
     trainer_id: '',
   });
 
+  // Handle session deletion
+  const handleDeleteSession = async (sessionId: number) => {
+    if (!confirm('Are you sure you want to delete this session?')) return;
+    
+    try {
+      const token = localStorage.getItem('token');
+      const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
+      
+      const response = await fetch(`${BASE}/sessions/${sessionId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to delete session: ${response.status}`);
+      }
+      
+      // Remove from local state
+      setSessions(prev => prev.filter(s => s.session_id !== sessionId));
+      setFilteredSessions(prev => prev.filter(s => s.session_id !== sessionId));
+      
+      alert('Session deleted successfully!');
+    } catch (err: any) {
+      alert('Failed to delete session: ' + err.message);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -70,6 +99,7 @@ export default function AdminSessionsPage() {
           getJson(`/admin/sessions?${query.toString()}`),
           getJson(`/admin/schedules?${query.toString()}`),
         ]);
+        console.log('Sessions data received:', sessionsData);
         setSessions(sessionsData?.data || []);
         setSchedules(schedulesData?.data || []);
       } catch (err: any) {
@@ -235,7 +265,7 @@ export default function AdminSessionsPage() {
 
   const stats = {
     totalSessions: sessions.length,
-    activeSessions: sessions.filter((s) => s.status === 'active').length,
+    activeSessions: sessions.length, // All sessions are considered active
     totalSchedules: schedules.length,
     upcomingSchedules: schedules.filter(
       (s) => new Date(s.start_time) > new Date(),
@@ -381,23 +411,7 @@ export default function AdminSessionsPage() {
                 className="input"
               />
             </div>
-            {activeTab === 'sessions' && (
-              <div>
-                <label style={{ display: 'block', marginBottom: 4 }}>
-                  Status
-                </label>
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="input"
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="archived">Archived</option>
-                </select>
-              </div>
-            )}
+
           </div>
         </div>
 
@@ -717,25 +731,25 @@ export default function AdminSessionsPage() {
                       }}
                     >
                       <th style={{ padding: '12px', textAlign: 'left' }}>
-                        Title
+                        Category
+                      </th>
+                      <th style={{ padding: '12px', textAlign: 'left' }}>
+                        Description
                       </th>
                       <th style={{ padding: '12px', textAlign: 'left' }}>
                         Trainer
                       </th>
                       <th style={{ padding: '12px', textAlign: 'left' }}>
-                        Type
+                        Duration
                       </th>
                       <th style={{ padding: '12px', textAlign: 'left' }}>
                         Capacity
                       </th>
                       <th style={{ padding: '12px', textAlign: 'left' }}>
-                        Status
+                        Price (KES)
                       </th>
                       <th style={{ padding: '12px', textAlign: 'left' }}>
-                        Created
-                      </th>
-                      <th style={{ padding: '12px', textAlign: 'left' }}>
-                        Description
+                        Actions
                       </th>
                     </tr>
                   </thead>
@@ -745,47 +759,42 @@ export default function AdminSessionsPage() {
                         key={session.session_id}
                         style={{ borderBottom: '1px solid #e0e0e0' }}
                       >
-                        <td style={{ padding: '12px' }}>{session.title}</td>
+                        <td style={{ padding: '12px', fontSize: 12, textTransform: 'capitalize' }}>
+                          {session.category?.replace('_', ' ') || 'N/A'}
+                        </td>
+                        <td style={{ padding: '12px', fontSize: 12, maxWidth: 200 }}>
+                          <span title={session.description}>
+                            {session.description?.substring(0, 40) || 'N/A'}
+                            {session.description && session.description.length > 40 ? '...' : ''}
+                          </span>
+                        </td>
                         <td style={{ padding: '12px', fontSize: 12 }}>
                           {session.trainer?.name || 'N/A'}
                         </td>
                         <td style={{ padding: '12px', fontSize: 12 }}>
-                          {session.type || 'N/A'}
+                          {session.duration_minutes || 'N/A'} min
                         </td>
                         <td style={{ padding: '12px', fontSize: 12 }}>
                           {session.capacity || 'N/A'}
                         </td>
+                        <td style={{ padding: '12px', fontSize: 12, fontWeight: 'bold' }}>
+                          {session.price ? `${Number(session.price).toLocaleString()}` : 'N/A'}
+                        </td>
                         <td style={{ padding: '12px' }}>
-                          <span
+                          <button
+                            onClick={() => handleDeleteSession(session.session_id)}
                             style={{
                               padding: '4px 8px',
-                              borderRadius: 4,
-                              backgroundColor: getStatusColor(session.status),
+                              backgroundColor: '#f44336',
                               color: 'white',
+                              border: 'none',
+                              borderRadius: 4,
+                              cursor: 'pointer',
                               fontSize: 11,
-                              textTransform: 'uppercase',
                             }}
                           >
-                            {session.status}
-                          </span>
-                        </td>
-                        <td style={{ padding: '12px', fontSize: 11 }}>
-                          {new Date(session.created_at).toLocaleDateString()}
-                        </td>
-                        <td
-                          style={{
-                            padding: '12px',
-                            fontSize: 11,
-                            maxWidth: 200,
-                          }}
-                        >
-                          <span title={session.description}>
-                            {session.description?.substring(0, 30)}
-                            {session.description &&
-                            session.description.length > 30
-                              ? '...'
-                              : ''}
-                          </span>
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))}

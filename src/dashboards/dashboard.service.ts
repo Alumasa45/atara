@@ -134,12 +134,17 @@ export class DashboardService {
         order: { booking_id: 'DESC' }
       });
 
-      // Get schedules with trainer information
-      const upcomingSchedules = await this.scheduleRepository.find({
-        take: 10,
-        order: { date: 'ASC' },
-        relations: ['timeSlots', 'timeSlots.session', 'timeSlots.session.trainer']
-      });
+      // Get schedules with trainer information using query builder for better control
+      const upcomingSchedules = await this.scheduleRepository
+        .createQueryBuilder('schedule')
+        .leftJoinAndSelect('schedule.timeSlots', 'timeSlot')
+        .leftJoinAndSelect('timeSlot.session', 'session')
+        .leftJoinAndSelect('session.trainer', 'trainer')
+        .orderBy('schedule.date', 'ASC')
+        .take(10)
+        .getMany();
+      
+      console.log('Dashboard service - schedules with trainer data:', JSON.stringify(upcomingSchedules, null, 2));
 
       console.log('Dashboard service - data collected successfully');
 

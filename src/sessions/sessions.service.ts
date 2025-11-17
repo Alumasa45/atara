@@ -92,11 +92,12 @@ export class SessionsService {
 
       console.log(`📄 Pagination - page: ${page}, limit: ${limit}, skip: ${skip}`);
 
-      // Use simpler query without complex relations first
+      // Include trainer relations for better data display
       const [items, total] = await this.sessionRepository.findAndCount({
         skip,
         take: limit,
         order: { session_id: 'ASC' },
+        relations: ['trainer'],
       });
 
       console.log(`✅ Found ${items.length} sessions (total in DB: ${total})`);
