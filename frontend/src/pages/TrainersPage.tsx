@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TrainerCard from '../components/TrainerCard';
 import { getCurrentUserFromToken } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { Users } from 'lucide-react';
 
 const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com/api';
 
@@ -40,7 +41,7 @@ export default function TrainersPage() {
   return (
     <div className="app">
       <header className="header">
-        <div className="logo">👥</div>
+        <div className="logo"><Users size={24} /></div>
         <div>
           <div className="title">Our Trainers</div>
           <div className="muted">Meet our professional fitness instructors</div>

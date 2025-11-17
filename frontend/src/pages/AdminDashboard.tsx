@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserManagement from '../components/UserManagement';
 import AdminMembershipsManager from '../components/AdminMembershipsManager';
+import { Settings, Users, Zap, ClipboardList, Calendar, CreditCard, Lightbulb, BarChart3, Lock } from 'lucide-react';
 
 const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com';
 
@@ -89,7 +90,7 @@ export default function AdminDashboard() {
   return (
     <div className="app">
       <header className="header">
-        <div className="logo">⚙️</div>
+        <div className="logo"><Settings size={24} /></div>
         <div>
           <div className="title">Admin Dashboard</div>
           <div className="muted">Full system administration and overview</div>
@@ -119,7 +120,10 @@ export default function AdminDashboard() {
               fontWeight: 'bold',
             }}
           >
-            👥 Manage Users
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Users size={16} />
+              Manage Users
+            </div>
           </button>
           <button
             onClick={() => navigate('/admin/trainers')}
@@ -134,7 +138,10 @@ export default function AdminDashboard() {
               fontWeight: 'bold',
             }}
           >
-            ⚡ Register Trainer
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Zap size={16} />
+              Register Trainer
+            </div>
           </button>
           <button
             onClick={() => navigate('/admin/bookings')}
@@ -149,7 +156,10 @@ export default function AdminDashboard() {
               fontWeight: 'bold',
             }}
           >
-            📋 View Bookings
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <ClipboardList size={16} />
+              View Bookings
+            </div>
           </button>
           <button
             onClick={() => navigate('/admin/sessions')}
@@ -164,7 +174,10 @@ export default function AdminDashboard() {
               fontWeight: 'bold',
             }}
           >
-            📅 Manage Sessions
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Calendar size={16} />
+              Manage Sessions
+            </div>
           </button>
           <button
             onClick={() => navigate('/admin/memberships')}
@@ -183,7 +196,10 @@ export default function AdminDashboard() {
             }
             disabled={userRole !== 'admin'}
           >
-            💳 Memberships
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CreditCard size={16} />
+              Memberships
+            </div>
           </button>
         </div>
 
@@ -310,30 +326,48 @@ export default function AdminDashboard() {
 
         {/* Recent Bookings */}
         <div className="card" style={{ marginTop: 16 }}>
-          <h3>💡 Quick Tips</h3>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Lightbulb size={20} />
+            Quick Tips
+          </h3>
           <ul style={{ marginTop: 12, marginBottom: 0 }}>
             <li>
               Use the quick action buttons above to navigate to specific admin
               functions
             </li>
             <li>
-              📊 <strong>Manage Users:</strong> View, search, and update user
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                <BarChart3 size={16} style={{ marginTop: 2 }} />
+                <span><strong>Manage Users:</strong> View, search, and update user</span>
+              </div>
               roles and status
             </li>
             <li>
-              ⚡ <strong>Register Trainer:</strong> Create new trainer accounts
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                <Zap size={16} style={{ marginTop: 2 }} />
+                <span><strong>Register Trainer:</strong> Create new trainer accounts</span>
+              </div>
               and profiles
             </li>
             <li>
-              📋 <strong>View Bookings:</strong> Oversee all session bookings
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                <ClipboardList size={16} style={{ marginTop: 2 }} />
+                <span><strong>View Bookings:</strong> Oversee all session bookings</span>
+              </div>
               and their status
             </li>
             <li>
-              📅 <strong>Manage Sessions:</strong> View and manage all sessions
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                <Calendar size={16} style={{ marginTop: 2 }} />
+                <span><strong>Manage Sessions:</strong> View and manage all sessions</span>
+              </div>
               and schedules
             </li>
             <li>
-              💳 <strong>Memberships:</strong> Create and manage membership
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                <CreditCard size={16} style={{ marginTop: 2 }} />
+                <span><strong>Memberships:</strong> Create and manage membership</span>
+              </div>
               plans
             </li>
           </ul>
@@ -352,7 +386,10 @@ export default function AdminDashboard() {
               }}
             >
               <strong style={{ color: '#1565C0' }}>
-                🔒 Admin Only Section
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Lock size={16} />
+                  Admin Only Section
+                </div>
               </strong>
               <p
                 style={{ color: '#1565C0', fontSize: 12, margin: '4px 0 0 0' }}
@@ -377,7 +414,9 @@ export default function AdminDashboard() {
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: 24, marginBottom: 8 }}>🔐</div>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>
+                <Lock size={24} />
+              </div>
               <div
                 style={{ fontSize: 14, fontWeight: 'bold', color: '#E65100' }}
               >

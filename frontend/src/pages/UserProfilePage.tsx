@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles.css';
 import toast from 'react-hot-toast';
+import { User, Trophy, Lightbulb, CheckCircle, PartyPopper } from 'lucide-react';
 
 const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com/api';
 
@@ -85,7 +86,7 @@ export default function UserProfilePage() {
   return (
     <div className="app">
       <header className="header">
-        <div className="logo">👤</div>
+        <div className="logo"><User size={24} /></div>
         <div>
           <div className="title">My Profile</div>
           <div className="muted">
@@ -179,7 +180,10 @@ export default function UserProfilePage() {
             color: 'white',
           }}
         >
-          <h3 style={{ color: 'white', margin: 0 }}>🏆 Loyalty Points</h3>
+          <h3 style={{ color: 'white', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Trophy size={20} />
+            Loyalty Points
+          </h3>
           <div
             style={{
               display: 'grid',
@@ -206,8 +210,12 @@ export default function UserProfilePage() {
                   marginBottom: 0,
                 }}
               >
-                <li>✅ 5 points for registration</li>
-                <li>✅ 10 points per completed session</li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle size={14} /> 5 points for registration
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle size={14} /> 10 points per completed session
+                </li>
               </ul>
             </div>
           </div>
@@ -215,7 +223,10 @@ export default function UserProfilePage() {
 
         {/* Info Card */}
         <div className="card">
-          <h3>💡 About Loyalty Points</h3>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Lightbulb size={20} />
+            About Loyalty Points
+          </h3>
           <p style={{ lineHeight: 1.6, color: '#666' }}>
             Loyalty points are rewards for your engagement with Atara Fitness.
             You earn points when you:
@@ -231,8 +242,10 @@ export default function UserProfilePage() {
             </li>
           </ul>
           <p style={{ color: '#999', fontSize: 13 }}>
-            Keep accumulating points to unlock exclusive rewards and benefits!
-            🎉
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              Keep accumulating points to unlock exclusive rewards and benefits!
+              <PartyPopper size={16} />
+            </span>
           </p>
         </div>
       </div>

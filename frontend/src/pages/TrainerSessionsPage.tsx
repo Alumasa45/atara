@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getCurrentUserFromToken, getJson } from '../api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { Video, AlertTriangle, Calendar, Target } from 'lucide-react';
 
 export default function TrainerSessionsPage() {
   const [sessions, setSessions] = useState<any[]>([]);
@@ -40,7 +41,7 @@ export default function TrainerSessionsPage() {
     return (
       <div className="app">
         <header className="header">
-          <div className="logo">📹</div>
+          <div className="logo"><Video size={24} /></div>
           <div>
             <div className="title">My Sessions</div>
           </div>
@@ -53,8 +54,9 @@ export default function TrainerSessionsPage() {
             backgroundColor: '#ffebee',
           }}
         >
-          <h3 style={{ color: '#c62828', marginTop: 0 }}>
-            ⚠️ Error Loading Sessions
+          <h3 style={{ color: '#c62828', marginTop: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <AlertTriangle size={20} />
+            Error Loading Sessions
           </h3>
           <p style={{ color: '#d32f2f' }}>{error}</p>
         </div>
@@ -65,7 +67,7 @@ export default function TrainerSessionsPage() {
   return (
     <div className="app">
       <header className="header">
-        <div className="logo">📹</div>
+        <div className="logo"><Video size={24} /></div>
         <div>
           <div className="title">My Sessions</div>
           <div className="muted">
@@ -77,8 +79,9 @@ export default function TrainerSessionsPage() {
       <div style={{ marginTop: 20 }}>
         {/* Upcoming Schedules Section */}
         <div style={{ marginBottom: 32 }}>
-          <h2 style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold' }}>
-            📅 Upcoming Sessions ({upcomingSchedules.length})
+          <h2 style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Calendar size={20} />
+            Upcoming Sessions ({upcomingSchedules.length})
           </h2>
 
           {upcomingSchedules.length === 0 ? (
@@ -177,8 +180,9 @@ export default function TrainerSessionsPage() {
 
         {/* All Sessions Section */}
         <div>
-          <h2 style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold' }}>
-            🎯 All Your Sessions ({sessions.length})
+          <h2 style={{ marginBottom: 16, fontSize: 20, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Target size={20} />
+            All Your Sessions ({sessions.length})
           </h2>
 
           {sessions.length === 0 ? (

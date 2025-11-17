@@ -5,7 +5,7 @@ import BookingForm from '../components/BookingForm';
 import BookingFlow from '../components/BookingFlow';
 import MembershipCard from '../components/MembershipCard';
 import NavigationHeader from '../components/NavigationHeader';
-import { PaymentTestCard } from '../components/PaymentTestCard';
+// import { PaymentTestCard } from '../components/PaymentTestCard'; // Temporarily disabled
 import api from '../api';
 
 export default function Home() {
@@ -196,8 +196,8 @@ export default function Home() {
             )}
           </div>
           
-          <div style={{ height: 16 }} />
-          <PaymentTestCard />
+          {/* <div style={{ height: 16 }} />
+          <PaymentTestCard /> */} {/* Temporarily disabled */}
         </aside>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TestTube, CheckCircle, X, Smartphone, Clock } from 'lucide-react';
 
 export const PaymentTestCard: React.FC = () => {
   const [testName, setTestName] = useState('John Doe');
@@ -28,15 +29,15 @@ export const PaymentTestCard: React.FC = () => {
       
       if (response.ok) {
         if (data.ResponseCode === '0') {
-          setResult(`✅ STK Push sent successfully!\nCheckout ID: ${data.CheckoutRequestID}`);
+          setResult(`STK Push sent successfully!\nCheckout ID: ${data.CheckoutRequestID}`);
         } else {
-          setResult(`❌ STK Push failed: ${data.errorMessage || 'Unknown error'}`);
+          setResult(`STK Push failed: ${data.errorMessage || 'Unknown error'}`);
         }
       } else {
-        setResult(`❌ Request failed: ${data.message || 'Server error'}`);
+        setResult(`Request failed: ${data.message || 'Server error'}`);
       }
     } catch (error: any) {
-      setResult(`❌ Network error: ${error.message}`);
+      setResult(`Network error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -44,7 +45,10 @@ export const PaymentTestCard: React.FC = () => {
 
   return (
     <div className="card">
-      <h3>🧪 Test M-Pesa Payment</h3>
+      <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <TestTube size={20} />
+        Test M-Pesa Payment
+      </h3>
       
       <div style={{ marginBottom: 16 }}>
         <label style={{ display: 'block', marginBottom: 4, fontWeight: 'bold', fontSize: 12 }}>
@@ -98,14 +102,17 @@ export const PaymentTestCard: React.FC = () => {
           marginBottom: 16,
         }}
       >
-        {loading ? '⏳ Testing...' : '📱 Test M-Pesa STK Push'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {loading ? <Clock size={16} /> : <Smartphone size={16} />}
+          {loading ? 'Testing...' : 'Test M-Pesa STK Push'}
+        </div>
       </button>
 
       {result && (
         <div style={{ 
           padding: 12, 
-          backgroundColor: result.includes('✅') ? '#E8F5E9' : '#FFEBEE',
-          color: result.includes('✅') ? '#2E7D32' : '#C62828',
+          backgroundColor: result.includes('successfully') ? '#E8F5E9' : '#FFEBEE',
+          color: result.includes('successfully') ? '#2E7D32' : '#C62828',
           borderRadius: 4,
           fontSize: 12,
           whiteSpace: 'pre-line',

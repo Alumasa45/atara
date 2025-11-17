@@ -29,6 +29,7 @@ export class MpesaService {
 
   private async getAccessToken(): Promise<string> {
     const auth = Buffer.from(`${this.consumerKey}:${this.consumerSecret}`).toString('base64');
+    console.log('Auth header (first 20 chars):', auth.substring(0, 20) + '...');
     
     const response = await fetch('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
       method: 'GET',
@@ -37,11 +38,15 @@ export class MpesaService {
       },
     });
 
+    console.log('Access token response status:', response.status);
+    
+    const text = await response.text();
+    console.log('Access token response:', text);
+    
     if (!response.ok) {
-      throw new Error(`Failed to get access token: ${response.status}`);
+      throw new Error(`Failed to get access token: ${response.status} - ${text}`);
     }
 
-    const text = await response.text();
     if (!text) {
       throw new Error('Empty response from M-Pesa API');
     }
@@ -51,6 +56,7 @@ export class MpesaService {
       if (!data.access_token) {
         throw new Error('No access token in response');
       }
+      console.log('Access token obtained successfully');
       return data.access_token;
     } catch (e) {
       throw new Error(`Invalid JSON response: ${text}`);

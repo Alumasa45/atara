@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import api, { getCurrentUserFromToken } from '../api';
 import toast from 'react-hot-toast';
 import { MpesaPayment } from './MpesaPayment';
+import { CheckCircle, User, Unlock, Banknote } from 'lucide-react';
 
 type Step = 'pickDate' | 'pickClass' | 'confirm' | 'chooseBookingMethod' | 'choosePaymentMethod';
 type BookingMethod = 'registered' | 'guest' | null;
-type PaymentMethod = 'mpesa' | 'cash' | null;
+type PaymentMethod = 'cash' | null; // 'mpesa' temporarily disabled
 
 export default function BookingFlow({
   onDone,
@@ -198,7 +199,12 @@ export default function BookingFlow({
       toast.success('Booking created #' + (res?.booking_id ?? ''));
       
       // Handle payment method specific confirmation
-      if (paymentMethod === 'mpesa' && paymentRef) {
+      if (paymentMethod === 'cash') {
+        // Cash payment - booking pending until payment at studio
+        toast.success('Booking confirmed! Please pay KES ' + sessionPrice.toLocaleString('en-KE') + ' at the studio.');
+      }
+      // M-Pesa payment temporarily disabled
+      /* if (paymentMethod === 'mpesa' && paymentRef) {
         // M-Pesa payment already processed, just confirm
         try {
           const confirmRes: any = await api.confirmBooking(
@@ -213,10 +219,7 @@ export default function BookingFlow({
         } catch (e: any) {
           toast.error('Failed to verify M-Pesa payment');
         }
-      } else if (paymentMethod === 'cash') {
-        // Cash payment - booking pending until payment at studio
-        toast.success('Booking confirmed! Please pay KES ' + sessionPrice.toLocaleString('en-KE') + ' at the studio.');
-      }
+      } */
       setLoading(false);
       onDone && onDone();
     } catch (err: any) {
@@ -451,7 +454,10 @@ export default function BookingFlow({
                 <div
                   style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 16 }}
                 >
-                  {currentUser?.userId ? '✅ My Account' : '🔓 Create Account'}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {currentUser?.userId ? <CheckCircle size={16} /> : <Unlock size={16} />}
+                    {currentUser?.userId ? 'My Account' : 'Create Account'}
+                  </div>
                 </div>
                 <div style={{ fontSize: 13, color: '#666' }}>
                   {currentUser?.userId
@@ -479,7 +485,10 @@ export default function BookingFlow({
                 <div
                   style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 16 }}
                 >
-                  👤 Book as Guest
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <User size={16} />
+                    Book as Guest
+                  </div>
                 </div>
                 <div style={{ fontSize: 13, color: '#666' }}>
                   No account needed. Just provide your contact info
@@ -516,9 +525,9 @@ export default function BookingFlow({
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
-            {/* M-Pesa Payment */}
-            <div
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            {/* M-Pesa Payment - Temporarily disabled */}
+            {/* <div
               onClick={() => setPaymentMethod('mpesa')}
               style={{
                 padding: 16,
@@ -538,7 +547,7 @@ export default function BookingFlow({
               <div style={{ fontSize: 12, color: '#2E7D32', fontWeight: 'bold' }}>
                 Paybill: 174379 (Sandbox)
               </div>
-            </div>
+            </div> */}
 
             {/* Cash Payment */}
             <div
@@ -550,10 +559,12 @@ export default function BookingFlow({
                 cursor: 'pointer',
                 backgroundColor: paymentMethod === 'cash' ? '#E8F5E9' : '#fff',
                 transition: 'all 0.2s',
+                maxWidth: '300px',
               }}
             >
-              <div style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 16 }}>
-                💵 Cash
+              <div style={{ fontWeight: 'bold', marginBottom: 8, fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Banknote size={16} />
+                Cash
               </div>
               <div style={{ fontSize: 13, color: '#666' }}>
                 Pay at the studio before class
@@ -594,15 +605,19 @@ export default function BookingFlow({
             <div style={{ padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
               Booking as:{' '}
               <strong>
-                {bookingMethod === 'registered'
-                  ? '✅ Registered User'
-                  : '👤 Guest'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {bookingMethod === 'registered' ? <CheckCircle size={16} /> : <User size={16} />}
+                  {bookingMethod === 'registered' ? 'Registered User' : 'Guest'}
+                </div>
               </strong>
             </div>
             <div style={{ padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
               Payment:{' '}
               <strong>
-                {paymentMethod === 'mpesa' ? '📱 M-Pesa' : '💵 Cash'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {paymentMethod === 'cash' && <Banknote size={16} />}
+                  {paymentMethod === 'cash' ? 'Cash' : 'Payment Method'}
+                </div>
               </strong>
             </div>
           </div>
@@ -679,8 +694,8 @@ export default function BookingFlow({
             </>
           )}
 
-          {/* M-Pesa Payment */}
-          {paymentMethod === 'mpesa' && (
+          {/* M-Pesa Payment - Temporarily disabled */}
+          {/* {paymentMethod === 'mpesa' && (
             <div style={{ marginBottom: 16 }}>
               <MpesaPayment
                 amount={sessionPrice}
@@ -696,14 +711,15 @@ export default function BookingFlow({
                 }}
               />
             </div>
-          )}
+          )} */}
 
           {/* Cash Payment */}
           {paymentMethod === 'cash' && (
             <>
               <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#FFF3E0', borderRadius: 4 }}>
-                <div style={{ fontWeight: 'bold', marginBottom: 8, color: '#E65100' }}>
-                  💵 Cash Payment Instructions
+                <div style={{ fontWeight: 'bold', marginBottom: 8, color: '#E65100', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Banknote size={16} />
+                  Cash Payment Instructions
                 </div>
                 <div style={{ fontSize: 14, color: '#666' }}>
                   • Please arrive 15 minutes early to pay at the studio

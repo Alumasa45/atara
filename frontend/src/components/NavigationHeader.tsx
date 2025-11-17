@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Dumbbell, Star, User, LogOut } from 'lucide-react';
 
 export default function NavigationHeader() {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ export default function NavigationHeader() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
             }}
           >
-            💪
+            <Dumbbell size={20} color="#3b2f2a" />
           </span>
           <span style={{ fontSize: '18px', fontWeight: 600 }}>
             Atara Movement Studio
@@ -158,7 +159,7 @@ export default function NavigationHeader() {
                   '0 3px 8px rgba(221, 184, 146, 0.4)';
               }}
             >
-              <span style={{ fontSize: '16px' }}>⭐</span>
+              <Star size={16} />
               <span>Membership</span>
             </Link>
           )}
@@ -241,7 +242,10 @@ export default function NavigationHeader() {
                   letterSpacing: '0.3px',
                 }}
               >
-                👤 {user.username}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <User size={16} />
+                  {user.username}
+                </div>
                 <span
                   style={{
                     marginLeft: '6px',
@@ -283,7 +287,10 @@ export default function NavigationHeader() {
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
               >
-                🚪 Logout
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <LogOut size={16} />
+                  Logout
+                </div>
               </button>
             </div>
           )}
