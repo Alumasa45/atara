@@ -35,9 +35,9 @@ Content-Type: application/json
 
 {
     "username": "AtaraManager",
-    "email": "manager@gmail.com",
-    "phone": "0744444444",
-    "password": "Manager@1234",
+    "email": "atarastudio25@gmail.com",
+    "phone": "0716914453",
+    "password": "Manager1",
     "role": "manager",
     "status": "active"
 }
