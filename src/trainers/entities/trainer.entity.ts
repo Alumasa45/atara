@@ -52,7 +52,7 @@ export class Trainer {
     example: '+1234567890',
   })
   @Column({ type: 'varchar', length: 15, nullable: true })
-  phone: string;
+  phone: string | null;
 
   @ApiProperty({
     description: 'Email address of the trainer',
@@ -66,7 +66,7 @@ export class Trainer {
     example: 'Experienced yoga instructor with 10 years of teaching.',
   })
   @Column({ type: 'text', nullable: true })
-  bio: string;
+  bio: string | null;
 
   @ApiProperty({ description: 'Account status', example: 'active' })
   @Column({ type: 'enum', enum: status, default: status.active })

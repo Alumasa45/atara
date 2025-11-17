@@ -38,9 +38,9 @@ export class TrainersService {
     trainer.user = user;
     trainer.name = createTrainerDto.name;
     trainer.specialty = createTrainerDto.specialty;
-    trainer.phone = createTrainerDto.phone;
+    trainer.phone = createTrainerDto.phone ?? null;
     trainer.email = createTrainerDto.email;
-    trainer.bio = createTrainerDto.bio;
+    trainer.bio = createTrainerDto.bio ?? null;
     trainer.status = createTrainerDto.status ?? trainer.status;
 
     const saved = await this.trainerRepository.save(trainer);
