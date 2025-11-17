@@ -140,13 +140,13 @@ export default function ClientDashboard() {
             <div>
               <span style={{ color: '#666' }}>Username:</span>
               <span style={{ marginLeft: 12, fontWeight: 'bold' }}>
-                {currentUser?.username || 'N/A'}
+                {profile?.username || currentUser?.username || 'N/A'}
               </span>
             </div>
             <div>
               <span style={{ color: '#666' }}>Email:</span>
               <span style={{ marginLeft: 12, fontWeight: 'bold' }}>
-                {currentUser?.email || 'N/A'}
+                {profile?.email || currentUser?.email || 'N/A'}
               </span>
             </div>
             <div>

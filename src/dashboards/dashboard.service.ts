@@ -134,16 +134,21 @@ export class DashboardService {
         order: { booking_id: 'DESC' }
       });
 
-      // Get simple schedules
+      // Get schedules with trainer information
       const upcomingSchedules = await this.scheduleRepository.find({
         take: 10,
-        order: { date: 'ASC' }
+        order: { date: 'ASC' },
+        relations: ['timeSlots', 'timeSlots.session', 'timeSlots.session.trainer']
       });
 
       console.log('Dashboard service - data collected successfully');
 
       return {
-        profile,
+        profile: {
+          ...profile,
+          username: user.username,
+          email: user.email
+        },
         upcomingBookings,
         pastBookings,
         upcomingSchedules,
