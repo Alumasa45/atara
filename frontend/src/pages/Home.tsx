@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import TrainerCard from '../components/TrainerCard';
 import SessionCard from '../components/SessionCard';
-import BookingForm from '../components/BookingForm';
 import BookingFlow from '../components/BookingFlow';
 import MembershipCard from '../components/MembershipCard';
 import NavigationHeader from '../components/NavigationHeader';
-// import { PaymentTestCard } from '../components/PaymentTestCard'; // Temporarily disabled
 import api from '../api';
 
 export default function Home() {
   const [trainers, setTrainers] = useState<any[]>([]);
-  const [sessions, setSessions] = useState<any[]>([]);
   const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
   const [showFlow, setShowFlow] = useState(false);
   const [initialSessionId, setInitialSessionId] = useState<number | null>(null);
@@ -35,6 +32,7 @@ export default function Home() {
   }, [backgroundImages.length]);
 
   useEffect(() => {
+    // Fetch all trainers
     api
       .fetchTrainers()
       .then((t: any) => {
@@ -43,31 +41,43 @@ export default function Home() {
       .catch(() => {
         setTrainers([]);
       });
+    
+    // Fetch schedules for upcoming sessions (schedules have dates, not sessions)
     api
-      .fetchSessions()
-      .then((s: any) => {
-        const allSessions = Array.isArray(s) ? s : s?.data || [];
-        setSessions(allSessions);
+      .fetchSchedules()
+      .then((scheduleData: any) => {
+        const allSchedules = Array.isArray(scheduleData) ? scheduleData : scheduleData?.data || [];
         
-        // Filter for upcoming sessions only
+        // Filter for upcoming schedules only
         const now = new Date();
-        const upcoming = allSessions.filter((session: any) => {
-          // Check if session is active
-          if (session.status !== 'active') return false;
-          
-          // Check if session date is in the future
-          if (session.date) {
-            const sessionDate = new Date(session.date);
-            return sessionDate >= now;
+        const upcomingSchedules = allSchedules.filter((schedule: any) => {
+          if (schedule.date) {
+            const scheduleDate = new Date(schedule.date);
+            return scheduleDate >= now;
           }
-          
-          return true; // Include sessions without dates for now
+          return false;
         });
         
-        setUpcomingSessions(upcoming);
+        // Extract unique sessions from upcoming schedules
+        const sessionMap = new Map();
+        upcomingSchedules.forEach((schedule: any) => {
+          if (schedule.session) {
+            sessionMap.set(schedule.session.session_id, schedule.session);
+          }
+          // Also check timeSlots for sessions
+          if (schedule.timeSlots) {
+            schedule.timeSlots.forEach((slot: any) => {
+              if (slot.session) {
+                sessionMap.set(slot.session.session_id, slot.session);
+              }
+            });
+          }
+        });
+        
+        const uniqueUpcomingSessions = Array.from(sessionMap.values());
+        setUpcomingSessions(uniqueUpcomingSessions);
       })
       .catch(() => {
-        setSessions([]);
         setUpcomingSessions([]);
       });
   }, []);
@@ -140,24 +150,27 @@ export default function Home() {
 
           <div className="card">
             <h3>Trainers</h3>
-            {trainers.slice(0, 4).map((t: any) => (
-              <TrainerCard
-                key={t.trainer_id}
-                name={t.name}
-                specialty={t.specialty}
-                phone={t.phone}
-                email={t.email}
-                bio={t.bio}
-              />
-            ))}
+            {trainers.length === 0 ? (
+              <p style={{ color: '#666', fontStyle: 'italic' }}>No trainers available</p>
+            ) : (
+              trainers.slice(0, 4).map((t: any) => (
+                <TrainerCard
+                  key={t.trainer_id}
+                  name={t.name}
+                  specialty={t.specialty}
+                  phone={t.phone}
+                  email={t.email}
+                  bio={t.bio}
+                />
+              ))
+            )}
           </div>
         </div>
 
         <aside>
           <div className="card">
-            <h3>Quick Booking</h3>
-            <BookingForm />
-            <div style={{ height: 12 }} />
+            <h3>Book a Class</h3>
+            <p style={{ color: '#666', marginBottom: 16 }}>Ready to join a session? Click below to start booking.</p>
             <button className="button" onClick={() => setShowFlow(true)}>
               Book Now
             </button>
@@ -195,9 +208,6 @@ export default function Home() {
               </div>
             )}
           </div>
-          
-          {/* <div style={{ height: 16 }} />
-          <PaymentTestCard /> */} {/* Temporarily disabled */}
         </aside>
       </div>
     </div>
