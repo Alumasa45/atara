@@ -20,7 +20,7 @@ import { OAuth2Client } from 'google-auth-library';
 
 import { EmailVerification } from './entities/email-verification.entity';
 import { MailService } from '../mail/mail.service';
-import { Trainer } from '../trainers/entities/trainer.entity';
+import { Trainer, specialty, status } from '../trainers/entities/trainer.entity';
 
 @Injectable()
 export class UsersService {
@@ -87,9 +87,9 @@ export class UsersService {
           trainer.name = saved.username;
           trainer.email = saved.email;
           trainer.phone = saved.phone;
-          trainer.specialty = 'general'; // default specialty
+          trainer.specialty = specialty.yoga; // default specialty
           trainer.bio = '';
-          trainer.status = 'active';
+          trainer.status = status.active;
           await this.trainerRepository.save(trainer);
         } catch (e) {
           console.warn('Failed to create trainer profile:', e);
