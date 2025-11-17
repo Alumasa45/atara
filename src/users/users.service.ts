@@ -20,6 +20,7 @@ import { OAuth2Client } from 'google-auth-library';
 
 import { EmailVerification } from './entities/email-verification.entity';
 import { MailService } from '../mail/mail.service';
+import { Trainer } from '../trainers/entities/trainer.entity';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,8 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(EmailVerification)
     private readonly verificationRepository: Repository<EmailVerification>,
+    @InjectRepository(Trainer)
+    private readonly trainerRepository: Repository<Trainer>,
     private readonly jwtService: JwtService,
     private readonly profilesService: ProfilesService,
     private readonly mailService: MailService,
@@ -74,6 +77,23 @@ export class UsersService {
         await this.profilesService.createForUser(saved, 5);
       } catch (e) {
         // don't fail registration on profile creation issues
+      }
+
+      // Auto-create trainer profile if user role is 'trainer'
+      if (saved.role === 'trainer') {
+        try {
+          const trainer = new Trainer();
+          trainer.user = saved;
+          trainer.name = saved.username;
+          trainer.email = saved.email;
+          trainer.phone = saved.phone;
+          trainer.specialty = 'general'; // default specialty
+          trainer.bio = '';
+          trainer.status = 'active';
+          await this.trainerRepository.save(trainer);
+        } catch (e) {
+          console.warn('Failed to create trainer profile:', e);
+        }
       }
       // create email verification token and send email
       try {
@@ -237,6 +257,16 @@ export class UsersService {
         where: { user_id: id },
       });
       if (!user) throw new NotFoundException('User not found');
+      
+      // Auto-delete trainer profile if user is a trainer
+      if (user.role === 'trainer') {
+        try {
+          await this.trainerRepository.delete({ user: { user_id: id } });
+        } catch (e) {
+          console.warn('Failed to delete trainer profile:', e);
+        }
+      }
+      
       await this.userRepository.delete({ user_id: id });
       return { ok: true };
     })();
