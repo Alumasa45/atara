@@ -67,10 +67,11 @@ export class ExpensesService {
   }
 
   async clearAll(): Promise<{ message: string; deletedCount: number }> {
-    const result = await this.expenseRepository.delete({});
+    const count = await this.expenseRepository.count();
+    await this.expenseRepository.clear();
     return {
       message: 'All expenses cleared successfully',
-      deletedCount: result.affected || 0,
+      deletedCount: count,
     };
   }
 }
