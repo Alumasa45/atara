@@ -86,7 +86,7 @@ export class UsersService {
           trainer.user = saved;
           trainer.name = saved.username;
           trainer.email = saved.email;
-          trainer.phone = saved.phone;
+          trainer.phone = saved.phone ?? null;
           trainer.specialty = specialty.yoga; // default specialty
           trainer.bio = null;
           trainer.status = status.active;
