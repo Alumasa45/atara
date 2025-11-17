@@ -36,9 +36,13 @@ export default function Home() {
     api
       .fetchTrainers()
       .then((t: any) => {
-        setTrainers(Array.isArray(t) ? t : t?.data || []);
+        console.log('Trainers API response:', t);
+        const trainersList = Array.isArray(t) ? t : t?.data || [];
+        console.log('Processed trainers list:', trainersList);
+        setTrainers(trainersList);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error('Failed to fetch trainers:', error);
         setTrainers([]);
       });
     

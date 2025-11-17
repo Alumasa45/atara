@@ -73,7 +73,7 @@ export function getCurrentUserFromToken() {
 export { getJson, postJson };
 
 export async function fetchTrainers() {
-  return getJson('/trainers');
+  return getJson('/trainers?page=1&limit=100');
 }
 
 export async function fetchSessions() {
