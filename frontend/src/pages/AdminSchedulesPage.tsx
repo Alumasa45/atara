@@ -3,10 +3,13 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 interface Session {
   session_id: number;
-  title: string;
   category: string;
   duration_minutes: number;
   price?: number;
+  trainer?: {
+    trainer_id: number;
+    name: string;
+  };
 }
 
 interface TimeSlot {
@@ -545,7 +548,7 @@ export default function AdminSchedulesPage() {
                             <div
                               style={{ fontWeight: 'bold', marginBottom: 2 }}
                             >
-                              {slot.session?.title || 'Session'}
+                              {slot.session?.trainer?.name || 'No Trainer'} ({slot.session?.category || 'Session'})
                             </div>
                             <div style={{ color: '#666', fontSize: 9 }}>
                               {new Date(slot.start_time).toLocaleTimeString(
@@ -675,8 +678,7 @@ export default function AdminSchedulesPage() {
                                 key={session.session_id}
                                 value={session.session_id}
                               >
-                                {session.title} ({session.category}) -{' '}
-                                {session.duration_minutes}m
+                                {session.trainer?.name || 'No Trainer'} ({session.category}) - {session.duration_minutes}m
                               </option>
                             ))}
                           </select>
@@ -852,7 +854,7 @@ export default function AdminSchedulesPage() {
                               }}
                             >
                               <strong>
-                                {slot.session?.title || 'Session'}
+                                {slot.session?.trainer?.name || 'No Trainer'} ({slot.session?.category || 'Session'})
                               </strong>{' '}
                               •{' '}
                               {new Date(slot.start_time).toLocaleTimeString(
