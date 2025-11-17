@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { getCurrentUserFromToken } from '../api';
+import { Home, BarChart3, Calendar, Users, Star, User, BookOpen, ClipboardList, Zap, Clock, DollarSign, LogOut } from 'lucide-react';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -19,42 +20,59 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
   const isActive = (path: string) => location.pathname === path;
 
+  const getIcon = (iconName: string) => {
+    const iconMap: { [key: string]: React.ReactNode } = {
+      'home': <Home size={20} />,
+      'chart': <BarChart3 size={20} />,
+      'calendar': <Calendar size={20} />,
+      'users': <Users size={20} />,
+      'star': <Star size={20} />,
+      'user': <User size={20} />,
+      'book': <BookOpen size={20} />,
+      'clipboard': <ClipboardList size={20} />,
+      'zap': <Zap size={20} />,
+      'clock': <Clock size={20} />,
+      'dollar': <DollarSign size={20} />,
+    };
+    return iconMap[iconName] || <Home size={20} />;
+  };
+
   const navItems = {
     client: [
-      { label: 'Home', path: '/', icon: '🏠' },
-      { label: 'Dashboard', path: '/dashboard', icon: '📊' },
-      { label: 'Schedule', path: '/schedule', icon: '📅' },
-      { label: 'Trainers', path: '/trainers', icon: '👥' },
-      { label: 'My Profile', path: '/my-profile', icon: '⭐' },
-      { label: 'Profile', path: '/profile', icon: '👤' },
+      { label: 'Home', path: '/', icon: 'home' },
+      { label: 'Dashboard', path: '/dashboard', icon: 'chart' },
+      { label: 'Schedule', path: '/schedule', icon: 'calendar' },
+      { label: 'Trainers', path: '/trainers', icon: 'users' },
+      { label: 'My Profile', path: '/my-profile', icon: 'star' },
+      { label: 'Profile', path: '/profile', icon: 'user' },
     ],
     trainer: [
-      { label: 'Home', path: '/', icon: '🏠' },
-      { label: 'Dashboard', path: '/dashboard', icon: '📊' },
-      { label: 'My Sessions', path: '/my-sessions', icon: '📚' },
-      { label: 'Student Bookings', path: '/bookings', icon: '📋' },
-      { label: 'My Profile', path: '/my-profile', icon: '⭐' },
-      { label: 'Profile', path: '/profile', icon: '👤' },
+      { label: 'Home', path: '/', icon: 'home' },
+      { label: 'Dashboard', path: '/dashboard', icon: 'chart' },
+      { label: 'My Sessions', path: '/my-sessions', icon: 'book' },
+      { label: 'Student Bookings', path: '/bookings', icon: 'clipboard' },
+      { label: 'My Profile', path: '/my-profile', icon: 'star' },
+      { label: 'Profile', path: '/profile', icon: 'user' },
     ],
     manager: [
-      { label: 'Home', path: '/', icon: '🏠' },
-      { label: 'Dashboard', path: '/dashboard', icon: '📊' },
-      { label: 'Schedule', path: '/schedule', icon: '📅' },
-      { label: 'All Bookings', path: '/admin/bookings', icon: '📋' },
-      { label: 'Users', path: '/admin/users', icon: '👥' },
-      { label: 'Expenses', path: '/expenses', icon: '💰' },
+      { label: 'Home', path: '/', icon: 'home' },
+      { label: 'Dashboard', path: '/dashboard', icon: 'chart' },
+      { label: 'Schedule', path: '/schedule', icon: 'calendar' },
+      { label: 'All Bookings', path: '/admin/bookings', icon: 'clipboard' },
+      { label: 'Users', path: '/admin/users', icon: 'users' },
+      { label: 'Expenses', path: '/expenses', icon: 'dollar' },
     ],
     admin: [
-      { label: 'Home', path: '/', icon: '🏠' },
-      { label: 'Dashboard', path: '/dashboard', icon: '📊' },
-      { label: 'Users', path: '/admin/users', icon: '👥' },
-      { label: 'Trainers', path: '/admin/trainers', icon: '⚡' },
-      { label: 'Bookings', path: '/admin/bookings', icon: '📋' },
-      { label: 'Sessions', path: '/admin/sessions', icon: '📅' },
-      { label: 'Schedules', path: '/admin/schedules', icon: '⏰' },
-      { label: 'Expenses', path: '/expenses', icon: '💰' },
-      { label: 'My Profile', path: '/my-profile', icon: '⭐' },
-      { label: 'Profile', path: '/admin/profile', icon: '👤' },
+      { label: 'Home', path: '/', icon: 'home' },
+      { label: 'Dashboard', path: '/dashboard', icon: 'chart' },
+      { label: 'Users', path: '/admin/users', icon: 'users' },
+      { label: 'Trainers', path: '/admin/trainers', icon: 'zap' },
+      { label: 'Bookings', path: '/admin/bookings', icon: 'clipboard' },
+      { label: 'Sessions', path: '/admin/sessions', icon: 'calendar' },
+      { label: 'Schedules', path: '/admin/schedules', icon: 'clock' },
+      { label: 'Expenses', path: '/expenses', icon: 'dollar' },
+      { label: 'My Profile', path: '/my-profile', icon: 'star' },
+      { label: 'Profile', path: '/admin/profile', icon: 'user' },
     ],
   };
 
@@ -79,7 +97,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
             className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
             onClick={onClose}
           >
-            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-icon">{getIcon(item.icon)}</span>
             <span className="nav-label">{item.label}</span>
           </Link>
         ))}
@@ -96,7 +114,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
       </div>
 
       <button className="logout-btn" onClick={handleLogout}>
-        <span>🚪</span>
+        <LogOut size={20} />
         <span>Logout</span>
       </button>
     </aside>
