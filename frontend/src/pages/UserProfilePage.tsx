@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles.css';
 import toast from 'react-hot-toast';
-import { User, Trophy, Lightbulb, CheckCircle, PartyPopper } from 'lucide-react';
+import { User, Trophy, Lightbulb, CheckCircle, PartyPopper, LogOut } from 'lucide-react';
 
 const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.onrender.com/api';
 
@@ -21,6 +21,12 @@ export default function UserProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -247,6 +253,38 @@ export default function UserProfilePage() {
               <PartyPopper size={16} />
             </span>
           </p>
+        </div>
+
+        {/* Logout Button */}
+        <div className="card">
+          <button
+            onClick={handleLogout}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              padding: '12px 16px',
+              backgroundColor: '#f44336',
+              color: 'white',
+              border: 'none',
+              borderRadius: 8,
+              cursor: 'pointer',
+              fontSize: 16,
+              fontWeight: 'bold',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#d32f2f';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#f44336';
+            }}
+          >
+            <LogOut size={20} />
+            Logout
+          </button>
         </div>
       </div>
     </div>
