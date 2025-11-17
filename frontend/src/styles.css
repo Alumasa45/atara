@@ -519,7 +519,7 @@ body{
   /* Sidebar adjustments for mobile */
   .sidebar {
     padding: 16px;
-    padding-top: 70px;
+    padding-top: 16px;
   }
   
   .sidebar-header {
