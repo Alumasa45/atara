@@ -10,8 +10,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY pnpm-lock.yaml ./
 
-# Install backend dependencies with timeout and retry
-RUN pnpm install --frozen-lockfile --network-timeout 300000
+# Install backend dependencies
+RUN pnpm install
 
 # Copy source code
 COPY . .
