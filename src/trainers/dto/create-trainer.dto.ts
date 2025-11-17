@@ -26,12 +26,12 @@ export class CreateTrainerDto {
   specialty: specialty;
 
   @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     description: 'Phone number of the trainer',
     example: '+1234567890',
+    required: false,
   })
-  phone: string;
+  phone?: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -42,12 +42,12 @@ export class CreateTrainerDto {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
   @ApiProperty({
     description: 'Short bio of the trainer',
     example: 'Experienced yoga instructor with 10 years of teaching.',
+    required: false,
   })
-  bio: string;
+  bio?: string;
 
   @IsNotEmpty()
   @IsEnum(status, { message: 'status must be one of: active, inactive' })

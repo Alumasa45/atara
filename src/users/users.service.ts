@@ -86,14 +86,14 @@ export class UsersService {
           trainer.user = saved;
           trainer.name = saved.username;
           trainer.email = saved.email;
-          trainer.phone = saved.phone || '';
+          trainer.phone = saved.phone;
           trainer.specialty = specialty.yoga; // default specialty
-          trainer.bio = '';
+          trainer.bio = null;
           trainer.status = status.active;
           const savedTrainer = await this.trainerRepository.save(trainer);
           console.log('✅ Auto-created trainer profile:', savedTrainer.trainer_id);
         } catch (e) {
-          console.error('❌ Failed to create trainer profile:', e.message);
+          console.error('❌ Failed to create trainer profile:', e.message, e.stack);
           // Don't fail user creation, but log the error
         }
       }

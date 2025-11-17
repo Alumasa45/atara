@@ -51,7 +51,7 @@ export class Trainer {
     description: 'Phone number of the trainer',
     example: '+1234567890',
   })
-  @Column({ type: 'varchar', length: 15 })
+  @Column({ type: 'varchar', length: 15, nullable: true })
   phone: string;
 
   @ApiProperty({
@@ -65,7 +65,7 @@ export class Trainer {
     description: 'Short bio of the trainer',
     example: 'Experienced yoga instructor with 10 years of teaching.',
   })
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   bio: string;
 
   @ApiProperty({ description: 'Account status', example: 'active' })
