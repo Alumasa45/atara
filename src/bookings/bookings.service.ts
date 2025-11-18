@@ -138,13 +138,13 @@ export class BookingsService {
       const saved = await queryRunner.manager.save(booking);
       await queryRunner.commitTransaction();
       
-      // Create notification for trainer after successful booking
-      try {
-        await this.notificationsService.createBookingNotification(saved);
-      } catch (error) {
-        console.error('Failed to create booking notification:', error);
-        // Don't fail the booking if notification fails
-      }
+      // Create notification for trainer after successful booking (temporarily disabled)
+      // TODO: Re-enable after notifications table is created
+      // try {
+      //   await this.notificationsService.createBookingNotification(saved);
+      // } catch (error) {
+      //   console.error('Failed to create booking notification:', error);
+      // }
       
       return saved;
     } catch (err) {

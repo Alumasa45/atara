@@ -60,9 +60,13 @@ POST https://atara-dajy.onrender.com/auth/login
 Content-Type: application/json
 
 {
-    "email": "aquinattaalumasa@gmail.com",
+    "email": "aquinatta@gmail.com",
     "password": "Akwinara2005!"
 }
+
+POST https://atara-dajy.onrender.com/admin/create-notifications-table
+Authorization: Bearer {{adminToken}}
+
 
 ###Login - Trainer User
 POST https://atara-dajy.onrender.com/auth/login

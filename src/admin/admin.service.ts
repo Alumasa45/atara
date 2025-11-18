@@ -1133,4 +1133,60 @@ export class AdminService {
       throw error;
     }
   }
+
+  /**
+   * Create notifications table
+   */
+  async createNotificationsTable() {
+    try {
+      console.log('🔍 Creating notifications table...');
+      
+      const queryRunner = this.userRepository.manager.connection.createQueryRunner();
+      await queryRunner.connect();
+      
+      try {
+        // Create notifications table
+        const createTableQuery = `
+          CREATE TABLE IF NOT EXISTS notifications (
+            notification_id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+            type VARCHAR(50) NOT NULL CHECK (type IN ('new_booking', 'booking_cancelled', 'payment_received')),
+            title VARCHAR(255) NOT NULL,
+            message TEXT NOT NULL,
+            booking_id INTEGER REFERENCES bookings(booking_id) ON DELETE CASCADE,
+            is_read BOOLEAN NOT NULL DEFAULT false,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+        `;
+        
+        await queryRunner.query(createTableQuery);
+        console.log('✅ Notifications table created successfully');
+        
+        // Create indexes
+        const indexes = [
+          'CREATE INDEX IF NOT EXISTS IDX_notifications_user_id ON notifications(user_id);',
+          'CREATE INDEX IF NOT EXISTS IDX_notifications_is_read ON notifications(is_read);',
+          'CREATE INDEX IF NOT EXISTS IDX_notifications_created_at ON notifications(created_at);'
+        ];
+        
+        for (const indexQuery of indexes) {
+          await queryRunner.query(indexQuery);
+        }
+        console.log('✅ Indexes created successfully');
+        
+        return {
+          success: true,
+          message: 'Notifications table created successfully'
+        };
+      } finally {
+        await queryRunner.release();
+      }
+    } catch (error) {
+      console.error('❌ Error creating notifications table:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
 }

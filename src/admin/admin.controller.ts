@@ -265,4 +265,12 @@ export class AdminController {
   ) {
     return this.adminService.confirmBookingPayment(bookingId);
   }
+
+  /**
+   * Create notifications table
+   */
+  @Post('create-notifications-table')
+  async createNotificationsTable() {
+    return this.adminService.createNotificationsTable();
+  }
 }
