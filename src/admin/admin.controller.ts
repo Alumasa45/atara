@@ -80,4 +80,17 @@ export class AdminController {
   async activateUser(@Param('id') id: number) {
     return await this.adminService.activateUser(id);
   }
+
+  @Get('stats')
+  async getStats() {
+    return await this.adminService.getStats();
+  }
+
+  @Get('bookings')
+  async getBookings(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 50,
+  ) {
+    return await this.adminService.getBookings({ page, limit });
+  }
 }

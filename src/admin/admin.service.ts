@@ -1145,6 +1145,20 @@ export class AdminService {
   }
 
   /**
+   * Get stats for admin dashboard
+   */
+  async getStats() {
+    return await this.getAdminStats();
+  }
+
+  /**
+   * Get bookings with pagination (alias for getAllBookings)
+   */
+  async getBookings(query?: { page?: number; limit?: number }) {
+    return await this.getAllBookings(query);
+  }
+
+  /**
    * Create notifications table
    */
   async createNotificationsTable() {
