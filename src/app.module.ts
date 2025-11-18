@@ -20,6 +20,7 @@ import { LoyaltyModule } from './loyalty/loyalty.module';
 import { TrainerReviewsModule } from './trainer-reviews/trainer-reviews.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { MpesaModule } from './mpesa/mpesa.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { MpesaModule } from './mpesa/mpesa.module';
     TrainerReviewsModule,
     ExpensesModule,
     MpesaModule,
+    NotificationsModule,
   ],
   controllers: [HealthController],
   providers: [],

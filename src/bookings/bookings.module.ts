@@ -11,6 +11,7 @@ import { Session } from '../sessions/entities/session.entity';
 import { Trainer } from '../trainers/entities/trainer.entity';
 import { AuthModule } from '../auth/auth.module';
 import { ProfilesModule } from '../profiles/profiles.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ProfilesModule } from '../profiles/profiles.module';
       Trainer,
     ]),
     ProfilesModule,
+    NotificationsModule,
     // cancellation requests module lives alongside bookings
     // registered below to avoid circular import at AppModule
     AuthModule,

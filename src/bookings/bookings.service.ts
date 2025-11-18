@@ -10,6 +10,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { Booking, status as BookingStatus } from './entities/booking.entity';
 import { ProfilesService } from '../profiles/profiles.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { ScheduleTimeSlot } from '../schedule/entities/schedule-time-slot.entity';
 import { User } from '../users/entities/user.entity';
@@ -30,6 +31,7 @@ export class BookingsService {
     @InjectRepository(SessionGroup)
     private readonly groupRepository: Repository<SessionGroup>,
     private readonly profilesService: ProfilesService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   // helper: category-specific caps
@@ -135,6 +137,15 @@ export class BookingsService {
 
       const saved = await queryRunner.manager.save(booking);
       await queryRunner.commitTransaction();
+      
+      // Create notification for trainer after successful booking
+      try {
+        await this.notificationsService.createBookingNotification(saved);
+      } catch (error) {
+        console.error('Failed to create booking notification:', error);
+        // Don't fail the booking if notification fails
+      }
+      
       return saved;
     } catch (err) {
       await queryRunner.rollbackTransaction();

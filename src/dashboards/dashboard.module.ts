@@ -10,6 +10,7 @@ import { Schedule } from '../schedule/entities/schedule.entity';
 import { ScheduleTimeSlot } from '../schedule/entities/schedule-time-slot.entity';
 import { Session } from '../sessions/entities/session.entity';
 import { CancellationRequest } from '../cancellation-requests/entities/cancellation-request.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CancellationRequest } from '../cancellation-requests/entities/cancellat
       CancellationRequest,
     ]),
     AuthModule,
+    NotificationsModule,
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

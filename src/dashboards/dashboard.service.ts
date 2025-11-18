@@ -18,6 +18,7 @@ import {
   CancellationRequest,
   CancellationRequestStatus,
 } from '../cancellation-requests/entities/cancellation-request.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class DashboardService {
@@ -36,6 +37,7 @@ export class DashboardService {
     private readonly sessionRepository: Repository<Session>,
     @InjectRepository(CancellationRequest)
     private readonly cancellationRepository: Repository<CancellationRequest>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   /**
@@ -212,12 +214,18 @@ export class DashboardService {
         order: { date: 'ASC' }
       });
 
+      // Get notifications for trainer
+      const notifications = await this.notificationsService.getUserNotifications(userId, 10);
+      const unreadCount = await this.notificationsService.getUnreadCount(userId);
+
       return {
         trainer,
         sessions: sessions || [],
         upcomingSchedules: upcomingSchedules || [],
         bookings: bookings || [],
         cancellations: [],
+        notifications: notifications || [],
+        unreadNotifications: unreadCount || 0,
         stats: {
           totalSessions: sessions ? sessions.length : 0,
           totalBookings: bookings ? bookings.length : 0,

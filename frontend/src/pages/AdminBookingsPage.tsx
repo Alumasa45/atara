@@ -7,26 +7,34 @@ const BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'https://atara-dajy.
 
 interface Booking {
   booking_id: number;
-  user_id: number;
+  user_id?: number;
   schedule_id: number;
   status: 'booked' | 'cancelled' | 'missed' | 'completed';
-  created_at: string;
+  date_booked: string;
+  guest_name?: string;
+  guest_email?: string;
+  guest_phone?: string;
+  payment_reference?: string;
   user?: {
     username: string;
     email: string;
   };
-  schedule?: {
-    schedule_id: number;
+  timeSlot?: {
     start_time: string;
     end_time: string;
     session?: {
       session_id: number;
-      title: string;
+      category: string;
+      description: string;
       trainer?: {
         trainer_id: number;
         name: string;
       };
     };
+  };
+  schedule?: {
+    schedule_id: number;
+    date: string;
   };
 }
 
@@ -75,7 +83,7 @@ export default function AdminBookingsPage() {
     const now = new Date();
     if (dateFilter !== 'all') {
       filtered = filtered.filter((b) => {
-        const bookingDate = new Date(b.schedule?.start_time || b.created_at);
+        const bookingDate = new Date(b.timeSlot?.start_time || b.date_booked);
         switch (dateFilter) {
           case 'today':
             return bookingDate.toDateString() === now.toDateString();
@@ -102,10 +110,14 @@ export default function AdminBookingsPage() {
         (b) =>
           b.user?.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           b.user?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          b.schedule?.session?.title
+          b.guest_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          b.guest_email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          b.guest_phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          b.payment_reference?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          b.timeSlot?.session?.category
             ?.toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
-          b.schedule?.session?.trainer?.name
+          b.timeSlot?.session?.trainer?.name
             ?.toLowerCase()
             .includes(searchQuery.toLowerCase()),
       );
@@ -330,6 +342,9 @@ export default function AdminBookingsPage() {
                   </th>
                   <th style={{ padding: '12px', textAlign: 'left' }}>Date</th>
                   <th style={{ padding: '12px', textAlign: 'left' }}>Time</th>
+                  <th style={{ padding: '12px', textAlign: 'left' }}>
+                    Reference
+                  </th>
                   <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
                   <th style={{ padding: '12px', textAlign: 'left' }}>
                     Booked On
@@ -349,30 +364,69 @@ export default function AdminBookingsPage() {
                       #{booking.booking_id}
                     </td>
                     <td style={{ padding: '12px', fontSize: 12 }}>
-                      {booking.user?.username || 'Guest'}
+                      <div>
+                        {booking.user?.username || booking.guest_name || 'Guest'}
+                      </div>
+                      {(booking.user?.email || booking.guest_email) && (
+                        <div style={{ fontSize: 10, color: '#666' }}>
+                          {booking.user?.email || booking.guest_email}
+                        </div>
+                      )}
+                      {booking.guest_phone && (
+                        <div style={{ fontSize: 10, color: '#666' }}>
+                          {booking.guest_phone}
+                        </div>
+                      )}
                     </td>
                     <td style={{ padding: '12px', fontSize: 12 }}>
-                      {booking.schedule?.session?.title || 'N/A'}
+                      <div>
+                        {booking.timeSlot?.session?.category || 'N/A'}
+                      </div>
+                      {booking.timeSlot?.session?.description && (
+                        <div style={{ fontSize: 10, color: '#666' }}>
+                          {booking.timeSlot.session.description}
+                        </div>
+                      )}
                     </td>
                     <td style={{ padding: '12px', fontSize: 12 }}>
-                      {booking.schedule?.session?.trainer?.name || 'N/A'}
+                      {booking.timeSlot?.session?.trainer?.name || 'N/A'}
                     </td>
                     <td style={{ padding: '12px', fontSize: 12 }}>
-                      {booking.schedule?.start_time
+                      {booking.timeSlot?.start_time
                         ? new Date(
-                            booking.schedule.start_time,
+                            booking.timeSlot.start_time,
                           ).toLocaleDateString()
+                        : booking.schedule?.date
+                        ? new Date(booking.schedule.date).toLocaleDateString()
                         : 'N/A'}
                     </td>
                     <td style={{ padding: '12px', fontSize: 12 }}>
-                      {booking.schedule?.start_time
+                      {booking.timeSlot?.start_time
                         ? new Date(
-                            booking.schedule.start_time,
+                            booking.timeSlot.start_time,
                           ).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit',
                           })
                         : 'N/A'}
+                    </td>
+                    <td style={{ padding: '12px', fontSize: 12 }}>
+                      {booking.payment_reference ? (
+                        <div
+                          style={{
+                            padding: '2px 6px',
+                            backgroundColor: '#e3f2fd',
+                            borderRadius: 3,
+                            fontSize: 10,
+                            fontFamily: 'monospace',
+                            color: '#1976d2',
+                          }}
+                        >
+                          {booking.payment_reference}
+                        </div>
+                      ) : (
+                        <span style={{ color: '#999', fontSize: 10 }}>—</span>
+                      )}
                     </td>
                     <td style={{ padding: '12px' }}>
                       <span
@@ -389,7 +443,7 @@ export default function AdminBookingsPage() {
                       </span>
                     </td>
                     <td style={{ padding: '12px', fontSize: 11 }}>
-                      {new Date(booking.created_at).toLocaleDateString()}
+                      {new Date(booking.date_booked).toLocaleDateString()}
                     </td>
                     <td style={{ padding: '12px' }}>
                       {booking.status === 'booked' && (

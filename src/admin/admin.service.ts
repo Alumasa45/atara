@@ -226,46 +226,28 @@ export class AdminService {
     const skip = (page - 1) * limit;
 
     try {
-      // First, try a simple query without relations to test basic connectivity
-      console.log('🔍 Testing basic booking repository connection...');
-      const testCount = await this.bookingRepository.count();
-      console.log(`📊 Total bookings in database: ${testCount}`);
-
-      // If no bookings exist, return empty result
-      if (testCount === 0) {
-        console.log('📊 No bookings found in database');
-        return {
-          data: [],
-          total: 0,
-          page: page,
-          limit: limit,
-          pages: 0,
-        };
-      }
-
       // Build where conditions
       const where: any = {};
       if (query?.filter && query.filter !== 'all') {
-        // Validate filter value against enum
         const validStatuses = ['booked', 'cancelled', 'completed', 'missed'];
         if (validStatuses.includes(query.filter)) {
           where.status = query.filter;
-        } else {
-          console.log(`⚠️ Invalid filter status: ${query.filter}`);
         }
       }
 
-      console.log('📋 WHERE conditions:', where);
-      console.log(`📄 Pagination - page: ${page}, limit: ${limit}, skip: ${skip}`);
-
-      // Try with query builder for better error handling
+      // Get bookings with all necessary relations
       const queryBuilder = this.bookingRepository
         .createQueryBuilder('booking')
+        .leftJoinAndSelect('booking.user', 'user')
+        .leftJoinAndSelect('booking.timeSlot', 'timeSlot')
+        .leftJoinAndSelect('timeSlot.session', 'session')
+        .leftJoinAndSelect('session.trainer', 'trainer')
+        .leftJoinAndSelect('booking.schedule', 'schedule')
         .orderBy('booking.date_booked', 'DESC')
         .skip(skip)
         .take(limit);
 
-      // Add where conditions if any
+      // Add where conditions
       if (Object.keys(where).length > 0) {
         Object.keys(where).forEach(key => {
           queryBuilder.andWhere(`booking.${key} = :${key}`, { [key]: where[key] });
@@ -274,46 +256,33 @@ export class AdminService {
 
       const [bookings, total] = await queryBuilder.getManyAndCount();
 
-      console.log(`✅ Found ${bookings.length} bookings (total in DB: ${total})`);
-      console.log('📊 Sample booking data:', bookings.slice(0, 1));
-
-      // Apply search filter in application layer
+      // Apply search filter
       let filtered = bookings;
       if (query?.search) {
         const searchLower = query.search.toLowerCase();
         filtered = bookings.filter((b: any) => {
           return (
+            b.user?.username?.toLowerCase().includes(searchLower) ||
+            b.user?.email?.toLowerCase().includes(searchLower) ||
             b.guest_name?.toLowerCase().includes(searchLower) ||
             b.guest_email?.toLowerCase().includes(searchLower) ||
             b.guest_phone?.toLowerCase().includes(searchLower) ||
-            b.payment_reference?.toLowerCase().includes(searchLower)
+            b.payment_reference?.toLowerCase().includes(searchLower) ||
+            b.timeSlot?.session?.category?.toLowerCase().includes(searchLower) ||
+            b.timeSlot?.session?.trainer?.name?.toLowerCase().includes(searchLower)
           );
         });
-        console.log(`🔍 After search filter: ${filtered.length} bookings`);
       }
 
-      const response = {
+      return {
         data: filtered,
         total,
         page,
         limit,
         pages: Math.ceil(total / limit),
       };
-
-      console.log('📤 Response structure:', {
-        dataLength: response.data.length,
-        total: response.total,
-        page: response.page,
-        limit: response.limit,
-        pages: response.pages
-      });
-      return response;
     } catch (error) {
       console.error('❌ Error in getAllBookings:', error);
-      console.error('❌ Error message:', error.message);
-      console.error('❌ Error stack:', error.stack);
-      
-      // Return a safe error response instead of throwing
       return {
         data: [],
         total: 0,

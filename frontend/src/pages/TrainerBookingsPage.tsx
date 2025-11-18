@@ -107,8 +107,18 @@ export default function TrainerBookingsPage() {
                       Student
                     </label>
                     <div style={{ fontSize: 16, fontWeight: 'bold' }}>
-                      {booking.user?.username || 'N/A'}
+                      {booking.user?.username || booking.guest_name || 'Guest'}
                     </div>
+                    {(booking.user?.email || booking.guest_email) && (
+                      <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+                        {booking.user?.email || booking.guest_email}
+                      </div>
+                    )}
+                    {booking.guest_phone && (
+                      <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+                        {booking.guest_phone}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -123,8 +133,13 @@ export default function TrainerBookingsPage() {
                       Session
                     </label>
                     <div style={{ fontSize: 16 }}>
-                      {booking.schedule?.session?.title || 'N/A'}
+                      {booking.timeSlot?.session?.category || 'N/A'}
                     </div>
+                    {booking.timeSlot?.session?.description && (
+                      <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>
+                        {booking.timeSlot.session.description}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -139,9 +154,40 @@ export default function TrainerBookingsPage() {
                       Date & Time
                     </label>
                     <div style={{ fontSize: 16 }}>
-                      {booking.schedule?.start_time
-                        ? new Date(booking.schedule.start_time).toLocaleString()
+                      {booking.timeSlot?.start_time
+                        ? new Date(booking.timeSlot.start_time).toLocaleString()
                         : 'N/A'}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        color: 'var(--muted)',
+                        fontSize: 12,
+                        display: 'block',
+                        marginBottom: 4,
+                      }}
+                    >
+                      Payment Reference
+                    </label>
+                    <div style={{ fontSize: 14 }}>
+                      {booking.payment_reference ? (
+                        <span
+                          style={{
+                            padding: '2px 6px',
+                            backgroundColor: '#e3f2fd',
+                            borderRadius: 3,
+                            fontSize: 12,
+                            fontFamily: 'monospace',
+                            color: '#1976d2',
+                          }}
+                        >
+                          {booking.payment_reference}
+                        </span>
+                      ) : (
+                        <span style={{ color: '#999', fontSize: 12 }}>No reference</span>
+                      )}
                     </div>
                   </div>
 
