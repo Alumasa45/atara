@@ -203,6 +203,38 @@ export async function getMyActiveSubscription() {
   return getJson('/memberships/my-active');
 }
 
+// Axios-like API client for notifications
+export const api = {
+  get: async (path: string) => {
+    const data = await getJson(path);
+    return { data };
+  },
+  post: async (path: string, body?: any) => {
+    const data = await postJson(path, body);
+    return { data };
+  },
+  patch: async (path: string, body?: any) => {
+    const token = localStorage.getItem('token');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(`${BASE}${path}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(body || {}),
+    });
+    if (!res.ok) throw new Error(`Request failed ${res.status}`);
+    const text = await res.text();
+    if (!text) return { data: {} };
+    try {
+      return { data: JSON.parse(text) };
+    } catch (e) {
+      return { data: {} };
+    }
+  }
+};
+
 export default {
   fetchTrainers,
   fetchSessions,
