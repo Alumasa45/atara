@@ -131,14 +131,17 @@ export class AdminController {
   }
 
   /**
-   * Debug endpoint: test database connectivity
+   * Debug endpoint: test database connectivity and create notifications table
    */
   @Get('debug/db-test')
   async dbTest() {
     console.log('🔍 [AdminController /admin/debug/db-test] request received');
     try {
-      const result = await this.adminService.testDatabaseConnection();
+      console.log('🔍 Creating notifications table first...');
       const notificationResult = await this.adminService.createNotificationsTable();
+      console.log('🔍 Notification table result:', notificationResult);
+      
+      const result = await this.adminService.testDatabaseConnection();
       return { ...result, notificationTable: notificationResult };
     } catch (error) {
       console.error('❌ Database test failed:', error);
