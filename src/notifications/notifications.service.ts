@@ -22,16 +22,29 @@ export class NotificationsService {
    */
   async createBookingNotification(booking: Booking): Promise<void> {
     try {
+      console.log('🔔 Creating booking notification for booking:', booking.booking_id);
+      console.log('🔔 Booking timeSlot:', !!booking.timeSlot);
+      console.log('🔔 Booking session:', !!booking.timeSlot?.session);
+      console.log('🔔 Booking trainer:', !!booking.timeSlot?.session?.trainer);
+      
       // Get trainer from the booking's session
       const trainerId = booking.timeSlot?.session?.trainer?.trainer_id;
-      if (!trainerId) return;
+      console.log('🔔 Trainer ID:', trainerId);
+      if (!trainerId) {
+        console.log('🔔 No trainer ID found, skipping trainer notification');
+        return;
+      }
 
       const trainer = await this.trainerRepository.findOne({
         where: { trainer_id: trainerId },
         relations: ['user'],
       });
+      console.log('🔔 Found trainer:', !!trainer, 'with user:', !!trainer?.user);
 
-      if (!trainer?.user) return;
+      if (!trainer?.user) {
+        console.log('🔔 No trainer user found, skipping trainer notification');
+        return;
+      }
 
       const clientName = booking.user?.username || booking.guest_name || 'A client';
       const sessionName = booking.timeSlot?.session?.category || 'session';
@@ -49,9 +62,10 @@ export class NotificationsService {
       notification.booking_id = booking.booking_id;
       notification.is_read = false;
 
-      await this.notificationRepository.save(notification);
+      const savedNotification = await this.notificationRepository.save(notification);
+      console.log('🔔 Trainer notification saved:', savedNotification.notification_id);
     } catch (error) {
-      console.error('Error creating booking notification:', error);
+      console.error('❌ Error creating booking notification:', error);
     }
   }
 
@@ -122,10 +136,11 @@ export class NotificationsService {
         notification.booking_id = booking.booking_id;
         notification.is_read = false;
 
-        await this.notificationRepository.save(notification);
+        const savedNotification = await this.notificationRepository.save(notification);
+        console.log('🔔 Admin notification saved:', savedNotification.notification_id);
       }
     } catch (error) {
-      console.error('Error creating admin booking notification:', error);
+      console.error('❌ Error creating admin booking notification:', error);
     }
   }
 
@@ -155,10 +170,11 @@ export class NotificationsService {
         notification.booking_id = booking.booking_id;
         notification.is_read = false;
 
-        await this.notificationRepository.save(notification);
+        const savedNotification = await this.notificationRepository.save(notification);
+        console.log('🔔 Manager notification saved:', savedNotification.notification_id);
       }
     } catch (error) {
-      console.error('Error creating manager booking notification:', error);
+      console.error('❌ Error creating manager booking notification:', error);
     }
   }
 
@@ -267,9 +283,11 @@ export class NotificationsService {
    */
   async createNewExpenseNotification(expense: any): Promise<void> {
     try {
+      console.log('💰🔔 Creating expense notification for expense:', expense.expense_id);
       const managers = await this.userRepository.find({
         where: { role: role.manager },
       });
+      console.log('💰🔔 Found managers:', managers.length);
 
       for (const manager of managers) {
         const notification = new Notification();

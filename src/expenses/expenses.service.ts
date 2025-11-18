@@ -14,14 +14,20 @@ export class ExpensesService {
   ) {}
 
   async create(createExpenseDto: CreateExpenseDto): Promise<Expense> {
+    console.log('💰 Creating expense:', createExpenseDto);
+    console.log('💰 NotificationsService available:', !!this.notificationsService);
+    
     const expense = this.expenseRepository.create(createExpenseDto);
     const saved = await this.expenseRepository.save(expense);
+    console.log('💰 Expense saved:', saved.expense_id);
     
     // Create notification for managers about new expense
     try {
+      console.log('💰 Calling createNewExpenseNotification...');
       await this.notificationsService.createNewExpenseNotification(saved);
+      console.log('💰 Notification service call completed');
     } catch (error) {
-      console.error('Failed to create expense notification:', error);
+      console.error('❌ Failed to create expense notification:', error);
     }
     
     return saved;

@@ -138,11 +138,21 @@ export class BookingsService {
       const saved = await queryRunner.manager.save(booking);
       await queryRunner.commitTransaction();
       
+      // Load the booking with all necessary relations for notifications
+      const bookingWithRelations = await this.bookingRepository.findOne({
+        where: { booking_id: saved.booking_id },
+        relations: ['timeSlot', 'timeSlot.session', 'timeSlot.session.trainer', 'timeSlot.session.trainer.user', 'user']
+      });
+      
       // Create notifications for trainer, admin, and manager after successful booking
       try {
-        await this.notificationsService.createBookingNotification(saved);
-        await this.notificationsService.createAdminBookingNotification(saved);
-        await this.notificationsService.createManagerBookingNotification(saved);
+        console.log('Creating notifications for booking:', bookingWithRelations?.booking_id);
+        if (bookingWithRelations) {
+          await this.notificationsService.createBookingNotification(bookingWithRelations);
+          await this.notificationsService.createAdminBookingNotification(bookingWithRelations);
+          await this.notificationsService.createManagerBookingNotification(bookingWithRelations);
+          console.log('Notifications created successfully');
+        }
       } catch (error) {
         console.error('Failed to create booking notifications:', error);
       }
