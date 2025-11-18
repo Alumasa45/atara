@@ -214,12 +214,15 @@ export class DashboardService {
         order: { date: 'ASC' }
       });
 
-      // Get notifications for trainer (temporarily disabled until migration runs)
-      const notifications = [];
-      const unreadCount = 0;
-      // TODO: Re-enable after notifications table is created
-      // const notifications = await this.notificationsService.getUserNotifications(userId, 10);
-      // const unreadCount = await this.notificationsService.getUnreadCount(userId);
+      // Get notifications for trainer
+      let notifications = [];
+      let unreadCount = 0;
+      try {
+        notifications = await this.notificationsService.getUserNotifications(userId, 10);
+        unreadCount = await this.notificationsService.getUnreadCount(userId);
+      } catch (error) {
+        console.log('Notifications not available yet:', error.message);
+      }
 
       return {
         trainer,

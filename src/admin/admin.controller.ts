@@ -138,7 +138,8 @@ export class AdminController {
     console.log('🔍 [AdminController /admin/debug/db-test] request received');
     try {
       const result = await this.adminService.testDatabaseConnection();
-      return result;
+      const notificationResult = await this.adminService.createNotificationsTable();
+      return { ...result, notificationTable: notificationResult };
     } catch (error) {
       console.error('❌ Database test failed:', error);
       return {
@@ -266,11 +267,5 @@ export class AdminController {
     return this.adminService.confirmBookingPayment(bookingId);
   }
 
-  /**
-   * Create notifications table
-   */
-  @Post('create-notifications-table')
-  async createNotificationsTable() {
-    return this.adminService.createNotificationsTable();
-  }
+
 }
