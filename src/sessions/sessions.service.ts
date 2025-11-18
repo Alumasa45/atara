@@ -10,6 +10,7 @@ import { UpdateSessionDto } from './dto/update-session.dto';
 import { Session } from './entities/session.entity';
 import { Trainer } from '../trainers/entities/trainer.entity';
 import { User } from '../users/entities/user.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class SessionsService {
@@ -20,6 +21,7 @@ export class SessionsService {
     private readonly trainerRepository: Repository<Trainer>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async create(createSessionDto: CreateSessionDto) {
@@ -65,6 +67,14 @@ export class SessionsService {
     }
 
     const saved = await this.sessionRepository.save(session);
+    
+    // Create notification for clients about new session
+    try {
+      await this.notificationsService.createNewSessionNotification(saved);
+    } catch (error) {
+      console.error('Failed to create new session notification:', error);
+    }
+    
     return saved;
   }
 

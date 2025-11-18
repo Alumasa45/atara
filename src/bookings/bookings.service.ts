@@ -138,13 +138,14 @@ export class BookingsService {
       const saved = await queryRunner.manager.save(booking);
       await queryRunner.commitTransaction();
       
-      // Create notification for trainer after successful booking (temporarily disabled)
-      // TODO: Re-enable after notifications table is created
-      // try {
-      //   await this.notificationsService.createBookingNotification(saved);
-      // } catch (error) {
-      //   console.error('Failed to create booking notification:', error);
-      // }
+      // Create notifications for trainer, admin, and manager after successful booking
+      try {
+        await this.notificationsService.createBookingNotification(saved);
+        await this.notificationsService.createAdminBookingNotification(saved);
+        await this.notificationsService.createManagerBookingNotification(saved);
+      } catch (error) {
+        console.error('Failed to create booking notifications:', error);
+      }
       
       return saved;
     } catch (err) {
@@ -227,9 +228,12 @@ export class BookingsService {
       ) {
         // award 5 points
         await this.profilesService.addPoints(saved.user_id, 5);
+        // Create session completed notification
+        await this.notificationsService.createSessionCompletedNotification(saved, 5);
       }
     } catch (e) {
       // don't fail update on points-award errors
+      console.error('Error awarding points or creating notification:', e);
     }
 
     return saved;
@@ -271,9 +275,12 @@ export class BookingsService {
         saved.user_id
       ) {
         await this.profilesService.addPoints(saved.user_id, 5);
+        // Create session completed notification
+        await this.notificationsService.createSessionCompletedNotification(saved, 5);
       }
     } catch (e) {
       // don't fail on points award
+      console.error('Error awarding points or creating notification:', e);
     }
 
     return { booking: saved, verified };

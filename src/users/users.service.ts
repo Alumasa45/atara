@@ -21,6 +21,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { EmailVerification } from './entities/email-verification.entity';
 import { MailService } from '../mail/mail.service';
 import { Trainer, specialty, status } from '../trainers/entities/trainer.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class UsersService {
@@ -34,6 +35,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
     private readonly profilesService: ProfilesService,
     private readonly mailService: MailService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   // Google OAuth2 client; requires GOOGLE_CLIENT_ID in env
@@ -111,6 +113,13 @@ export class UsersService {
       } catch (e) {
         // non-fatal
         console.warn('Failed to create/send verification email', e);
+      }
+
+      // Create notification for managers about new user registration
+      try {
+        await this.notificationsService.createNewUserNotification(saved);
+      } catch (e) {
+        console.error('Failed to create new user notification:', e);
       }
 
       // Generate JWT tokens for immediate authentication after signup
@@ -371,6 +380,13 @@ export class UsersService {
       try {
         await this.profilesService.createForUser(user, 5);
       } catch (e) {}
+      
+      // Create notification for managers about new user registration
+      try {
+        await this.notificationsService.createNewUserNotification(user);
+      } catch (e) {
+        console.error('Failed to create new user notification:', e);
+      }
     } else if (!user.google_id) {
       // Link google id to existing account
       user.google_id = verifiedGoogleId;

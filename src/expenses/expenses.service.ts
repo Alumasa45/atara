@@ -3,17 +3,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Expense } from './entities/expense.entity';
 import { CreateExpenseDto, UpdateExpenseStatusDto } from './dto/create-expense.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ExpensesService {
   constructor(
     @InjectRepository(Expense)
     private expenseRepository: Repository<Expense>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async create(createExpenseDto: CreateExpenseDto): Promise<Expense> {
     const expense = this.expenseRepository.create(createExpenseDto);
-    return this.expenseRepository.save(expense);
+    const saved = await this.expenseRepository.save(expense);
+    
+    // Create notification for managers about new expense
+    try {
+      await this.notificationsService.createNewExpenseNotification(saved);
+    } catch (error) {
+      console.error('Failed to create expense notification:', error);
+    }
+    
+    return saved;
   }
 
   async findAll(page: number = 1, limit: number = 20) {

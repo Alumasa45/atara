@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ExpensesService } from './expenses.service';
 import { ExpensesController } from './expenses.controller';
 import { Expense } from './entities/expense.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { Expense } from './entities/expense.entity';
       secret: process.env.JWT_SECRET || 'mysecretkey',
       signOptions: { expiresIn: '3600s' },
     }),
+    forwardRef(() => NotificationsModule),
   ],
   controllers: [ExpensesController],
   providers: [ExpensesService],

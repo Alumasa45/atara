@@ -1,17 +1,84 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { Dumbbell, Star, User, LogOut } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Dumbbell, Star, User, LogOut, Bell } from 'lucide-react';
+import { api } from '../api';
 
 export default function NavigationHeader() {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
       setUser(JSON.parse(userData));
+      fetchUnreadCount();
     }
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await api.get('/notifications/unread-count');
+      setUnreadCount(response.data.count);
+    } catch (error) {
+      console.error('Error fetching unread count:', error);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await api.get('/notifications?limit=10');
+      setNotifications(response.data);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  const markAsRead = async (notificationId: number) => {
+    try {
+      await api.patch(`/notifications/${notificationId}/read`);
+      fetchUnreadCount();
+      fetchNotifications();
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await api.patch('/notifications/mark-all-read');
+      setUnreadCount(0);
+      fetchNotifications();
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    }
+  };
+
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+    if (!showNotifications) {
+      fetchNotifications();
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -221,6 +288,163 @@ export default function NavigationHeader() {
           >
              Contact
           </Link>
+
+          {/* Notifications Bell */}
+          {user && (
+            <div ref={notificationRef} style={{ position: 'relative', marginLeft: '16px' }}>
+              <button
+                onClick={toggleNotifications}
+                style={{
+                  backgroundColor: 'rgba(221, 184, 146, 0.2)',
+                  color: '#FFFFFF',
+                  border: '2px solid #DDB892',
+                  padding: '10px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#DDB892';
+                  e.currentTarget.style.color = '#3b2f2a';
+                  e.currentTarget.style.transform = 'scale(1.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(221, 184, 146, 0.2)';
+                  e.currentTarget.style.color = '#FFFFFF';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                <Bell size={18} />
+                {unreadCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-5px',
+                      right: '-5px',
+                      backgroundColor: '#ff4444',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notifications Dropdown */}
+              {showNotifications && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '8px',
+                    backgroundColor: 'white',
+                    border: '1px solid #ddd',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    width: '350px',
+                    maxHeight: '400px',
+                    overflowY: 'auto',
+                    zIndex: 1001,
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '12px 16px',
+                      borderBottom: '1px solid #eee',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      backgroundColor: '#f8f9fa',
+                    }}
+                  >
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '16px' }}>Notifications</h3>
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={markAllAsRead}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#7F5539',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+                  
+                  {notifications.length === 0 ? (
+                    <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                      No notifications
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.notification_id}
+                        onClick={() => !notification.is_read && markAsRead(notification.notification_id)}
+                        style={{
+                          padding: '12px 16px',
+                          borderBottom: '1px solid #eee',
+                          cursor: notification.is_read ? 'default' : 'pointer',
+                          backgroundColor: notification.is_read ? 'white' : '#f0f8ff',
+                          transition: 'background-color 0.2s',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!notification.is_read) {
+                            e.currentTarget.style.backgroundColor = '#e6f3ff';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = notification.is_read ? 'white' : '#f0f8ff';
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ flex: 1 }}>
+                            <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: '#333' }}>
+                              {notification.title}
+                            </h4>
+                            <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#666', lineHeight: '1.4' }}>
+                              {notification.message}
+                            </p>
+                            <span style={{ fontSize: '11px', color: '#999' }}>
+                              {new Date(notification.created_at).toLocaleString()}
+                            </span>
+                          </div>
+                          {!notification.is_read && (
+                            <div
+                              style={{
+                                width: '8px',
+                                height: '8px',
+                                backgroundColor: '#007bff',
+                                borderRadius: '50%',
+                                marginLeft: '8px',
+                                marginTop: '4px',
+                              }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* User Info & Logout */}
           {user && (

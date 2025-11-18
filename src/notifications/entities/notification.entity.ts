@@ -14,6 +14,11 @@ export enum NotificationType {
   NEW_BOOKING = 'new_booking',
   BOOKING_CANCELLED = 'booking_cancelled',
   PAYMENT_RECEIVED = 'payment_received',
+  SESSION_COMPLETED = 'session_completed',
+  LOYALTY_POINTS_EARNED = 'loyalty_points_earned',
+  NEW_SESSION_ADDED = 'new_session_added',
+  NEW_USER_REGISTERED = 'new_user_registered',
+  NEW_EXPENSE_ADDED = 'new_expense_added',
 }
 
 @Entity('notifications')

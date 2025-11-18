@@ -9,6 +9,7 @@ import { EmailVerification } from './entities/email-verification.entity';
 import { Trainer } from '../trainers/entities/trainer.entity';
 import { MailService } from '../mail/mail.service';
 import { ProfilesModule } from '../profiles/profiles.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   controllers: [UsersController, AuthController],
@@ -17,6 +18,7 @@ import { ProfilesModule } from '../profiles/profiles.module';
     TypeOrmModule.forFeature([User, EmailVerification, Trainer]),
     forwardRef(() => ProfilesModule),
     forwardRef(() => AuthModule),
+    forwardRef(() => NotificationsModule),
   ],
   exports: [TypeOrmModule, UsersService, AuthModule],
 })
