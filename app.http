@@ -66,6 +66,9 @@ Content-Type: application/json
 
 POST https://atara-dajy.onrender.com/admin/create-notifications-table
 Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{}
 
 
 ###Login - Trainer User
@@ -299,6 +302,8 @@ Content-Type: application/json
 
 {
     "email": "client@gmail.com",
+    "password": "Client@1234"
+},
     "password": "Client@1234"
 }
 
