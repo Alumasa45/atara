@@ -632,10 +632,10 @@ export class AdminService {
         totalNewUsers > 0 ? (totalBookings / totalNewUsers).toFixed(2) : 0;
 
       // Find top trainer (trainer with most bookings/sessions)
-      let topTrainer = trainers[0]?.name || 'Not Available';
+      let topTrainer = 'No trainers available';
       if (trainers.length > 0) {
         // In real scenario, count bookings per trainer
-        topTrainer = trainers[0].name;
+        topTrainer = trainers[0].name || 'Trainer name not set';
       }
 
       const currentMonth = new Date().toLocaleString('default', {
@@ -684,10 +684,10 @@ export class AdminService {
           completedSessions: 0,
           totalLoyaltyPointsAwarded: 0,
           averageBookingPerUser: 0,
-          topTrainer: 'N/A',
+          topTrainer: 'No trainers available',
           systemHealthScore: 0,
           avgSessionCompletion: 0,
-          peakBookingTime: 'N/A',
+          peakBookingTime: 'No data available',
         },
       };
     }

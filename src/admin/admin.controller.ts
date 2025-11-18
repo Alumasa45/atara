@@ -93,4 +93,12 @@ export class AdminController {
   ) {
     return await this.adminService.getBookings({ page, limit });
   }
+
+  @Patch('bookings/:id/status')
+  async updateBookingStatus(
+    @Param('id') id: number,
+    @Body() body: { status: string; payment_reference?: string },
+  ) {
+    return await this.adminService.updateBookingStatus(id, body.status as any, body.payment_reference);
+  }
 }

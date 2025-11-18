@@ -19,9 +19,9 @@ export default function ContactPage() {
           <p style={{ fontSize: '16px', lineHeight: 1.6, color: '#666' }}>
             📧 Email: ataradesk25@gmail.com
             <br />
-            📞 Phone: Coming soon
+            📞 Phone: +254 700 000 000
             <br />
-            📍 Address: Coming soon
+            📍 Address: Nairobi, Kenya
           </p>
         </div>
       </div>

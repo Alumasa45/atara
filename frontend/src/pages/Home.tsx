@@ -117,6 +117,7 @@ export default function Home() {
       />
 
       <div
+        className="home-layout"
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 320px',
@@ -125,6 +126,8 @@ export default function Home() {
           position: 'relative',
           zIndex: 10,
           padding: '0 20px',
+          maxWidth: '1200px',
+          margin: '92px auto 0',
         }}
       >
         <div>

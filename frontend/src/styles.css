@@ -582,6 +582,46 @@ body{
   }
 }
 
+/* Home layout responsive styles */
+.home-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .home-layout {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding: 0 16px;
+  }
+  
+  .home-layout aside {
+    order: -1; /* Move "Book a Class" to top on mobile */
+  }
+  
+  .home-layout aside .card {
+    text-align: center;
+  }
+  
+  .home-layout aside .card .button {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-layout {
+    padding: 0 12px;
+    gap: 8px;
+  }
+}
+
 /* Carousel tweaks */
 .carousel-img{border-radius:12px}
 .carousel-dots button{width:12px;height:12px}
