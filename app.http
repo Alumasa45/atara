@@ -214,6 +214,11 @@ GET https://atara-dajy.onrender.com/
 GET https://atara-dajy.onrender.com/admin/debug/whoami
 Authorization: Bearer {{adminToken}}
 
+### 10a. FIX: Create Notifications Table
+### This will create the missing notifications table
+POST https://atara-dajy.onrender.com/admin/debug/fix-notifications
+Authorization: Bearer {{adminToken}}
+
 ### 11. TEST: Create Multiple Schedules on Same Day
 ### First Schedule - Morning Session
 POST https://atara-dajy.onrender.com/admin/schedules

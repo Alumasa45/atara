@@ -215,7 +215,7 @@ export class DashboardService {
       });
 
       // Get notifications for trainer
-      let notifications = [];
+      let notifications: any[] = [];
       let unreadCount = 0;
       try {
         notifications = await this.notificationsService.getUserNotifications(userId, 10);

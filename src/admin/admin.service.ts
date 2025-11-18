@@ -1145,9 +1145,26 @@ export class AdminService {
       await queryRunner.connect();
       
       try {
+        // Check if table exists first
+        const tableExists = await queryRunner.query(`
+          SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = 'notifications'
+          );
+        `);
+        
+        if (tableExists[0].exists) {
+          console.log('✅ Notifications table already exists');
+          return {
+            success: true,
+            message: 'Notifications table already exists'
+          };
+        }
+        
         // Create notifications table
         const createTableQuery = `
-          CREATE TABLE IF NOT EXISTS notifications (
+          CREATE TABLE notifications (
             notification_id SERIAL PRIMARY KEY,
             user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
             type VARCHAR(50) NOT NULL CHECK (type IN ('new_booking', 'booking_cancelled', 'payment_received')),
@@ -1164,9 +1181,9 @@ export class AdminService {
         
         // Create indexes
         const indexes = [
-          'CREATE INDEX IF NOT EXISTS IDX_notifications_user_id ON notifications(user_id);',
-          'CREATE INDEX IF NOT EXISTS IDX_notifications_is_read ON notifications(is_read);',
-          'CREATE INDEX IF NOT EXISTS IDX_notifications_created_at ON notifications(created_at);'
+          'CREATE INDEX IDX_notifications_user_id ON notifications(user_id);',
+          'CREATE INDEX IDX_notifications_is_read ON notifications(is_read);',
+          'CREATE INDEX IDX_notifications_created_at ON notifications(created_at);'
         ];
         
         for (const indexQuery of indexes) {

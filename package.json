@@ -23,7 +23,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "build:frontend:copy": "node ./scripts/build-and-copy-frontend.js"
+    "build:frontend:copy": "node ./scripts/build-and-copy-frontend.js",
+    "fix:notifications": "node fix-production-notifications.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
