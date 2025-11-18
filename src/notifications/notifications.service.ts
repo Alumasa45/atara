@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification, NotificationType } from './entities/notification.entity';
-import { User } from '../users/entities/user.entity';
+import { User, role } from '../users/entities/user.entity';
 import { Booking } from '../bookings/entities/booking.entity';
 import { Trainer } from '../trainers/entities/trainer.entity';
 
@@ -102,7 +102,7 @@ export class NotificationsService {
   async createAdminBookingNotification(booking: Booking): Promise<void> {
     try {
       const admins = await this.userRepository.find({
-        where: { role: 'admin' },
+        where: { role: role.admin },
       });
 
       const clientName = booking.user?.username || booking.guest_name || 'A client';
@@ -135,7 +135,7 @@ export class NotificationsService {
   async createManagerBookingNotification(booking: Booking): Promise<void> {
     try {
       const managers = await this.userRepository.find({
-        where: { role: 'manager' },
+        where: { role: role.manager },
       });
 
       const clientName = booking.user?.username || booking.guest_name || 'A client';
@@ -168,7 +168,7 @@ export class NotificationsService {
   async createNewSessionNotification(session: any): Promise<void> {
     try {
       const clients = await this.userRepository.find({
-        where: { role: 'client' },
+        where: { role: role.client },
       });
 
       const trainerName = session.trainer?.user?.username || 'Trainer';
@@ -243,7 +243,7 @@ export class NotificationsService {
   async createNewUserNotification(newUser: User): Promise<void> {
     try {
       const managers = await this.userRepository.find({
-        where: { role: 'manager' },
+        where: { role: role.manager },
       });
 
       for (const manager of managers) {
@@ -268,7 +268,7 @@ export class NotificationsService {
   async createNewExpenseNotification(expense: any): Promise<void> {
     try {
       const managers = await this.userRepository.find({
-        where: { role: 'manager' },
+        where: { role: role.manager },
       });
 
       for (const manager of managers) {
@@ -277,7 +277,7 @@ export class NotificationsService {
         notification.user_id = manager.user_id;
         notification.type = NotificationType.NEW_EXPENSE_ADDED;
         notification.title = 'New Expense Added';
-        notification.message = `New expense: ${expense.description} - $${expense.amount}`;
+        notification.message = `New expense: ${expense.name} - $${expense.cost}`;
         notification.is_read = false;
 
         await this.notificationRepository.save(notification);
