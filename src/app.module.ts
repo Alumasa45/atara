@@ -61,7 +61,6 @@ import { NotificationsModule } from './notifications/notifications.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/',
-      exclude: ['/auth/(.*)', '/health/(.*)', '/api/(.*)', '/dashboard/(.*)', '/users/(.*)', '/trainers/(.*)', '/sessions/(.*)', '/bookings/(.*)', '/schedule/(.*)', '/admin/(.*)'],
     }),
 
     // slides endpoint to list public images
