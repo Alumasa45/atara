@@ -719,6 +719,16 @@ export class AdminService {
   }
 
   /**
+   * Suspend user account
+   */
+  async suspendUser(userId: number) {
+    const user = await this.getUserById(userId);
+
+    user.status = userStatus.inactive;
+    return await this.userRepository.save(user);
+  }
+
+  /**
    * Delete user (hard delete)
    */
   async deleteUser(userId: number, adminId: number) {

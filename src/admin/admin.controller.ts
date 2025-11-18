@@ -45,7 +45,7 @@ export class AdminController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ) {
-    return await this.adminService.getAllUsers(page, limit);
+    return await this.adminService.getAllUsers({ page, limit });
   }
 
   @Get('trainers')
@@ -53,7 +53,7 @@ export class AdminController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 100,
   ) {
-    return await this.adminService.getAllTrainers(page, limit);
+    return await this.adminService.getAllTrainers({ page, limit });
   }
 
   @Post('trainers')
@@ -67,8 +67,8 @@ export class AdminController {
   }
 
   @Post('schedules')
-  async createSchedule(@Body() createScheduleDto: any) {
-    return await this.adminService.createSchedule(createScheduleDto);
+  async createSchedule(@Body() createScheduleDto: any, @Request() req) {
+    return await this.adminService.createSchedule(createScheduleDto, req.user.userId);
   }
 
   @Patch('users/:id/suspend')
