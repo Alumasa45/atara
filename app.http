@@ -1,5 +1,5 @@
 @url=https://atara-dajy.onrender.com
-@adminToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzQ1NzYxNiwiZXhwIjoxNzYzNDYxMjE2fQ.IRROg0v9zut7bHUdJiFKh31DvAWqXYxHUcxaPKjqI3Y
+@adminToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzQ2MTYzNCwiZXhwIjoxNzYzNDY1MjM0fQ.JtEJkn4K8TWlBIRRrx8BHyd-4qNKSeNTy-YXjcJCmYk
 @trainerToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJyb2xlIjoidHJhaW5lciIsImlhdCI6MTc2MzQ1ODMwMywiZXhwIjoxNzYzNDYxOTAzfQ.OEKcksWNNqI2LA6waRDqHtbdqLhjU_0skRvIvNUNjUw
 @clientToken=PASTE_CLIENT_TOKEN_HERE
 
@@ -644,7 +644,7 @@ Content-Type: application/json
 
 ### CREATE NOTIFICATIONS TABLE
 ### Admin endpoint to create notifications table in DB
-GET https://atara-dajy.onrender.com/admin/debug/db-test
+POST https://atara-dajy.onrender.com/admin/debug/fix-notifications
 Authorization: Bearer {{adminToken}}
 
 ### NOTIFICATIONS TESTING

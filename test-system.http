@@ -1,0 +1,42 @@
+@url=https://atara-dajy.onrender.com
+@adminToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzQ2MjA2MiwiZXhwIjoxNzYzNDY1NjYyfQ.Ns5uAm8bNr8JiYbwYGprQ0pNWda9-Yx_YaebBjXS9_o
+@trainerToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI1LCJyb2xlIjoidHJhaW5lciIsImlhdCI6MTc2MzQ2MzcxNCwiZXhwIjoxNzYzNDY3MzE0fQ.v1yQNTWjP6WTQSByHJN9EX5jtDr2cHPRsPE6dxi1wk0
+
+### 1. Test Database Connection
+GET {{url}}/admin/debug/db-test
+Authorization: Bearer {{adminToken}}
+
+### 2. Test Trainer Dashboard (was failing before)
+GET {{url}}/dashboard/trainer
+Authorization: Bearer {{trainerToken}}
+
+### 3. Test Notifications Endpoint
+GET {{url}}/notifications
+Authorization: Bearer {{trainerToken}}
+
+### 4. Test Client Dashboard
+GET {{url}}/dashboard/client
+Authorization: Bearer {{trainerToken}}
+
+### 5. Test System Health
+GET {{url}}/
+
+### 6. Create Test Notification (by making a booking)
+POST {{url}}/bookings
+Content-Type: application/json
+
+{
+    "time_slot_id": 9,
+    "guest_name": "Test Client",
+    "guest_phone": "+1234567890",
+    "guest_email": "test@example.com",
+    "payment_reference": "TEST-PAY-123"
+}
+
+### 7. Check Notifications Again (should have data now)
+GET {{url}}/notifications
+Authorization: Bearer {{trainerToken}}
+
+### 8. Test Trainer Dashboard (should work without errors)
+GET {{url}}/dashboard/trainer
+Authorization: Bearer {{trainerToken}}
