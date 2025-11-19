@@ -231,13 +231,13 @@ export class DashboardService {
         email: trainer.email === 'N/A' ? 'trainer@atara.com' : trainer.email,
         phone: trainer.phone === 'N/A' ? '+254 700 000 000' : trainer.phone,
         bio: trainer.bio === 'N/A' ? 'Professional fitness trainer' : trainer.bio,
-        specialty: trainer.specialty === 'N/A' ? 'strength_training' : trainer.specialty
+        specialty: (trainer.specialty as string) === 'N/A' ? 'strength_training' : trainer.specialty
       };
 
       // Clean up sessions data
       const cleanSessions = (sessions || []).map(session => ({
         ...session,
-        category: session.category === 'N/A' ? 'strength_training' : session.category,
+        category: (session.category as string) === 'N/A' ? 'strength_training' : session.category,
         description: session.description === 'N/A' ? 'Fitness Training Session' : session.description,
         duration_minutes: session.duration_minutes || 60,
         capacity: session.capacity || 15,
@@ -469,7 +469,7 @@ export class DashboardService {
     // Return sessions with meaningful data instead of N/A
     return sessions.map(session => ({
       ...session,
-      category: session.category === 'N/A' ? 'strength_training' : (session.category || 'strength_training'),
+      category: (session.category as string) === 'N/A' ? 'strength_training' : (session.category || 'strength_training'),
       description: session.description === 'N/A' ? 'Fitness Training Session' : (session.description || 'Fitness Training Session'),
       duration_minutes: session.duration_minutes || 60,
       capacity: session.capacity || 15,
@@ -524,7 +524,7 @@ export class DashboardService {
       client_email: (booking.user?.email === 'N/A' ? 'client@example.com' : booking.user?.email) || (booking.guest_email === 'N/A' ? 'client@example.com' : booking.guest_email) || 'client@example.com',
       client_phone: (booking.user?.phone === 'N/A' ? '+254 700 000 000' : booking.user?.phone) || (booking.guest_phone === 'N/A' ? '+254 700 000 000' : booking.guest_phone) || '+254 700 000 000',
       session_name: (booking.timeSlot?.session?.description === 'N/A' ? 'Fitness Training Session' : booking.timeSlot?.session?.description) || 'Fitness Training Session',
-      session_category: (booking.timeSlot?.session?.category === 'N/A' ? 'strength_training' : booking.timeSlot?.session?.category) || 'strength_training',
+      session_category: (booking.timeSlot?.session?.category as string) === 'N/A' ? 'strength_training' : (booking.timeSlot?.session?.category || 'strength_training'),
       booking_date: booking.date_booked,
       schedule_date: booking.schedule?.date || new Date(),
       payment_ref: (booking.payment_reference === 'N/A' ? 'Pending Payment' : booking.payment_reference) || 'Pending Payment',
