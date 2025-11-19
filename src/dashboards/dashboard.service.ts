@@ -431,30 +431,75 @@ export class DashboardService {
     });
     if (!trainer) throw new NotFoundException('Trainer profile not found');
 
-    return await this.sessionRepository.find({
+    const sessions = await this.sessionRepository.find({
       where: { trainer: { trainer_id: trainer.trainer_id } },
       relations: ['trainer'],
       order: { session_id: 'DESC' },
     });
+
+    // Return sessions with meaningful data instead of N/A
+    return sessions.map(session => ({
+      ...session,
+      category: session.category || 'General Fitness',
+      description: session.description || 'Fitness Session',
+      duration_minutes: session.duration_minutes || 60,
+      capacity: session.capacity || 15,
+      price: session.price || 25.00,
+      trainer_name: session.trainer?.name || trainer.name || 'Trainer'
+    }));
   }
 
   /**
-   * Get trainer's student bookings (Student Bookings)
+   * Get trainer's student bookings (Student Bookings) with filtering
    */
-  async getTrainerBookings(userId: number) {
+  async getTrainerBookings(userId: number, filter?: string) {
     const trainer = await this.trainerRepository.findOne({
       where: { user_id: userId },
     });
     if (!trainer) throw new NotFoundException('Trainer profile not found');
 
-    return await this.bookingRepository
+    let queryBuilder = this.bookingRepository
       .createQueryBuilder('b')
       .leftJoinAndSelect('b.user', 'u')
       .leftJoinAndSelect('b.timeSlot', 'ts')
       .leftJoinAndSelect('ts.session', 's')
       .leftJoinAndSelect('s.trainer', 't')
-      .where('t.trainer_id = :trainerId', { trainerId: trainer.trainer_id })
+      .leftJoinAndSelect('b.schedule', 'sch')
+      .where('t.trainer_id = :trainerId', { trainerId: trainer.trainer_id });
+
+    // Apply filters
+    if (filter === 'recent') {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      queryBuilder = queryBuilder.andWhere('b.date_booked >= :sevenDaysAgo', { sevenDaysAgo });
+    } else if (filter === 'today') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      queryBuilder = queryBuilder.andWhere('b.date_booked >= :today AND b.date_booked < :tomorrow', { today, tomorrow });
+    } else if (filter === 'confirmed') {
+      queryBuilder = queryBuilder.andWhere('b.status = :status', { status: BookingStatus.booked });
+    } else if (filter === 'cancelled') {
+      queryBuilder = queryBuilder.andWhere('b.status = :status', { status: BookingStatus.cancelled });
+    }
+
+    const bookings = await queryBuilder
       .orderBy('b.date_booked', 'DESC')
       .getMany();
+
+    // Return bookings with meaningful data and booking date
+    return bookings.map(booking => ({
+      ...booking,
+      client_name: booking.user?.username || booking.guest_name || 'Guest Client',
+      client_email: booking.user?.email || booking.guest_email || 'No email provided',
+      client_phone: booking.user?.phone || booking.guest_phone || 'No phone provided',
+      session_name: booking.timeSlot?.session?.description || 'Fitness Session',
+      session_category: booking.timeSlot?.session?.category || 'general',
+      booking_date: booking.date_booked,
+      schedule_date: booking.schedule?.date || new Date(),
+      payment_ref: booking.payment_reference || 'Pending payment',
+      status_display: booking.status || 'booked'
+    }));
   }
 }

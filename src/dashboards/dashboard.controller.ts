@@ -3,6 +3,7 @@ import {
   Get,
   UseGuards,
   Req,
+  Query,
   ForbiddenException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -113,11 +114,11 @@ export class DashboardController {
    */
   @Get('trainer/bookings')
   @UseGuards(JwtAuthGuard)
-  async getTrainerBookings(@Req() req: any) {
+  async getTrainerBookings(@Req() req: any, @Query('filter') filter?: string) {
     const user = req.user;
     if (!user || user.role !== 'trainer') {
       throw new ForbiddenException('Only trainers can access this endpoint');
     }
-    return await this.dashboardService.getTrainerBookings(user.userId);
+    return await this.dashboardService.getTrainerBookings(user.userId, filter);
   }
 }

@@ -94,6 +94,14 @@ export class AdminController {
     return await this.adminService.getBookings({ page, limit });
   }
 
+  @Get('sessions')
+  async getSessions(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 50,
+  ) {
+    return await this.adminService.getAllSessions({ page, limit });
+  }
+
   @Patch('bookings/:id/status')
   async updateBookingStatus(
     @Param('id') id: number,
