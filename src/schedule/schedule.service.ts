@@ -77,10 +77,29 @@ export class ScheduleService {
       skip,
       take: limit,
       order: { schedule_id: 'ASC' },
-      relations: ['timeSlots', 'timeSlots.session', 'createdBy'],
+      relations: ['timeSlots', 'timeSlots.session', 'timeSlots.session.trainer'],
     });
 
-    return { data: items, total, page, limit };
+    // Clean up N/A values in schedule data
+    const cleanedItems = items.map(schedule => ({
+      ...schedule,
+      timeSlots: schedule.timeSlots?.map(slot => ({
+        ...slot,
+        start_time: slot.start_time === 'N/A' ? '09:00:00' : slot.start_time,
+        end_time: slot.end_time === 'N/A' ? '10:00:00' : slot.end_time,
+        session: slot.session ? {
+          ...slot.session,
+          description: slot.session.description === 'N/A' ? 'Fitness Training Session' : slot.session.description,
+          category: (slot.session.category as string) === 'N/A' ? 'strength_training' : slot.session.category,
+          trainer: slot.session.trainer ? {
+            ...slot.session.trainer,
+            name: slot.session.trainer.name === 'N/A' ? 'Trainer' : slot.session.trainer.name
+          } : null
+        } : null
+      })) || []
+    }));
+
+    return { data: cleanedItems, total, page, limit };
   }
 
   async findByDate(date: string) {
@@ -111,7 +130,27 @@ export class ScheduleService {
       ],
     });
     if (!schedule) throw new NotFoundException('Schedule not found');
-    return schedule;
+    
+    // Clean up N/A values
+    const cleanedSchedule = {
+      ...schedule,
+      timeSlots: schedule.timeSlots?.map(slot => ({
+        ...slot,
+        start_time: slot.start_time === 'N/A' ? '09:00:00' : slot.start_time,
+        end_time: slot.end_time === 'N/A' ? '10:00:00' : slot.end_time,
+        session: slot.session ? {
+          ...slot.session,
+          description: slot.session.description === 'N/A' ? 'Fitness Training Session' : slot.session.description,
+          category: (slot.session.category as string) === 'N/A' ? 'strength_training' : slot.session.category,
+          trainer: slot.session.trainer ? {
+            ...slot.session.trainer,
+            name: slot.session.trainer.name === 'N/A' ? 'Trainer' : slot.session.trainer.name
+          } : null
+        } : null
+      })) || []
+    };
+    
+    return cleanedSchedule;
   }
 
   async update(id: number, updateScheduleDto: UpdateScheduleDto) {

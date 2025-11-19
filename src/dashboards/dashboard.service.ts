@@ -87,10 +87,30 @@ export class DashboardService {
    * Get upcoming schedules
    */
   async getUpcomingSchedules() {
-    return await this.scheduleRepository.find({
+    const schedules = await this.scheduleRepository.find({
       take: 10,
-      order: { date: 'ASC' }
+      order: { date: 'ASC' },
+      relations: ['timeSlots', 'timeSlots.session', 'timeSlots.session.trainer']
     });
+    
+    // Clean up N/A values in schedule data
+    return schedules.map(schedule => ({
+      ...schedule,
+      timeSlots: schedule.timeSlots?.map(slot => ({
+        ...slot,
+        start_time: slot.start_time === 'N/A' ? '09:00:00' : slot.start_time,
+        end_time: slot.end_time === 'N/A' ? '10:00:00' : slot.end_time,
+        session: slot.session ? {
+          ...slot.session,
+          description: slot.session.description === 'N/A' ? 'Fitness Training Session' : slot.session.description,
+          category: (slot.session.category as string) === 'N/A' ? 'strength_training' : slot.session.category,
+          trainer: slot.session.trainer ? {
+            ...slot.session.trainer,
+            name: slot.session.trainer.name === 'N/A' ? 'Trainer' : slot.session.trainer.name
+          } : null
+        } : null
+      })) || []
+    }));
   }
 
   /**
