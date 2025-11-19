@@ -40,3 +40,15 @@ Authorization: Bearer {{trainerToken}}
 ### 8. Test Trainer Dashboard (should work without errors)
 GET {{url}}/dashboard/trainer
 Authorization: Bearer {{trainerToken}}
+
+### 9. Test Trainer Sessions (My Sessions)
+GET {{url}}/dashboard/trainer/sessions
+Authorization: Bearer {{trainerToken}}
+
+### 10. Test Trainer Bookings (Student Bookings)
+GET {{url}}/dashboard/trainer/bookings
+Authorization: Bearer {{trainerToken}}
+
+### 11. Test Trainer Bookings with Recent Filter
+GET {{url}}/dashboard/trainer/bookings?filter=recent
+Authorization: Bearer {{trainerToken}}

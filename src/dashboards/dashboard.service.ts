@@ -224,18 +224,47 @@ export class DashboardService {
         console.log('Notifications not available yet:', error.message);
       }
 
+      // Clean up trainer data to remove N/A values
+      const cleanTrainer = {
+        ...trainer,
+        name: trainer.name === 'N/A' ? 'Trainer' : trainer.name,
+        email: trainer.email === 'N/A' ? 'trainer@atara.com' : trainer.email,
+        phone: trainer.phone === 'N/A' ? '+254 700 000 000' : trainer.phone,
+        bio: trainer.bio === 'N/A' ? 'Professional fitness trainer' : trainer.bio,
+        specialty: trainer.specialty === 'N/A' ? 'strength_training' : trainer.specialty
+      };
+
+      // Clean up sessions data
+      const cleanSessions = (sessions || []).map(session => ({
+        ...session,
+        category: session.category === 'N/A' ? 'strength_training' : session.category,
+        description: session.description === 'N/A' ? 'Fitness Training Session' : session.description,
+        duration_minutes: session.duration_minutes || 60,
+        capacity: session.capacity || 15,
+        price: session.price || 25.00
+      }));
+
+      // Clean up bookings data
+      const cleanBookings = (bookings || []).map(booking => ({
+        ...booking,
+        guest_name: booking.guest_name === 'N/A' ? 'Client' : booking.guest_name,
+        guest_email: booking.guest_email === 'N/A' ? 'client@example.com' : booking.guest_email,
+        guest_phone: booking.guest_phone === 'N/A' ? '+254 700 000 000' : booking.guest_phone,
+        payment_reference: booking.payment_reference === 'N/A' ? 'Pending Payment' : booking.payment_reference
+      }));
+
       return {
-        trainer,
-        sessions: sessions || [],
+        trainer: cleanTrainer,
+        sessions: cleanSessions,
         upcomingSchedules: upcomingSchedules || [],
-        bookings: bookings || [],
+        bookings: cleanBookings,
         cancellations: [],
         notifications: notifications || [],
         unreadNotifications: unreadCount || 0,
         stats: {
-          totalSessions: sessions ? sessions.length : 0,
-          totalBookings: bookings ? bookings.length : 0,
-          cancelledBookings: bookings ? bookings.filter(b => b.status === BookingStatus.cancelled).length : 0,
+          totalSessions: cleanSessions.length,
+          totalBookings: cleanBookings.length,
+          cancelledBookings: cleanBookings.filter(b => b.status === BookingStatus.cancelled).length,
           upcomingCount: upcomingSchedules ? upcomingSchedules.length : 0,
         },
       };
@@ -440,12 +469,12 @@ export class DashboardService {
     // Return sessions with meaningful data instead of N/A
     return sessions.map(session => ({
       ...session,
-      category: session.category || 'General Fitness',
-      description: session.description || 'Fitness Session',
+      category: session.category === 'N/A' ? 'strength_training' : (session.category || 'strength_training'),
+      description: session.description === 'N/A' ? 'Fitness Training Session' : (session.description || 'Fitness Training Session'),
       duration_minutes: session.duration_minutes || 60,
       capacity: session.capacity || 15,
       price: session.price || 25.00,
-      trainer_name: session.trainer?.name || trainer.name || 'Trainer'
+      trainer_name: (session.trainer?.name === 'N/A' ? 'Trainer' : session.trainer?.name) || (trainer.name === 'N/A' ? 'Trainer' : trainer.name) || 'Trainer'
     }));
   }
 
@@ -491,14 +520,14 @@ export class DashboardService {
     // Return bookings with meaningful data and booking date
     return bookings.map(booking => ({
       ...booking,
-      client_name: booking.user?.username || booking.guest_name || 'Guest Client',
-      client_email: booking.user?.email || booking.guest_email || 'No email provided',
-      client_phone: booking.user?.phone || booking.guest_phone || 'No phone provided',
-      session_name: booking.timeSlot?.session?.description || 'Fitness Session',
-      session_category: booking.timeSlot?.session?.category || 'general',
+      client_name: (booking.user?.username === 'N/A' ? 'Client' : booking.user?.username) || (booking.guest_name === 'N/A' ? 'Guest Client' : booking.guest_name) || 'Guest Client',
+      client_email: (booking.user?.email === 'N/A' ? 'client@example.com' : booking.user?.email) || (booking.guest_email === 'N/A' ? 'client@example.com' : booking.guest_email) || 'client@example.com',
+      client_phone: (booking.user?.phone === 'N/A' ? '+254 700 000 000' : booking.user?.phone) || (booking.guest_phone === 'N/A' ? '+254 700 000 000' : booking.guest_phone) || '+254 700 000 000',
+      session_name: (booking.timeSlot?.session?.description === 'N/A' ? 'Fitness Training Session' : booking.timeSlot?.session?.description) || 'Fitness Training Session',
+      session_category: (booking.timeSlot?.session?.category === 'N/A' ? 'strength_training' : booking.timeSlot?.session?.category) || 'strength_training',
       booking_date: booking.date_booked,
       schedule_date: booking.schedule?.date || new Date(),
-      payment_ref: booking.payment_reference || 'Pending payment',
+      payment_ref: (booking.payment_reference === 'N/A' ? 'Pending Payment' : booking.payment_reference) || 'Pending Payment',
       status_display: booking.status || 'booked'
     }));
   }
