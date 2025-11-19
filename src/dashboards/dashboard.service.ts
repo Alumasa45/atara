@@ -87,29 +87,25 @@ export class DashboardService {
    * Get upcoming schedules
    */
   async getUpcomingSchedules() {
-    const schedules = await this.scheduleRepository.find({
-      take: 10,
-      order: { date: 'ASC' },
-      relations: ['timeSlots', 'timeSlots.session', 'timeSlots.session.trainer']
-    });
-    
-    // Clean up N/A values in schedule data
-    return schedules.map(schedule => ({
-      ...schedule,
-      timeSlots: schedule.timeSlots?.map(slot => ({
-        ...slot,
-        start_time: slot.start_time === 'N/A' ? '09:00:00' : slot.start_time,
-        end_time: slot.end_time === 'N/A' ? '10:00:00' : slot.end_time,
-        session: slot.session ? {
-          ...slot.session,
-          description: slot.session.description === 'N/A' ? 'Fitness Training Session' : slot.session.description,
-          category: (slot.session.category as string) === 'N/A' ? 'strength_training' : slot.session.category,
-          trainer: slot.session.trainer ? {
-            ...slot.session.trainer,
-            name: slot.session.trainer.name === 'N/A' ? 'Trainer' : slot.session.trainer.name
-          } : null
-        } : null
-      })) || []
+    const timeSlots = await this.scheduleTimeSlotRepository
+      .createQueryBuilder('ts')
+      .leftJoinAndSelect('ts.session', 's')
+      .leftJoinAndSelect('ts.schedule', 'sch')
+      .leftJoinAndSelect('s.trainer', 't')
+      .where('sch.date >= :today', { today: new Date() })
+      .orderBy('sch.date', 'ASC')
+      .addOrderBy('ts.start_time', 'ASC')
+      .take(10)
+      .getMany();
+
+    return timeSlots.map(slot => ({
+      session_title: slot.session?.description || 'Fitness Session',
+      start_time: slot.start_time || '09:00',
+      end_time: slot.end_time || '10:00',
+      location: 'Atara Studio',
+      date: slot.schedule?.date || new Date(),
+      trainer_name: slot.session?.trainer?.name || 'Trainer',
+      category: slot.session?.category || 'fitness'
     }));
   }
 
@@ -480,21 +476,24 @@ export class DashboardService {
     });
     if (!trainer) throw new NotFoundException('Trainer profile not found');
 
-    const sessions = await this.sessionRepository.find({
-      where: { trainer: { trainer_id: trainer.trainer_id } },
-      relations: ['trainer'],
-      order: { session_id: 'DESC' },
-    });
+    // Return actual schedule time slots for this trainer
+    const timeSlots = await this.scheduleTimeSlotRepository
+      .createQueryBuilder('ts')
+      .leftJoinAndSelect('ts.session', 's')
+      .leftJoinAndSelect('ts.schedule', 'sch')
+      .where('s.trainer_id = :trainerId', { trainerId: trainer.trainer_id })
+      .orderBy('sch.date', 'ASC')
+      .addOrderBy('ts.start_time', 'ASC')
+      .getMany();
 
-    // Return sessions with meaningful data instead of N/A
-    return sessions.map(session => ({
-      ...session,
-      category: (session.category as string) === 'N/A' ? 'strength_training' : (session.category || 'strength_training'),
-      description: session.description === 'N/A' ? 'Fitness Training Session' : (session.description || 'Fitness Training Session'),
-      duration_minutes: session.duration_minutes || 60,
-      capacity: session.capacity || 15,
-      price: session.price || 25.00,
-      trainer_name: (session.trainer?.name === 'N/A' ? 'Trainer' : session.trainer?.name) || (trainer.name === 'N/A' ? 'Trainer' : trainer.name) || 'Trainer'
+    return timeSlots.map(slot => ({
+      session_title: slot.session?.description || 'Fitness Session',
+      start_time: slot.start_time || '09:00',
+      end_time: slot.end_time || '10:00',
+      location: 'Atara Studio',
+      date: slot.schedule?.date || new Date(),
+      category: slot.session?.category || 'fitness',
+      capacity: slot.session?.capacity || 15
     }));
   }
 
@@ -537,18 +536,20 @@ export class DashboardService {
       .orderBy('b.date_booked', 'DESC')
       .getMany();
 
-    // Return bookings with meaningful data and booking date
+    // Return clean booking data
     return bookings.map(booking => ({
-      ...booking,
-      client_name: (booking.user?.username === 'N/A' ? 'Client' : booking.user?.username) || (booking.guest_name === 'N/A' ? 'Guest Client' : booking.guest_name) || 'Guest Client',
-      client_email: (booking.user?.email === 'N/A' ? 'client@example.com' : booking.user?.email) || (booking.guest_email === 'N/A' ? 'client@example.com' : booking.guest_email) || 'client@example.com',
-      client_phone: (booking.user?.phone === 'N/A' ? '+254 700 000 000' : booking.user?.phone) || (booking.guest_phone === 'N/A' ? '+254 700 000 000' : booking.guest_phone) || '+254 700 000 000',
-      session_name: (booking.timeSlot?.session?.description === 'N/A' ? 'Fitness Training Session' : booking.timeSlot?.session?.description) || 'Fitness Training Session',
-      session_category: (booking.timeSlot?.session?.category as string) === 'N/A' ? 'strength_training' : (booking.timeSlot?.session?.category || 'strength_training'),
+      booking_id: booking.booking_id,
+      client_name: booking.user?.username || booking.guest_name || 'Guest Client',
+      client_email: booking.user?.email || booking.guest_email || 'client@example.com',
+      client_phone: booking.user?.phone || booking.guest_phone || '+254 700 000 000',
+      session_name: booking.timeSlot?.session?.description || 'Fitness Session',
+      session_category: booking.timeSlot?.session?.category || 'fitness',
       booking_date: booking.date_booked,
       schedule_date: booking.schedule?.date || new Date(),
-      payment_ref: (booking.payment_reference === 'N/A' ? 'Pending Payment' : booking.payment_reference) || 'Pending Payment',
-      status_display: booking.status || 'booked'
+      payment_reference: booking.payment_reference || 'Pending',
+      status: booking.status,
+      start_time: booking.timeSlot?.start_time || '09:00',
+      end_time: booking.timeSlot?.end_time || '10:00'
     }));
   }
 }
