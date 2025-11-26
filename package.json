@@ -3,10 +3,13 @@
   "version": "1.1.0",
   "description": "Atara Movement Studio - Full Stack Application",
   "scripts": {
-    "build": "cd atarabackend && npm install && cd frontend && npm install && npx vite build && cd .. && npm run build:frontend:copy && npm run build",
-    "start": "cd atarabackend && npm run start:prod"
+    "build": "npm install && cd frontend && npm install && npx vite build && cd .. && npm run build:frontend:copy && nest build",
+    "start": "npm run start:prod"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@nestjs/cli": "^11.0.0"
   }
 }
