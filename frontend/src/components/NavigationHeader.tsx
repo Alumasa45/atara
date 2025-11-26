@@ -91,8 +91,7 @@ export default function NavigationHeader() {
   return (
     <nav
       style={{
-        background:
-          'linear-gradient(135deg, #7F5539 0%, #9C6644 50%, #B08968 100%)',
+        background: '#8B7355',
         color: '#FFFFFF',
         padding: '0',
         boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
@@ -101,7 +100,7 @@ export default function NavigationHeader() {
         left: 0,
         right: 0,
         zIndex: 1000,
-        borderBottom: '2px solid #DDB892',
+        borderBottom: '2px solid #D4C4B0',
       }}
     >
       <div
@@ -130,7 +129,7 @@ export default function NavigationHeader() {
             transition: 'all 0.3s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#DDB892';
+            e.currentTarget.style.color = '#D4C4B0';
             e.currentTarget.style.transform = 'scale(1.02)';
           }}
           onMouseLeave={(e) => {
@@ -141,7 +140,7 @@ export default function NavigationHeader() {
           <span
             style={{
               fontSize: '28px',
-              background: 'linear-gradient(135deg, #DDB892, #E6CCB2)',
+              background: '#D4C4B0',
               borderRadius: '50%',
               width: '42px',
               height: '42px',
@@ -151,7 +150,7 @@ export default function NavigationHeader() {
               boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
             }}
           >
-            <Dumbbell size={20} color="#3b2f2a" />
+            <Dumbbell size={20} color="#4A3F36" />
           </span>
           <span style={{ fontSize: '18px', fontWeight: 600 }}>
             Atara Movement Studio
@@ -174,9 +173,9 @@ export default function NavigationHeader() {
               letterSpacing: '0.3px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#DDB892';
-              e.currentTarget.style.color = '#3b2f2a';
-              e.currentTarget.style.borderColor = '#DDB892';
+              e.currentTarget.style.backgroundColor = '#D4C4B0';
+              e.currentTarget.style.color = '#4A3F36';
+              e.currentTarget.style.borderColor = '#D4C4B0';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
@@ -194,8 +193,8 @@ export default function NavigationHeader() {
             <Link
               to="/admin/memberships"
               style={{
-                color: '#3b2f2a',
-                backgroundColor: '#DDB892',
+                color: '#4A3F36',
+                backgroundColor: '#D4C4B0',
                 textDecoration: 'none',
                 fontSize: '15px',
                 fontWeight: 700,
@@ -205,25 +204,25 @@ export default function NavigationHeader() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                border: '2px solid #DDB892',
-                boxShadow: '0 3px 8px rgba(221, 184, 146, 0.4)',
+                border: '2px solid #D4C4B0',
+                boxShadow: '0 3px 8px rgba(212, 196, 176, 0.4)',
                 letterSpacing: '0.3px',
                 textTransform: 'uppercase',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#E6CCB2';
-                e.currentTarget.style.borderColor = '#E6CCB2';
+                e.currentTarget.style.backgroundColor = '#E8DDD4';
+                e.currentTarget.style.borderColor = '#E8DDD4';
                 e.currentTarget.style.transform =
                   'translateY(-3px) scale(1.05)';
                 e.currentTarget.style.boxShadow =
-                  '0 6px 16px rgba(221, 184, 146, 0.6)';
+                  '0 6px 16px rgba(212, 196, 176, 0.6)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#DDB892';
-                e.currentTarget.style.borderColor = '#DDB892';
+                e.currentTarget.style.backgroundColor = '#D4C4B0';
+                e.currentTarget.style.borderColor = '#D4C4B0';
                 e.currentTarget.style.transform = 'translateY(0) scale(1)';
                 e.currentTarget.style.boxShadow =
-                  '0 3px 8px rgba(221, 184, 146, 0.4)';
+                  '0 3px 8px rgba(212, 196, 176, 0.4)';
               }}
             >
               <Star size={16} />
@@ -245,9 +244,9 @@ export default function NavigationHeader() {
               letterSpacing: '0.3px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#DDB892';
-              e.currentTarget.style.color = '#3b2f2a';
-              e.currentTarget.style.borderColor = '#DDB892';
+              e.currentTarget.style.backgroundColor = '#D4C4B0';
+              e.currentTarget.style.color = '#4A3F36';
+              e.currentTarget.style.borderColor = '#D4C4B0';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
@@ -274,9 +273,9 @@ export default function NavigationHeader() {
               letterSpacing: '0.3px',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#DDB892';
-              e.currentTarget.style.color = '#3b2f2a';
-              e.currentTarget.style.borderColor = '#DDB892';
+              e.currentTarget.style.backgroundColor = '#D4C4B0';
+              e.currentTarget.style.color = '#4A3F36';
+              e.currentTarget.style.borderColor = '#D4C4B0';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
@@ -295,9 +294,9 @@ export default function NavigationHeader() {
               <button
                 onClick={toggleNotifications}
                 style={{
-                  backgroundColor: 'rgba(221, 184, 146, 0.2)',
+                  backgroundColor: 'rgba(212, 196, 176, 0.2)',
                   color: '#FFFFFF',
-                  border: '2px solid #DDB892',
+                  border: '2px solid #D4C4B0',
                   padding: '10px',
                   borderRadius: '50%',
                   cursor: 'pointer',
@@ -308,12 +307,12 @@ export default function NavigationHeader() {
                   justifyContent: 'center',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#DDB892';
-                  e.currentTarget.style.color = '#3b2f2a';
+                  e.currentTarget.style.backgroundColor = '#D4C4B0';
+                  e.currentTarget.style.color = '#4A3F36';
                   e.currentTarget.style.transform = 'scale(1.1)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(221, 184, 146, 0.2)';
+                  e.currentTarget.style.backgroundColor = 'rgba(212, 196, 176, 0.2)';
                   e.currentTarget.style.color = '#FFFFFF';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
@@ -377,7 +376,7 @@ export default function NavigationHeader() {
                         style={{
                           background: 'none',
                           border: 'none',
-                          color: '#7F5539',
+                          color: '#8B7355',
                           cursor: 'pointer',
                           fontSize: '12px',
                           textDecoration: 'underline',
@@ -460,8 +459,8 @@ export default function NavigationHeader() {
                 style={{
                   fontSize: '14px',
                   fontWeight: 500,
-                  color: '#E6CCB2',
-                  borderLeft: '2px solid #DDB892',
+                  color: '#E8DDD4',
+                  borderLeft: '2px solid #D4C4B0',
                   paddingLeft: '16px',
                   letterSpacing: '0.3px',
                 }}
@@ -474,8 +473,8 @@ export default function NavigationHeader() {
                   style={{
                     marginLeft: '6px',
                     fontSize: '12px',
-                    background: '#DDB892',
-                    color: '#3b2f2a',
+                    background: '#D4C4B0',
+                    color: '#4A3F36',
                     padding: '2px 8px',
                     borderRadius: '12px',
                     fontWeight: 600,
@@ -488,9 +487,9 @@ export default function NavigationHeader() {
               <button
                 onClick={handleLogout}
                 style={{
-                  backgroundColor: 'rgba(221, 184, 146, 0.2)',
+                  backgroundColor: 'rgba(212, 196, 176, 0.2)',
                   color: '#FFFFFF',
-                  border: '2px solid #DDB892',
+                  border: '2px solid #D4C4B0',
                   padding: '8px 18px',
                   borderRadius: '8px',
                   cursor: 'pointer',
@@ -500,13 +499,12 @@ export default function NavigationHeader() {
                   letterSpacing: '0.3px',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#DDB892';
-                  e.currentTarget.style.color = '#3b2f2a';
+                  e.currentTarget.style.backgroundColor = '#D4C4B0';
+                  e.currentTarget.style.color = '#4A3F36';
                   e.currentTarget.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor =
-                    'rgba(221, 184, 146, 0.2)';
+                  e.currentTarget.style.backgroundColor = 'rgba(212, 196, 176, 0.2)';
                   e.currentTarget.style.color = '#FFFFFF';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}

@@ -1,13 +1,13 @@
-/* Palette variables based on provided image — primary color marked with ❤️ is #DDB892 */
+/* Nude, beige, and brown color palette */
 :root{
-  --bg: #EDE0D4;
-  --surface: #E6CCB2;
-  --primary: #DDB892; /* chosen */
-  --accent-1: #B08968;
-  --accent-2: #7F5539;
-  --accent-3: #9C6644;
-  --text: #3b2f2a;
-  --muted: #8b6f5a;
+  --bg: #F5F0E8;
+  --surface: #E8DDD4;
+  --primary: #D4C4B0;
+  --accent-1: #C8B99C;
+  --accent-2: #8B7355;
+  --accent-3: #6B5B47;
+  --text: #4A3F36;
+  --muted: #7A6B5D;
 }
 
 *{box-sizing:border-box}
@@ -15,7 +15,7 @@ html,body,#root{height:100%;width:100%;overflow-x:hidden}
 body{
   margin:0;
   font-family: 'Times New Roman', Times, serif;
-  background: linear-gradient(180deg,var(--bg), #f6efe7);
+  background: var(--bg);
   color:var(--text);
 }
 
@@ -24,7 +24,7 @@ body{
   display: flex;
   height: 100vh;
   width: 100%;
-  background: linear-gradient(180deg,var(--bg), #f6efe7);
+  background: var(--bg);
   overflow-x: hidden;
 }
 
@@ -86,19 +86,19 @@ body{
 }
 
 .nav-item:hover {
-  background: linear-gradient(135deg, #F5EFE7 0%, #E6CCB2 100%);
+  background: var(--primary);
   color: var(--accent-2);
   transform: translateX(4px);
-  box-shadow: 0 2px 8px rgba(221, 184, 146, 0.3);
+  box-shadow: 0 2px 8px rgba(212, 196, 176, 0.3);
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, #DDB892 0%, #E6CCB2 100%);
+  background: var(--accent-1);
   color: white;
   font-weight: 700;
   border-left: 4px solid var(--accent-2);
   padding-left: 8px;
-  box-shadow: 0 3px 10px rgba(221, 184, 146, 0.4);
+  box-shadow: 0 3px 10px rgba(200, 185, 156, 0.4);
 }
 
 .nav-icon {
@@ -119,11 +119,11 @@ body{
   gap: 12px;
   align-items: center;
   padding: 14px;
-  background: linear-gradient(135deg, #E6CCB2 0%, #F5EFE7 100%);
+  background: var(--bg);
   border-radius: 10px;
   margin-bottom: 12px;
-  border: 2px solid #DDB892;
-  box-shadow: 0 3px 10px rgba(221, 184, 146, 0.25);
+  border: 2px solid var(--primary);
+  box-shadow: 0 3px 10px rgba(212, 196, 176, 0.25);
 }
 
 .user-avatar {
@@ -167,8 +167,8 @@ body{
   align-items: center;
   justify-content: center;
   padding: 11px 14px;
-  background: linear-gradient(135deg, #B08968 0%, #9C6644 100%);
-  border: 2px solid #7F5539;
+  background: var(--accent-2);
+  border: 2px solid var(--accent-3);
   color: white;
   border-radius: 8px;
   cursor: pointer;
@@ -177,13 +177,13 @@ body{
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 3px 10px rgba(127, 85, 57, 0.3);
+  box-shadow: 0 3px 10px rgba(107, 91, 71, 0.3);
 }
 
 .logout-btn:hover {
-  background: linear-gradient(135deg, #9C6644 0%, #7F5539 100%);
+  background: var(--accent-3);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(127, 85, 57, 0.5);
+  box-shadow: 0 5px 15px rgba(107, 91, 71, 0.5);
 }
 
 
@@ -192,7 +192,7 @@ body{
   max-width:1100px;
   margin:32px auto;
   padding:24px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+  background: rgba(255,255,255,0.8);
   border-radius:16px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
@@ -229,13 +229,13 @@ body{
 
 .formRow{display:flex;gap:8px;margin-top:8px}
 .input{flex:1;padding:8px;border-radius:8px;border:1px solid #e7dfd6}
-.button{background:var(--primary);color:white;padding:8px 12px;border-radius:8px;border:none}
+.button{background:var(--primary);color:var(--text);padding:8px 12px;border-radius:8px;border:none}
 
 /* Modal for booking flow */
 .modal-overlay{
   position:fixed;inset:0;background:rgba(16,12,10,0.45);display:flex;align-items:center;justify-content:center;z-index:2000;padding:16px
 }
-.modal{background:linear-gradient(180deg,#fff, #fff);border-radius:12px;padding:18px;max-width:720px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.25)}
+.modal{background:#fff;border-radius:12px;padding:18px;max-width:720px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.25)}
 .modal .close{position:absolute;right:20px;top:16px;background:transparent;border:none;color:var(--accent-2);font-weight:700}
 
 /* Toast theming (react-hot-toast uses .__react_hot_toast_container and .react-hot-toast) */
@@ -254,8 +254,8 @@ body{
   left: 0;
   right: 0;
   height: 60px;
-  background: linear-gradient(180deg, #F5EFE7 0%, #FDFBF7 100%);
-  border-bottom: 2px solid #DDB892;
+  background: var(--surface);
+  border-bottom: 2px solid var(--primary);
   display: none;
   align-items: center;
   padding: 0 16px;
@@ -317,7 +317,7 @@ body{
 .hamburger-btn span {
   width: 100%;
   height: 3px;
-  background: white;
+  background: var(--text);
   border-radius: 2px;
   transition: 0.3s;
   display: block;
@@ -338,9 +338,9 @@ body{
 
 /* Sidebar Container */
 .sidebar-container {
-  background: linear-gradient(180deg, #F5EFE7 0%, #FDFBF7 100%);
+  background: var(--surface);
   box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08);
-  border-right: 2px solid #DDB892;
+  border-right: 2px solid var(--primary);
   transition: transform 0.3s ease;
 }
 
@@ -374,6 +374,7 @@ body{
   padding: 20px;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Sidebar Overlay */
@@ -400,7 +401,7 @@ body{
 .main-content {
   flex: 1;
   overflow-y: auto;
-  background: linear-gradient(180deg,var(--bg), #f6efe7);
+  background: var(--bg);
 }
 
 .main-content.mobile {
@@ -410,6 +411,18 @@ body{
 
 .main-content.desktop {
   padding-top: 0;
+}
+
+/* Hide NavigationHeader on mobile, show mobile-header instead */
+@media (max-width: 768px) {
+  nav[style*="position: fixed"] {
+    display: none !important;
+  }
+  
+  /* Ensure main content doesn't have top padding on mobile when NavigationHeader is hidden */
+  .main-content.mobile {
+    padding-top: 60px !important;
+  }
 }
 
 /* Mobile header - hidden by default, shown on mobile */
@@ -434,6 +447,15 @@ body{
   .sidebar-container.mobile {
     top: 60px;
     height: calc(100vh - 60px);
+    overflow: hidden;
+  }
+  
+  .sidebar-container.mobile .sidebar {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
   
   /* Main content adjustments */
