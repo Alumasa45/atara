@@ -8,8 +8,8 @@ const frontendDist = path.join(frontendDir, 'dist');
 const publicDir = path.join(repoRoot, 'public');
 
 try {
-  console.log('Building frontend (pnpm build)...');
-  execSync('pnpm build', { cwd: frontendDir, stdio: 'inherit' });
+  console.log('Building frontend (npm build)...');
+  execSync('npm run build', { cwd: frontendDir, stdio: 'inherit' });
 
   if (!fs.existsSync(frontendDist)) {
     console.error('Frontend build output not found at', frontendDist);
