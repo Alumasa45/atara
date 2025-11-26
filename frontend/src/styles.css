@@ -452,10 +452,18 @@ body{
   
   .sidebar-container.mobile .sidebar {
     height: 100%;
-    overflow-y: auto;
+    overflow-y: auto !important;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+    max-height: calc(100vh - 60px);
+    position: relative;
+  }
+  
+  .sidebar-container.mobile .sidebar-nav {
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Main content adjustments */
@@ -585,6 +593,12 @@ body{
 @media (max-width: 380px) {
   .sidebar-container.mobile {
     width: 260px;
+  }
+  
+  .sidebar-container.mobile .sidebar {
+    padding: 12px;
+    overflow-y: scroll !important;
+    height: calc(100vh - 60px) !important;
   }
   
   .mobile-header {
